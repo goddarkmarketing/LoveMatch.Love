@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveMatch Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-left: #f9a0b0;
+      --bg-right: #f4c6ef;
+      --panel: rgba(255, 251, 252, 0.94);
+      --panel-strong: rgba(255, 255, 255, 0.98);
+      --line: rgba(232, 210, 221, 0.9);
+      --text: #2e2230;
+      --muted: #736274;
+      --heading: #d5537c;
+      --pink: linear-gradient(90deg, #ff68a0 0%, #d94a78 100%);
+      --cyan: linear-gradient(90deg, #35b0ff 0%, #11d4e9 100%);
+      --blue: linear-gradient(90deg, #58a7ff 0%, #0fd0f0 100%);
+      --gray: linear-gradient(90deg, #68708a 0%, #58607a 100%);
+      --gold: linear-gradient(90deg, #ffcc00 0%, #ffb300 100%);
+      --shadow: 0 24px 54px rgba(201, 92, 131, 0.14);
+      --font-body: 16px;
+      --font-small: 13px;
+      --font-label: 14px;
+      --font-button: 16px;
+      --font-page-title: clamp(32px, 4vw, 52px);
+      --leading-body: 1.6;
+      --leading-copy: 1.65;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Bai Jamjuree", sans-serif;
+      font-size: var(--font-body);
+      line-height: var(--leading-body);
+      color: var(--text);
+      background: linear-gradient(90deg, var(--bg-left) 0%, var(--bg-right) 100%);
+      min-height: 100vh;
+    }
+    button, input, select, textarea { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .page-shell { min-height: 100vh; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 20px;
+      background: rgba(255, 219, 230, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #eb5b89;
+      min-width: 240px;
+    }
+    .brand-icon { width: 28px; height: 28px; fill: currentColor; }
+    .brand-name { font-size: 24px; font-weight: 600; line-height: 1; }
+    .nav, .auth-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(220, 170, 191, 0.9);
+      border-radius: 16px;
+      background: rgba(255, 251, 253, 0.9);
+      color: #d5537c;
+      box-shadow: 0 14px 28px rgba(194, 102, 137, 0.14);
+      position: relative;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .menu-toggle span,
+    .menu-toggle::before,
+    .menu-toggle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 22px;
+      height: 2.5px;
+      border-radius: 999px;
+      background: currentColor;
+      transition: transform 0.22s ease, opacity 0.22s ease, top 0.22s ease;
+    }
+
+    .menu-toggle::before {
+      top: 16px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle span {
+      top: 22px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle::after {
+      top: 28px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle[aria-expanded="true"] span {
+      opacity: 0;
+    }
+
+    .menu-toggle[aria-expanded="true"]::before {
+      top: 22px;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .menu-toggle[aria-expanded="true"]::after {
+      top: 22px;
+      transform: translateX(-50%) rotate(-45deg);
+    }
+    .pill {
+      min-width: 134px;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: var(--font-button);
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(137, 101, 144, 0.15);
+      line-height: 1;
+      border: 0;
+      cursor: pointer;
+    }
+    .pill svg { width: 16px; height: 16px; fill: currentColor; }
+    .pill-pink { background: var(--pink); }
+    .pill-cyan { background: var(--cyan); }
+    .pill-blue { background: var(--blue); }
+    .pill-gray { background: var(--gray); }
+    .pill-gold { background: var(--gold); }
+
+    .main {
+      padding: 28px;
+    }
+
+    .profile-workspace {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.38fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .profile-sidebar,
+    .profile-main {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .profile-sidebar {
+      position: sticky;
+      top: 86px;
+      padding: 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .profile-main {
+      padding: 28px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .profile-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(241, 102, 155, 0.2) 0%, rgba(241, 102, 155, 0) 32%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 250, 0.92) 100%);
+      border: 1px solid rgba(232, 210, 221, 0.9);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      color: #d5537c;
+      font-size: var(--font-label);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .eyebrow svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .page-title {
+      margin: 16px 0 0;
+      font-size: var(--font-page-title);
+      line-height: 1.02;
+      font-weight: 700;
+      color: #2c2330;
+      letter-spacing: -0.03em;
+    }
+
+    .page-copy {
+      margin: 12px 0 0;
+      max-width: 56ch;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .avatar-panel {
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+      text-align: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(232, 210, 221, 0.9);
+    }
+
+    .avatar-preview {
+      width: 164px;
+      aspect-ratio: 1;
+      border-radius: 36px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #ffd6e5 0%, #f6f0ff 100%);
+      border: 1px solid rgba(232, 210, 221, 0.9);
+      box-shadow: 0 18px 38px rgba(201, 92, 131, 0.18);
+    }
+
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      font-size: 58px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #f46d9b 0%, #a17fff 100%);
+    }
+
+    .profile-name {
+      font-size: 32px;
+      line-height: 1.05;
+      font-weight: 700;
+      color: #2c2330;
+    }
+
+    .profile-role {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .upload-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    .mini-button {
+      border: 0;
+      border-radius: 16px;
+      min-height: 44px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(201, 92, 131, 0.16);
+      background: var(--pink);
+    }
+    .mini-button svg { width: 16px; height: 16px; fill: currentColor; }
+    .mini-button.secondary { background: var(--gray); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 16px 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(232, 210, 221, 0.88);
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #8a7384;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 22px;
+      color: #2c2330;
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .side-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .side-item {
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(232, 210, 221, 0.86);
+    }
+
+    .side-item-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #8a7384;
+      font-weight: 700;
+    }
+
+    .side-item-copy {
+      margin-top: 6px;
+      color: #473d4d;
+      line-height: 1.55;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .editor-section {
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(232, 210, 221, 0.9);
+    }
+
+    .editor-section.span-2 {
+      grid-column: 1 / -1;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.06;
+      font-weight: 700;
+      color: #2d2230;
+      letter-spacing: -0.02em;
+    }
+
+    .section-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.66;
+    }
+
+    .field-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field-grid.single {
+      grid-template-columns: 1fr;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: #2c2d3f;
+      line-height: 1.4;
+    }
+
+    .field-input,
+    .field-select,
+    .field-textarea {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid #d8dfea;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 0 18px;
+      color: #4d5c71;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    }
+
+    .field-input,
+    .field-select {
+      height: 56px;
+    }
+
+    .field-textarea {
+      min-height: 130px;
+      resize: vertical;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      line-height: 1.65;
+    }
+
+    .chip-grid {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid rgba(232, 210, 221, 0.9);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255, 247, 251, 0.92);
+      color: #5f5060;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .chip.is-active {
+      background: rgba(241, 93, 151, 0.12);
+      border-color: rgba(241, 93, 151, 0.42);
+      color: #d5537c;
+    }
+
+    .switch-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: rgba(255, 248, 251, 0.84);
+      border: 1px solid rgba(232, 210, 221, 0.82);
+    }
+
+    .switch-copy strong {
+      display: block;
+      color: #322737;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .switch-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .switch {
+      position: relative;
+      width: 56px;
+      height: 32px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: rgba(139, 120, 141, 0.32);
+      transition: background-color 0.18s ease;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 4px;
+      top: 4px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      transition: transform 0.18s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(90deg, #ff68a0 0%, #d94a78 100%);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(24px);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .form-notice {
+      display: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .form-notice.is-visible { display: block; }
+    .form-notice.is-success { background: #ecfff5; color: #087b48; border: 1px solid #bde8ce; }
+    .form-notice.is-error { background: #fff1f4; color: #bf2e60; border: 1px solid #f4bed0; }
+
+    .save-button {
+      min-height: 58px;
+      padding: 0 26px;
+      border: 0;
+      border-radius: 20px;
+      background: var(--pink);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 18px 30px rgba(220, 73, 121, 0.22);
+    }
+
+    .save-button svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .page-toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      min-width: 260px;
+      max-width: 360px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 16px 34px rgba(40, 20, 30, 0.22);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+    .page-toast.is-visible { opacity: 1; transform: translateY(0); }
+    .page-toast.is-success { background: linear-gradient(90deg, #18b875 0%, #0f9d68 100%); }
+    .page-toast.is-error { background: linear-gradient(90deg, #ff5e7e 0%, #d94672 100%); }
+    .page-toast.is-info { background: linear-gradient(90deg, #4a89ff 0%, #2ec5ff 100%); }
+
+    @media (max-width: 1180px) {
+      .profile-workspace {
+        grid-template-columns: 1fr;
+      }
+      .profile-sidebar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        padding: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .brand {
+        min-width: 0;
+      }
+      .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+      }
+      .topbar .nav,
+      .topbar .auth-nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(255, 244, 248, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.48);
+        box-shadow: 0 18px 36px rgba(196, 102, 137, 0.16);
+        backdrop-filter: blur(12px);
+      }
+      .topbar.is-menu-open .nav,
+      .topbar.is-menu-open .auth-nav {
+        display: flex;
+      }
+      .topbar .nav {
+        margin-top: 4px;
+        border-radius: 28px 28px 18px 18px;
+      }
+      .topbar .auth-nav {
+        margin-top: -6px;
+        border-radius: 18px 18px 28px 28px;
+      }
+      .pill {
+        width: 100%;
+        min-width: 0;
+      }
+      .main {
+        padding: 16px;
+      }
+      .editor-grid,
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.24 2 12.09 2 8.23 2 5.08 4.42 2.7 7.5 2.7c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.38 5.5 5.53 0 3.86-3.4 7.01-8.55 11.78L12 21.35Z"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><path d="M20 7h-2.18A2.99 2.99 0 0 0 18 6c0-1.66-1.34-3-3-3-1.54 0-2.8 1.18-2.96 2.68L12 6l-.04-.32A3 3 0 0 0 9 3C7.34 3 6 4.34 6 6c0 .35.06.69.18 1H4a2 2 0 0 0-2 2v2h20V9a2 2 0 0 0-2-2ZM9 5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1Zm6 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1ZM2 13h9v9H4a2 2 0 0 1-2-2v-7Zm11 9v-9h9v7a2 2 0 0 1-2 2h-7Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="m3 18 1.8-10 5.2 4 2-5 2 5 5.2-4L21 18H3Z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 9h-3.11a15.5 15.5 0 0 0-1.21-5.01A8.02 8.02 0 0 1 18.93 11ZM12 4.07c.97 1.4 1.75 3.56 2.01 6.93H9.99c.26-3.37 1.04-5.53 2.01-6.93ZM4.07 13h3.11c.13 1.8.54 3.53 1.21 5.01A8.02 8.02 0 0 1 4.07 13ZM7.18 11H4.07a8.02 8.02 0 0 1 4.32-5.01A15.5 15.5 0 0 0 7.18 11Zm1.79 2h6.06c-.26 3.37-1.04 5.53-2.01 6.93-.97-1.4-1.75-3.56-2.01-6.93Zm6.64 5.01c.67-1.48 1.08-3.21 1.21-5.01h3.11a8.02 8.02 0 0 1-4.32 5.01Z"/></symbol>
+    <symbol id="i-login" viewBox="0 0 24 24"><path d="M10 17v-3H3v-4h7V7l5 5-5 5Zm6-14h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M9 4 7.5 6H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-2.5L15 4H9Zm3 4.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5Z"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4ZM12 19a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm3-10H5V5h10v4Z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 2.93 6.26 6.9.99-5 4.86 1.18 6.89L12 17.77 5.99 21l1.18-6.89-5-4.86 6.9-.99L12 2Z"/></symbol>
+  </svg>
+
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./">
+        <svg class="brand-icon"><use href="#i-heart"></use></svg>
+        <span class="brand-name">LoveMatch.Love</span>
+      </a>
+      <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+      </button>
+      <nav class="nav">
+        <button class="pill pill-pink" id="giftMenuButton" type="button"><svg><use href="#i-gift"></use></svg>Gifts</button>
+        <button class="pill pill-cyan" id="chatMenuButton" type="button"><svg><use href="#i-chat"></use></svg>Chat</button>
+        <button class="pill pill-blue" id="premiumMenuButton" type="button"><svg><use href="#i-crown"></use></svg>Premium</button>
+        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>Language</button>
+      </nav>
+      <div class="auth-nav">
+        <button class="pill pill-pink" id="loginMenuButton" type="button"><svg><use href="#i-user"></use></svg>โปรไฟล์ของฉัน</button>
+        <button class="pill pill-blue" id="registerMenuButton" type="button"><svg><use href="#i-login"></use></svg>ออกจากระบบ</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="profile-workspace">
+        <aside class="profile-sidebar">
+          <div class="avatar-panel">
+            <div class="avatar-preview" id="avatarPreview">
+              <div class="avatar-fallback" id="avatarFallback">M</div>
+            </div>
+            <div>
+              <div class="profile-name" id="profileNameHeadline">สมาชิก LoveMatch</div>
+              <div class="profile-role" id="profileSubline">จัดการรูป โปรไฟล์ และการตั้งค่าการใช้งานของคุณ</div>
+            </div>
+            <div class="upload-actions">
+              <label class="mini-button" for="profilePhotoInput"><svg><use href="#i-camera"></use></svg>อัปโหลดรูป</label>
+              <button class="mini-button secondary" id="removePhotoButton" type="button">ลบรูป</button>
+            </div>
+            <input class="upload-input" id="profilePhotoInput" type="file" accept="image/*">
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Package</div>
+              <div class="stat-value" id="statPackage">Free</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Coins</div>
+              <div class="stat-value" id="statCoins">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Matches</div>
+              <div class="stat-value" id="statMatches">0</div>
+            </div>
+          </div>
+
+          <div class="side-list">
+            <div class="side-item">
+              <div class="side-item-title">ควรใส่อะไรบ้าง</div>
+              <div class="side-item-copy">รูปชัดเจน 3-5 รูป, bio สั้นอ่านง่าย, เมืองที่อยู่, อาชีพ, ภาษา, และสิ่งที่คุณกำลังมองหา</div>
+            </div>
+            <div class="side-item">
+              <div class="side-item-title">แนะนำเพิ่มเติม</div>
+              <div class="side-item-copy">เพิ่มความสนใจ เช่น ท่องเที่ยว คาเฟ่ ฟิตเนส ดนตรี หรือไลฟ์สไตล์ เพื่อให้ระบบจับคู่แม่นขึ้น</div>
+            </div>
+            <div class="side-item">
+              <div class="side-item-title">ความเป็นส่วนตัว</div>
+              <div class="side-item-copy">คุณสามารถตั้งค่าให้แสดงโปรไฟล์ รับของขวัญ หรือเปิดการแจ้งเตือนเฉพาะที่ต้องการได้จากหน้านี้</div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="profile-main">
+          <div class="profile-hero">
+            <div class="eyebrow"><svg><use href="#i-user"></use></svg>Profile & Settings</div>
+            <h1 class="page-title">จัดการโปรไฟล์ให้พร้อมสำหรับการจับคู่</h1>
+            <p class="page-copy">อัปเดตรูปโปรไฟล์ ข้อมูลพื้นฐาน เป้าหมายความสัมพันธ์ ความสนใจ และการตั้งค่าการใช้งานให้ครบ เพื่อให้คนที่ใช่เข้าใจคุณมากขึ้นตั้งแต่แรกเห็น</p>
+            <div class="hero-actions">
+              <button class="pill pill-pink" id="saveProfileTopButton" type="button"><svg><use href="#i-save"></use></svg>บันทึกโปรไฟล์</button>
+              <a class="pill pill-gray" href="./"><svg><use href="#i-chat"></use></svg>กลับหน้าเว็บหลัก</a>
+            </div>
+          </div>
+
+          <form id="profileForm">
+            <div class="editor-grid">
+              <section class="editor-section">
+                <h2 class="section-title">ข้อมูลพื้นฐาน</h2>
+                <p class="section-copy">ข้อมูลชุดนี้ใช้แสดงบนโปรไฟล์และช่วยให้ระบบค้นหาคนที่เหมาะกับคุณมากขึ้น</p>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">ชื่อที่แสดง</span>
+                    <input class="field-input" id="profileDisplayName" type="text" placeholder="เช่น Mike Demo">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">อายุ</span>
+                    <input class="field-input" id="profileAge" type="number" min="18" max="99" placeholder="30">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">เมือง / จังหวัด</span>
+                    <input class="field-input" id="profileLocation" type="text" placeholder="Bangkok, Thailand">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">อาชีพ</span>
+                    <input class="field-input" id="profileOccupation" type="text" placeholder="เช่น Entrepreneur">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">ภาษาที่ใช้</span>
+                    <input class="field-input" id="profileLanguages" type="text" placeholder="ไทย, English">
+                  </label>
+                  <label class="field">
+                    <span class="field-label">เป้าหมายความสัมพันธ์</span>
+                    <select class="field-select" id="profileGoal">
+                      <option value="serious">คบจริงจัง</option>
+                      <option value="dating">ทำความรู้จัก / เดต</option>
+                      <option value="friendship">เริ่มจากเพื่อน</option>
+                      <option value="marriage">มองหาคู่ชีวิต</option>
+                    </select>
+                  </label>
+                </div>
+              </section>
+
+              <section class="editor-section">
+                <h2 class="section-title">สไตล์ที่คุณชอบ</h2>
+                <p class="section-copy">เลือกแนวคนที่คุณอยากพบและรูปแบบการเริ่มคุยที่คุณสบายใจที่สุด</p>
+                <div class="field-grid">
+                  <label class="field">
+                    <span class="field-label">ต้องการพบ</span>
+                    <select class="field-select" id="profileInterestedIn">
+                      <option value="male">ผู้ชาย</option>
+                      <option value="female">ผู้หญิง</option>
+                      <option value="everyone">ทุกเพศ</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span class="field-label">ช่วงอายุที่สนใจ</span>
+                    <input class="field-input" id="profileAgeRange" type="text" placeholder="เช่น 25-40">
+                  </label>
+                </div>
+                <div class="chip-grid" id="interestChips">
+                  <button class="chip" type="button" data-chip="travel">ท่องเที่ยว</button>
+                  <button class="chip" type="button" data-chip="coffee">คาเฟ่</button>
+                  <button class="chip" type="button" data-chip="fitness">ฟิตเนส</button>
+                  <button class="chip" type="button" data-chip="music">ดนตรี</button>
+                  <button class="chip" type="button" data-chip="food">อาหาร</button>
+                  <button class="chip" type="button" data-chip="business">ธุรกิจ</button>
+                  <button class="chip" type="button" data-chip="luxury">ไลฟ์สไตล์พรีเมียม</button>
+                  <button class="chip" type="button" data-chip="family">ครอบครัว</button>
+                </div>
+              </section>
+
+              <section class="editor-section span-2">
+                <h2 class="section-title">เกี่ยวกับฉัน</h2>
+                <p class="section-copy">แนะนำตัวสั้น ๆ ให้คนที่เจอโปรไฟล์คุณเข้าใจตัวตน จุดเด่น และสิ่งที่คุณกำลังมองหา</p>
+                <div class="field-grid single">
+                  <label class="field">
+                    <span class="field-label">Bio / แนะนำตัว</span>
+                    <textarea class="field-textarea" id="profileBio" placeholder="เล่าให้คนที่สนใจรู้จักคุณมากขึ้น เช่น คุณชอบใช้เวลาว่างแบบไหน ทำงานอะไร และอยากเจอคนแบบไหน"></textarea>
+                  </label>
+                </div>
+              </section>
+
+              <section class="editor-section">
+                <h2 class="section-title">การมองเห็นโปรไฟล์</h2>
+                <p class="section-copy">ควบคุมว่าใครจะเห็นโปรไฟล์คุณ และเปิดฟีเจอร์ที่เกี่ยวกับการแชทหรือของขวัญอย่างไร</p>
+                <div class="switch-list">
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>แสดงโปรไฟล์ใน Discover</strong>
+                      <span>ให้โปรไฟล์ของคุณขึ้นในหน้าค้นหาคู่ของสมาชิกคนอื่น</span>
+                    </div>
+                    <span class="switch"><input id="toggleDiscover" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>อนุญาตรับของขวัญ</strong>
+                      <span>เปิดให้คนที่สนใจส่งของขวัญเพื่อเริ่มบทสนทนากับคุณได้</span>
+                    </div>
+                    <span class="switch"><input id="toggleGifts" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>แสดงสถานะออนไลน์</strong>
+                      <span>ให้คนที่กำลังคุยเห็นว่าคุณออนไลน์หรือล่าสุดใช้งานเมื่อไร</span>
+                    </div>
+                    <span class="switch"><input id="toggleOnline" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="editor-section">
+                <h2 class="section-title">การแจ้งเตือน</h2>
+                <p class="section-copy">เลือกว่าจะให้ระบบแจ้งเตือนอะไรบ้าง เพื่อไม่ให้พลาดคนที่ใช่หรือของขวัญสำคัญ</p>
+                <div class="switch-list">
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>แจ้งเตือนเมื่อมี Match ใหม่</strong>
+                      <span>รับการแจ้งเตือนเมื่อมีคนกดถูกใจกลับและจับคู่สำเร็จ</span>
+                    </div>
+                    <span class="switch"><input id="toggleMatches" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>แจ้งเตือนข้อความใหม่</strong>
+                      <span>แจ้งเตือนเมื่อมีข้อความใหม่ในห้องรวมและแชทส่วนตัว</span>
+                    </div>
+                    <span class="switch"><input id="toggleMessages" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                  <label class="switch-row">
+                    <div class="switch-copy">
+                      <strong>แจ้งเตือนแพ็กเกจและเหรียญ</strong>
+                      <span>แจ้งเมื่อแพ็กเกจใกล้หมดอายุ หรือเหรียญเหลือน้อย</span>
+                    </div>
+                    <span class="switch"><input id="toggleBilling" type="checkbox" checked><span class="slider"></span></span>
+                  </label>
+                </div>
+              </section>
+            </div>
+
+            <div class="editor-section span-2" style="margin-top:22px;">
+              <div class="form-actions">
+                <div class="form-notice" id="profileNotice"></div>
+                <button class="save-button" id="saveProfileButton" type="submit"><svg><use href="#i-save"></use></svg>บันทึกการเปลี่ยนแปลง</button>
+              </div>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="page-toast" id="pageToast"></div>
+
+  <script>
+    const appBasePath = window.location.pathname.replace(/\/profile\.html$/, "").replace(/\/$/, "");
+    const API_BASE = window.location.origin + (appBasePath || "") + "/api";
+    const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
+    const GIFTS_PAGE_URL = window.location.origin + (appBasePath || "") + "/gifts.html";
+    const CHAT_PAGE_URL = window.location.origin + (appBasePath || "") + "/chat.html";
+    const PREMIUM_PAGE_URL = window.location.origin + (appBasePath || "") + "/premium.html";
+    const ADMIN_PAGE_URL = window.location.origin + (appBasePath || "") + "/admin.html";
+
+    const giftMenuButton = document.getElementById("giftMenuButton");
+    const chatMenuButton = document.getElementById("chatMenuButton");
+    const premiumMenuButton = document.getElementById("premiumMenuButton");
+    const languageMenuButton = document.getElementById("languageMenuButton");
+    const topbar = document.querySelector(".topbar");
+    const loginMenuButton = document.getElementById("loginMenuButton");
+    const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+    const registerMenuButton = document.getElementById("registerMenuButton");
+    const saveProfileTopButton = document.getElementById("saveProfileTopButton");
+    const saveProfileButton = document.getElementById("saveProfileButton");
+    const profileForm = document.getElementById("profileForm");
+    const profileNotice = document.getElementById("profileNotice");
+    const profilePhotoInput = document.getElementById("profilePhotoInput");
+    const removePhotoButton = document.getElementById("removePhotoButton");
+    const avatarPreview = document.getElementById("avatarPreview");
+    const avatarFallback = document.getElementById("avatarFallback");
+    const profileNameHeadline = document.getElementById("profileNameHeadline");
+    const profileSubline = document.getElementById("profileSubline");
+    const statPackage = document.getElementById("statPackage");
+    const statCoins = document.getElementById("statCoins");
+    const statMatches = document.getElementById("statMatches");
+    const pageToast = document.getElementById("pageToast");
+
+    const fields = {
+      displayName: document.getElementById("profileDisplayName"),
+      age: document.getElementById("profileAge"),
+      location: document.getElementById("profileLocation"),
+      occupation: document.getElementById("profileOccupation"),
+      languages: document.getElementById("profileLanguages"),
+      goal: document.getElementById("profileGoal"),
+      interestedIn: document.getElementById("profileInterestedIn"),
+      ageRange: document.getElementById("profileAgeRange"),
+      bio: document.getElementById("profileBio"),
+      toggleDiscover: document.getElementById("toggleDiscover"),
+      toggleGifts: document.getElementById("toggleGifts"),
+      toggleOnline: document.getElementById("toggleOnline"),
+      toggleMatches: document.getElementById("toggleMatches"),
+      toggleMessages: document.getElementById("toggleMessages"),
+      toggleBilling: document.getElementById("toggleBilling")
+    };
+
+    const interestChipButtons = Array.from(document.querySelectorAll("#interestChips .chip"));
+
+    let currentUser = null;
+    let currentWallet = null;
+    let currentPlan = null;
+    let matches = [];
+    let currentLanguage = "th";
+    let profileState = {
+      photoDataUrl: "",
+      interests: []
+    };
+
+    function showNotice(element, message, type) {
+      element.textContent = message;
+      element.className = "form-notice is-visible " + (type === "success" ? "is-success" : "is-error");
+    }
+
+    function clearNotice(element) {
+      element.textContent = "";
+      element.className = "form-notice";
+    }
+
+    let toastTimer = null;
+    function showToast(message, type) {
+      pageToast.textContent = message;
+      pageToast.className = "page-toast is-visible " + (type || "is-info");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(function () {
+        pageToast.className = "page-toast";
+      }, 2600);
+    }
+
+    async function apiFetch(path, options) {
+      const response = await fetch(API_BASE + path, {
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        ...options
+      });
+
+      const data = await response.json().catch(function () {
+        return { success: false, message: "Invalid server response" };
+      });
+
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
+
+      return data;
+    }
+
+    function profileStorageKey() {
+      return "lovematch-profile-" + (currentUser ? currentUser.id : "guest");
+    }
+
+    function buildDefaultProfile() {
+      return {
+        displayName: currentUser && currentUser.display_name ? currentUser.display_name : "สมาชิก LoveMatch",
+        age: "",
+        location: "",
+        occupation: "",
+        languages: "ไทย, English",
+        goal: "serious",
+        interestedIn: "everyone",
+        ageRange: "25-40",
+        bio: "",
+        interests: [],
+        toggleDiscover: true,
+        toggleGifts: true,
+        toggleOnline: true,
+        toggleMatches: true,
+        toggleMessages: true,
+        toggleBilling: true,
+        photoDataUrl: ""
+      };
+    }
+
+    function loadProfileState() {
+      const defaults = buildDefaultProfile();
+      try {
+        const saved = JSON.parse(localStorage.getItem(profileStorageKey()) || "null");
+        profileState = Object.assign({}, defaults, saved || {});
+      } catch (error) {
+        profileState = defaults;
+      }
+    }
+
+    function saveProfileState() {
+      localStorage.setItem(profileStorageKey(), JSON.stringify(profileState));
+    }
+
+    function renderAvatar() {
+      const displayName = profileState.displayName || (currentUser && currentUser.display_name) || "สมาชิก";
+      profileNameHeadline.textContent = displayName;
+      avatarFallback.textContent = (String(displayName).trim().charAt(0) || "?").toUpperCase();
+
+      const previousImage = avatarPreview.querySelector("img");
+      if (previousImage) {
+        previousImage.remove();
+      }
+
+      if (profileState.photoDataUrl) {
+        const image = document.createElement("img");
+        image.src = profileState.photoDataUrl;
+        image.alt = displayName;
+        avatarPreview.appendChild(image);
+        avatarFallback.style.display = "none";
+      } else {
+        avatarFallback.style.display = "grid";
+      }
+    }
+
+    function renderStats() {
+      statPackage.textContent = currentPlan && currentPlan.name ? currentPlan.name : "Free";
+      statCoins.textContent = currentWallet && currentWallet.wallet ? Number(currentWallet.wallet.coin_balance || 0).toLocaleString("th-TH") : "0";
+      statMatches.textContent = String(Array.isArray(matches) ? matches.length : 0);
+    }
+
+    function renderInterestChips() {
+      interestChipButtons.forEach(function (button) {
+        button.classList.toggle("is-active", profileState.interests.includes(button.dataset.chip));
+      });
+    }
+
+    function renderForm() {
+      fields.displayName.value = profileState.displayName || "";
+      fields.age.value = profileState.age || "";
+      fields.location.value = profileState.location || "";
+      fields.occupation.value = profileState.occupation || "";
+      fields.languages.value = profileState.languages || "";
+      fields.goal.value = profileState.goal || "serious";
+      fields.interestedIn.value = profileState.interestedIn || "everyone";
+      fields.ageRange.value = profileState.ageRange || "";
+      fields.bio.value = profileState.bio || "";
+      fields.toggleDiscover.checked = Boolean(profileState.toggleDiscover);
+      fields.toggleGifts.checked = Boolean(profileState.toggleGifts);
+      fields.toggleOnline.checked = Boolean(profileState.toggleOnline);
+      fields.toggleMatches.checked = Boolean(profileState.toggleMatches);
+      fields.toggleMessages.checked = Boolean(profileState.toggleMessages);
+      fields.toggleBilling.checked = Boolean(profileState.toggleBilling);
+      renderAvatar();
+      renderInterestChips();
+    }
+
+    function syncStateFromForm() {
+      profileState.displayName = fields.displayName.value.trim();
+      profileState.age = fields.age.value.trim();
+      profileState.location = fields.location.value.trim();
+      profileState.occupation = fields.occupation.value.trim();
+      profileState.languages = fields.languages.value.trim();
+      profileState.goal = fields.goal.value;
+      profileState.interestedIn = fields.interestedIn.value;
+      profileState.ageRange = fields.ageRange.value.trim();
+      profileState.bio = fields.bio.value.trim();
+      profileState.toggleDiscover = fields.toggleDiscover.checked;
+      profileState.toggleGifts = fields.toggleGifts.checked;
+      profileState.toggleOnline = fields.toggleOnline.checked;
+      profileState.toggleMatches = fields.toggleMatches.checked;
+      profileState.toggleMessages = fields.toggleMessages.checked;
+      profileState.toggleBilling = fields.toggleBilling.checked;
+    }
+
+    function updateAuthUI() {
+      if (currentUser) {
+        loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
+        registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
+      }
+    }
+
+    async function hydrateCurrentUser() {
+      try {
+        const response = await apiFetch("/auth/me", { method: "GET" });
+        currentUser = response.data.user;
+      } catch (error) {
+        currentUser = null;
+      }
+
+      if (!currentUser) {
+        window.location.href = HOME_PAGE_URL;
+        return;
+      }
+
+      if (["admin", "moderator"].includes(currentUser.role_code)) {
+        window.location.href = ADMIN_PAGE_URL;
+        return;
+      }
+
+      updateAuthUI();
+      await hydrateWallet();
+      await hydrateMatches();
+      await hydrateCurrentPlan();
+      loadProfileState();
+      renderForm();
+      renderStats();
+    }
+
+    async function hydrateWallet() {
+      try {
+        const response = await apiFetch("/wallet", { method: "GET" });
+        currentWallet = response.data;
+      } catch (error) {
+        currentWallet = null;
+      }
+    }
+
+    async function hydrateMatches() {
+      try {
+        const response = await apiFetch("/matches", { method: "GET" });
+        matches = response.data.matches || [];
+      } catch (error) {
+        matches = [];
+      }
+    }
+
+    async function hydrateCurrentPlan() {
+      try {
+        const response = await apiFetch("/subscription/current", { method: "GET" });
+        currentPlan = response.data && response.data.plan ? response.data.plan : null;
+      } catch (error) {
+        currentPlan = null;
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await apiFetch("/auth/logout", { method: "POST", body: JSON.stringify({}) });
+        window.location.href = HOME_PAGE_URL;
+      } catch (error) {
+        showToast(error.message, "is-error");
+      }
+    }
+
+    function handleLanguageMenu() {
+      currentLanguage = currentLanguage === "th" ? "en" : "th";
+      showToast(currentLanguage === "en" ? "Language switched to English (translation pending)" : "เปลี่ยนภาษาเป็นไทย", "is-info");
+    }
+
+    function closeMobileMenu() {
+      if (!topbar || !mobileMenuToggle) {
+        return;
+      }
+      topbar.classList.remove("is-menu-open");
+      mobileMenuToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMobileMenu() {
+      if (!topbar || !mobileMenuToggle) {
+        return;
+      }
+      const isOpen = topbar.classList.toggle("is-menu-open");
+      mobileMenuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    function handlePhotoUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        showToast("กรุณาเลือกไฟล์รูปภาพเท่านั้น", "is-error");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        profileState.photoDataUrl = String(reader.result || "");
+        saveProfileState();
+        renderAvatar();
+        showToast("อัปโหลดรูปโปรไฟล์แล้ว", "is-success");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleRemovePhoto() {
+      profileState.photoDataUrl = "";
+      saveProfileState();
+      renderAvatar();
+      profilePhotoInput.value = "";
+      showToast("ลบรูปโปรไฟล์แล้ว", "is-info");
+    }
+
+    function handleChipToggle(event) {
+      const chip = event.currentTarget.dataset.chip;
+      if (!chip) {
+        return;
+      }
+
+      if (profileState.interests.includes(chip)) {
+        profileState.interests = profileState.interests.filter(function (entry) {
+          return entry !== chip;
+        });
+      } else {
+        profileState.interests.push(chip);
+      }
+
+      renderInterestChips();
+    }
+
+    function handleProfileSave(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
+      syncStateFromForm();
+      if (!profileState.displayName) {
+        showNotice(profileNotice, "กรุณากรอกชื่อที่แสดงก่อนบันทึก", "error");
+        return;
+      }
+
+      saveProfileState();
+      clearNotice(profileNotice);
+      renderAvatar();
+      showToast("บันทึกโปรไฟล์เรียบร้อยแล้ว", "is-success");
+    }
+
+    giftMenuButton.addEventListener("click", function () { window.location.href = GIFTS_PAGE_URL; });
+    chatMenuButton.addEventListener("click", function () { window.location.href = CHAT_PAGE_URL; });
+    premiumMenuButton.addEventListener("click", function () { window.location.href = PREMIUM_PAGE_URL; });
+    languageMenuButton.addEventListener("click", handleLanguageMenu);
+    if (mobileMenuToggle && topbar) {
+      mobileMenuToggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+        toggleMobileMenu();
+      });
+      topbar.querySelectorAll(".nav button, .auth-nav button, .brand").forEach(function (element) {
+        element.addEventListener("click", function () {
+          if (window.innerWidth <= 860) {
+            closeMobileMenu();
+          }
+        });
+      });
+      document.addEventListener("click", function (event) {
+        if (window.innerWidth > 860) {
+          return;
+        }
+        if (!topbar.contains(event.target)) {
+          closeMobileMenu();
+        }
+      });
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 860) {
+          closeMobileMenu();
+        }
+      });
+    }
+    loginMenuButton.addEventListener("click", function () { window.location.href = window.location.href; });
+    registerMenuButton.addEventListener("click", handleLogout);
+    profilePhotoInput.addEventListener("change", handlePhotoUpload);
+    removePhotoButton.addEventListener("click", handleRemovePhoto);
+    interestChipButtons.forEach(function (button) {
+      button.addEventListener("click", handleChipToggle);
+    });
+    profileForm.addEventListener("submit", handleProfileSave);
+    saveProfileTopButton.addEventListener("click", handleProfileSave);
+    saveProfileButton.addEventListener("click", handleProfileSave);
+
+    hydrateCurrentUser();
+  </script>
+</body>
+</html>

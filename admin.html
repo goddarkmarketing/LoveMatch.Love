@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveMatch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f3f8;
+      --panel: #ffffff;
+      --panel-soft: #fcf8fb;
+      --line: #eadde5;
+      --text: #261f2b;
+      --muted: #7d7282;
+      --pink: linear-gradient(135deg, #ff68a0 0%, #d94a78 100%);
+      --blue: linear-gradient(135deg, #5e9fff 0%, #24cfff 100%);
+      --gold: linear-gradient(135deg, #ffd44f 0%, #ffb400 100%);
+      --gray: linear-gradient(135deg, #7e859b 0%, #646b86 100%);
+      --green: linear-gradient(135deg, #29d48a 0%, #14a769 100%);
+      --shadow: 0 18px 42px rgba(122, 73, 100, 0.12);
+      --font-body: 16px;
+      --font-small: 13px;
+      --font-label: 14px;
+      --font-sidebar: 15px;
+      --font-card-title: 18px;
+      --font-button: 16px;
+      --font-page-title: clamp(34px, 3.4vw, 42px);
+      --leading-body: 1.6;
+      --leading-copy: 1.65;
+      --leading-tight: 1.3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Bai Jamjuree", sans-serif;
+      font-size: var(--font-body);
+      line-height: var(--leading-body);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 144, 190, 0.2), transparent 25%),
+        linear-gradient(180deg, #fbf7fa 0%, #f3eff5 100%);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .admin-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      padding: 28px 22px;
+      background: linear-gradient(180deg, #2f2540 0%, #4f2e54 52%, #7a4370 100%);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 22px;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: var(--leading-tight);
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: var(--font-label);
+      line-height: 1.55;
+    }
+
+    .profile-box {
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .profile-label {
+      font-size: var(--font-small);
+      color: rgba(255, 255, 255, 0.68);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.45;
+    }
+
+    .profile-name {
+      margin-top: 8px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: var(--leading-tight);
+    }
+
+    .profile-role {
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: var(--font-sidebar);
+      line-height: 1.55;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 18px;
+      text-align: left;
+      color: rgba(255, 255, 255, 0.82);
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.is-active {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    }
+
+    .nav-title {
+      font-size: var(--font-sidebar);
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .nav-meta {
+      margin-top: 4px;
+      font-size: var(--font-small);
+      color: rgba(255, 255, 255, 0.64);
+      line-height: 1.55;
+    }
+
+    .nav-icon,
+    .action-icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .nav-copy {
+      min-width: 0;
+    }
+
+    .sidebar-actions {
+      margin-top: auto;
+      display: grid;
+      gap: 10px;
+    }
+
+    .sidebar-link,
+    .sidebar-logout {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: var(--font-button);
+      line-height: 1;
+    }
+
+    .sidebar-link { background: rgba(255, 255, 255, 0.12); }
+    .sidebar-logout { background: var(--pink); }
+
+    .content {
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .headline h1 {
+      margin: 0;
+      font-size: var(--font-page-title);
+      line-height: 1.08;
+      font-weight: 700;
+    }
+
+    .headline p {
+      margin: 8px 0 0;
+      font-size: var(--font-body);
+      color: var(--muted);
+      line-height: var(--leading-copy);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      width: 260px;
+      max-width: 100%;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      padding: 0 16px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: var(--font-body);
+    }
+
+    .refresh-btn {
+      min-width: 140px;
+      height: 48px;
+      border: 0;
+      border-radius: 16px;
+      background: var(--pink);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 26px rgba(217, 74, 120, 0.18);
+      font-size: var(--font-button);
+      line-height: 1;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: var(--font-label);
+      line-height: 1.6;
+    }
+
+    .notice.is-visible { display: block; }
+    .notice.is-success {
+      background: #ecfff5;
+      color: #087b48;
+      border: 1px solid #bde8ce;
+    }
+    .notice.is-error {
+      background: #fff1f4;
+      color: #bf2e60;
+      border: 1px solid #f4bed0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: var(--font-small);
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.55;
+    }
+
+    .stat-value {
+      margin-top: 10px;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .panel-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section {
+      display: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .section.is-active {
+      display: grid;
+    }
+
+    .panel {
+      padding: 22px;
+      border-radius: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .panel.wide {
+      grid-column: 1 / -1;
+    }
+
+    .panel h3 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      line-height: 1.18;
+      font-weight: 700;
+    }
+
+    .panel-subtitle {
+      margin: -6px 0 16px;
+      color: var(--muted);
+      font-size: var(--font-label);
+      line-height: var(--leading-copy);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      padding: 16px;
+      border-radius: 20px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+    }
+
+    .item-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item-title {
+      font-size: var(--font-card-title);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .item-meta {
+      margin-top: 6px;
+      font-size: var(--font-label);
+      line-height: var(--leading-copy);
+      color: var(--muted);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: var(--font-small);
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      background: rgba(217, 74, 120, 0.12);
+      color: #d94a78;
+    }
+
+    .chip.is-ok {
+      background: rgba(20, 167, 105, 0.14);
+      color: #14865a;
+    }
+
+    .chip.is-warn {
+      background: rgba(255, 180, 0, 0.18);
+      color: #b17900;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .mini-btn {
+      min-width: 92px;
+      height: 38px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: var(--font-small);
+      line-height: 1;
+    }
+
+    .mini-btn.is-blue { background: var(--blue); }
+    .mini-btn.is-gold { background: var(--gold); }
+    .mini-btn.is-pink { background: var(--pink); }
+    .mini-btn.is-gray { background: var(--gray); }
+    .mini-btn.is-green { background: var(--green); }
+
+    .empty {
+      padding: 26px 18px;
+      border-radius: 20px;
+      border: 1px dashed var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: var(--font-label);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1180px) {
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .admin-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .content {
+        padding: 18px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .search {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="i-heart" viewBox="0 0 24 24">
+      <path d="M12 21.35 10.55 20C5.4 15.24 2 12.09 2 8.25 2 5.1 4.42 2.75 7.5 2.75c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.35 5.5 5.5 0 3.84-3.4 6.99-8.55 11.76L12 21.35Z"/>
+    </symbol>
+    <symbol id="i-dashboard" viewBox="0 0 24 24">
+      <path d="M3 3h8v8H3V3Zm10 0h8v5h-8V3ZM13 10h8v11h-8V10ZM3 13h8v8H3v-8Z"/>
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <path d="M16 11c1.66 0 2.99-1.79 2.99-4S17.66 3 16 3s-3 1.79-3 4 1.34 4 3 4Zm-8 0c1.66 0 2.99-1.79 2.99-4S9.66 3 8 3 5 4.79 5 7s1.34 4 3 4Zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.94 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5Z"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Z"/>
+    </symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24">
+      <path d="M21 7H5a2 2 0 0 0-2 2v8a3 3 0 0 0 3 3h15a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-2 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3ZM5 7V6a2 2 0 0 1 2-2h10v2H7a2 2 0 0 0-2 2Z"/>
+    </symbol>
+    <symbol id="i-home" viewBox="0 0 24 24">
+      <path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3Z"/>
+    </symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24">
+      <path d="M10 17v-3H3v-4h7V7l5 5-5 5Zm6-14h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
+    </symbol>
+  </svg>
+
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><svg class="action-icon"><use href="#i-heart"></use></svg></div>
+        <div class="brand-copy">
+          <div class="brand-title">LoveMatch Admin</div>
+          <div class="brand-subtitle">หลังบ้านจัดการระบบ</div>
+        </div>
+      </div>
+
+      <div class="profile-box">
+        <div class="profile-label">Signed In As</div>
+        <div class="profile-name" id="adminProfileName">กำลังโหลด...</div>
+        <div class="profile-role" id="adminProfileRole">Admin</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn is-active" type="button" data-section="overview">
+          <svg class="nav-icon"><use href="#i-dashboard"></use></svg>
+          <div class="nav-copy">
+            <div class="nav-title">ภาพรวมระบบ</div>
+            <div class="nav-meta">สถิติและความเคลื่อนไหวล่าสุด</div>
+          </div>
+        </button>
+        <button class="nav-btn" type="button" data-section="users">
+          <svg class="nav-icon"><use href="#i-users"></use></svg>
+          <div class="nav-copy">
+            <div class="nav-title">จัดการสมาชิก</div>
+            <div class="nav-meta">ค้นหาและเปลี่ยนสถานะบัญชี</div>
+          </div>
+        </button>
+        <button class="nav-btn" type="button" data-section="reports">
+          <svg class="nav-icon"><use href="#i-shield"></use></svg>
+          <div class="nav-copy">
+            <div class="nav-title">รายงานปัญหา</div>
+            <div class="nav-meta">คิวงานตรวจสอบและ moderation</div>
+          </div>
+        </button>
+        <button class="nav-btn" type="button" data-section="payments">
+          <svg class="nav-icon"><use href="#i-wallet"></use></svg>
+          <div class="nav-copy">
+            <div class="nav-title">การเงินและสมาชิก</div>
+            <div class="nav-meta">ตรวจสอบ payments และ package</div>
+          </div>
+        </button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <a class="sidebar-link" href="./"><svg class="action-icon"><use href="#i-home"></use></svg>กลับหน้าเว็บหลัก</a>
+        <button class="sidebar-logout" id="logoutButton" type="button"><svg class="action-icon"><use href="#i-logout"></use></svg>ออกจากระบบ</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div class="headline">
+          <h1 id="sectionTitle">ภาพรวมระบบ</h1>
+          <p id="sectionSubtitle">ติดตามสมาชิก รายงาน ธุรกรรม และการใช้งานล่าสุดแบบเรียลไทม์</p>
+        </div>
+
+        <div class="toolbar">
+          <input class="search" id="searchInput" type="search" placeholder="ค้นหาชื่อ อีเมล หรือเหตุผลรายงาน">
+          <button class="refresh-btn" id="refreshButton" type="button">รีเฟรชข้อมูล</button>
+        </div>
+      </div>
+
+      <div class="notice" id="notice"></div>
+      <section class="stats" id="statsGrid"></section>
+
+      <div class="panel-grid">
+        <section class="section is-active" id="section-overview">
+          <article class="panel">
+            <h3>สมาชิกล่าสุด</h3>
+            <div class="panel-subtitle">ดูสมาชิกที่เพิ่งเข้าสู่ระบบและจัดการสถานะได้ทันที</div>
+            <div class="list" id="usersList"></div>
+          </article>
+
+          <article class="panel">
+            <h3>รายงานที่ต้องตรวจสอบ</h3>
+            <div class="panel-subtitle">ตรวจสอบเคสที่เปิดอยู่และอัปเดตสถานะได้จากหน้านี้</div>
+            <div class="list" id="reportsList"></div>
+          </article>
+
+          <article class="panel">
+            <h3>การชำระเงินล่าสุด</h3>
+            <div class="panel-subtitle">ดูรายการสมัครแพ็กเกจและยอดชำระล่าสุด</div>
+            <div class="list" id="paymentsList"></div>
+          </article>
+
+          <article class="panel">
+            <h3>ของขวัญล่าสุด</h3>
+            <div class="panel-subtitle">ติดตามกิจกรรมการส่งของขวัญและการปลดล็อกแชท</div>
+            <div class="list" id="giftsList"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-users">
+          <article class="panel wide">
+            <h3>จัดการสมาชิก</h3>
+            <div class="panel-subtitle">ค้นหา กรอง และเปลี่ยนสถานะผู้ใช้จากรายการด้านล่าง</div>
+            <div class="list" id="usersListLarge"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-reports">
+          <article class="panel wide">
+            <h3>รายงานปัญหา</h3>
+            <div class="panel-subtitle">ติดตามคิวงาน moderation ทั้งหมดที่เปิดอยู่</div>
+            <div class="list" id="reportsListLarge"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-payments">
+          <article class="panel">
+            <h3>การชำระเงิน</h3>
+            <div class="panel-subtitle">รายการธุรกรรมล่าสุดของระบบ</div>
+            <div class="list" id="paymentsListLarge"></div>
+          </article>
+
+          <article class="panel">
+            <h3>ของขวัญและกิจกรรม</h3>
+            <div class="panel-subtitle">สรุปการใช้งานของขวัญล่าสุด</div>
+            <div class="list" id="giftsListLarge"></div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const appBasePath = window.location.pathname.replace(/\/admin\.html$/, "").replace(/\/$/, "");
+    const API_BASE = window.location.origin + (appBasePath || "") + "/api";
+    const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
+
+    const profileName = document.getElementById("adminProfileName");
+    const profileRole = document.getElementById("adminProfileRole");
+    const notice = document.getElementById("notice");
+    const sectionTitle = document.getElementById("sectionTitle");
+    const sectionSubtitle = document.getElementById("sectionSubtitle");
+    const refreshButton = document.getElementById("refreshButton");
+    const logoutButton = document.getElementById("logoutButton");
+    const searchInput = document.getElementById("searchInput");
+    const statsGrid = document.getElementById("statsGrid");
+    const usersList = document.getElementById("usersList");
+    const reportsList = document.getElementById("reportsList");
+    const paymentsList = document.getElementById("paymentsList");
+    const giftsList = document.getElementById("giftsList");
+    const usersListLarge = document.getElementById("usersListLarge");
+    const reportsListLarge = document.getElementById("reportsListLarge");
+    const paymentsListLarge = document.getElementById("paymentsListLarge");
+    const giftsListLarge = document.getElementById("giftsListLarge");
+    const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
+    const sections = Array.from(document.querySelectorAll(".section"));
+
+    let currentUser = null;
+    let adminDashboard = null;
+    let currentSection = "overview";
+
+    async function apiFetch(path, options) {
+      const response = await fetch(API_BASE + path, {
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        ...options
+      });
+
+      const data = await response.json().catch(function () {
+        return { success: false, message: "Invalid server response" };
+      });
+
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
+
+      return data;
+    }
+
+    function showNotice(message, type) {
+      notice.textContent = message;
+      notice.className = "notice is-visible " + (type === "success" ? "is-success" : "is-error");
+    }
+
+    function clearNotice() {
+      notice.textContent = "";
+      notice.className = "notice";
+    }
+
+    function formatDate(value) {
+      if (!value) {
+        return "-";
+      }
+      const date = new Date(value.replace(" ", "T"));
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      return date.toLocaleString("th-TH", {
+        dateStyle: "short",
+        timeStyle: "short"
+      });
+    }
+
+    function chipClass(status) {
+      if (["active", "paid", "resolved"].includes(status)) {
+        return "chip is-ok";
+      }
+      if (["reviewing", "pending", "suspended"].includes(status)) {
+        return "chip is-warn";
+      }
+      return "chip";
+    }
+
+    function emptyHtml(message) {
+      return '<div class="empty">' + message + '</div>';
+    }
+
+    function renderStats() {
+      const stats = adminDashboard && adminDashboard.stats ? adminDashboard.stats : {};
+      const items = [
+        ["สมาชิกทั้งหมด", stats.users_total || 0],
+        ["สมาชิกใช้งานอยู่", stats.users_active || 0],
+        ["รายงานเปิดอยู่", stats.reports_open || 0],
+        ["ชำระเงินสำเร็จ", stats.payments_paid || 0],
+        ["สมาชิกพรีเมียม", stats.subscriptions_active || 0],
+        ["ของขวัญที่ส่งแล้ว", stats.gifts_sent || 0]
+      ];
+
+      statsGrid.innerHTML = items.map(function (item) {
+        return '<div class="stat"><div class="stat-label">' + item[0] + '</div><div class="stat-value">' + Number(item[1]).toLocaleString("th-TH") + '</div></div>';
+      }).join("");
+    }
+
+    function renderUsers(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.display_name, item.email, item.role_code, item.status].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่พบข้อมูลสมาชิก");
+      }
+
+      return filtered.map(function (user) {
+        return '<div class="item">' +
+          '<div class="item-top">' +
+            '<div>' +
+              '<div class="item-title">' + user.display_name + '</div>' +
+              '<div class="item-meta">' + user.email + '<br>บทบาท: ' + user.role_code + ' · สมัครเมื่อ ' + formatDate(user.created_at) + '</div>' +
+            '</div>' +
+            '<span class="' + chipClass(user.status) + '">' + user.status + '</span>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="mini-btn is-blue" type="button" data-user-id="' + user.id + '" data-status="active">Active</button>' +
+            '<button class="mini-btn is-gold" type="button" data-user-id="' + user.id + '" data-status="suspended">Suspend</button>' +
+            '<button class="mini-btn is-pink" type="button" data-user-id="' + user.id + '" data-status="banned">Ban</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    function renderReports(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.reason_code, item.reporter_name, item.reported_name, item.status].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่พบรายงานที่ตรงกับคำค้น");
+      }
+
+      return filtered.map(function (report) {
+        return '<div class="item">' +
+          '<div class="item-top">' +
+            '<div>' +
+              '<div class="item-title">' + report.reason_code + '</div>' +
+              '<div class="item-meta">ผู้รายงาน: ' + report.reporter_name + '<br>ถูกรายงาน: ' + report.reported_name + '<br>เมื่อ ' + formatDate(report.created_at) + '</div>' +
+            '</div>' +
+            '<span class="' + chipClass(report.status) + '">' + report.status + '</span>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="mini-btn is-gold" type="button" data-report-id="' + report.id + '" data-report-status="reviewing">Reviewing</button>' +
+            '<button class="mini-btn is-green" type="button" data-report-id="' + report.id + '" data-report-status="resolved">Resolve</button>' +
+            '<button class="mini-btn is-gray" type="button" data-report-id="' + report.id + '" data-report-status="dismissed">Dismiss</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    function renderPayments(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.display_name, item.plan_name, item.payment_method, item.status].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่พบข้อมูลการชำระเงิน");
+      }
+
+      return filtered.map(function (payment) {
+        return '<div class="item">' +
+          '<div class="item-top">' +
+            '<div>' +
+              '<div class="item-title">' + payment.display_name + ' · ' + payment.plan_name + '</div>' +
+              '<div class="item-meta">ยอด ฿' + Number(payment.amount_thb).toLocaleString("th-TH") + ' · ' + payment.payment_method + '<br>' + formatDate(payment.created_at) + '</div>' +
+            '</div>' +
+            '<span class="' + chipClass(payment.status) + '">' + payment.status + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    function renderGifts(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.sender_name, item.receiver_name, item.gift_name].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่พบข้อมูลการส่งของขวัญ");
+      }
+
+      return filtered.map(function (gift) {
+        return '<div class="item">' +
+          '<div class="item-title">' + gift.sender_name + ' ส่ง ' + gift.gift_name + ' ให้ ' + gift.receiver_name + '</div>' +
+          '<div class="item-meta">เมื่อ ' + formatDate(gift.created_at) + '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    function renderAll() {
+      renderStats();
+
+      const query = searchInput.value.trim().toLowerCase();
+      const users = adminDashboard ? adminDashboard.recent_users : [];
+      const reports = adminDashboard ? adminDashboard.open_reports : [];
+      const payments = adminDashboard ? adminDashboard.recent_payments : [];
+      const gifts = adminDashboard ? adminDashboard.recent_gifts : [];
+
+      usersList.innerHTML = renderUsers(users, query);
+      usersListLarge.innerHTML = renderUsers(users, query);
+      reportsList.innerHTML = renderReports(reports, query);
+      reportsListLarge.innerHTML = renderReports(reports, query);
+      paymentsList.innerHTML = renderPayments(payments, query);
+      paymentsListLarge.innerHTML = renderPayments(payments, query);
+      giftsList.innerHTML = renderGifts(gifts, query);
+      giftsListLarge.innerHTML = renderGifts(gifts, query);
+    }
+
+    function switchSection(section) {
+      currentSection = section;
+
+      const titles = {
+        overview: ["ภาพรวมระบบ", "ติดตามสมาชิก รายงาน ธุรกรรม และการใช้งานล่าสุดแบบเรียลไทม์"],
+        users: ["จัดการสมาชิก", "ตรวจสอบและอัปเดตสถานะผู้ใช้งานจากหลังบ้านโดยตรง"],
+        reports: ["รายงานปัญหา", "ดูคิว moderation และจัดการรายงานที่เปิดอยู่"],
+        payments: ["การเงินและสมาชิก", "สรุปธุรกรรม แพ็กเกจ และกิจกรรมของขวัญล่าสุด"]
+      };
+
+      const copy = titles[section] || titles.overview;
+      sectionTitle.textContent = copy[0];
+      sectionSubtitle.textContent = copy[1];
+
+      navButtons.forEach(function (button) {
+        button.classList.toggle("is-active", button.dataset.section === section);
+      });
+
+      sections.forEach(function (panel) {
+        panel.classList.toggle("is-active", panel.id === "section-" + section);
+      });
+    }
+
+    async function loadCurrentUser() {
+      try {
+        const response = await apiFetch("/auth/me", { method: "GET" });
+        currentUser = response.data.user || null;
+      } catch (error) {
+        window.location.href = HOME_PAGE_URL;
+        return false;
+      }
+
+      if (!currentUser || !["admin", "moderator"].includes(currentUser.role_code)) {
+        window.location.href = HOME_PAGE_URL;
+        return false;
+      }
+
+      profileName.textContent = currentUser.display_name;
+      profileRole.textContent = currentUser.role_code === "admin" ? "Administrator" : "Moderator";
+      return true;
+    }
+
+    async function loadDashboard() {
+      clearNotice();
+      refreshButton.disabled = true;
+
+      try {
+        const response = await apiFetch("/admin/dashboard", { method: "GET" });
+        adminDashboard = response.data;
+        renderAll();
+      } catch (error) {
+        adminDashboard = {
+          stats: {},
+          recent_users: [],
+          open_reports: [],
+          recent_payments: [],
+          recent_gifts: []
+        };
+        renderAll();
+        showNotice(error.message, "error");
+      } finally {
+        refreshButton.disabled = false;
+      }
+    }
+
+    async function updateUserStatus(userId, status) {
+      clearNotice();
+      try {
+        const response = await apiFetch("/admin/users/" + userId + "/status", {
+          method: "POST",
+          body: JSON.stringify({ status: status })
+        });
+        showNotice(response.message, "success");
+        await loadDashboard();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
+    }
+
+    async function updateReportStatus(reportId, status) {
+      clearNotice();
+      try {
+        const response = await apiFetch("/admin/reports/" + reportId + "/status", {
+          method: "POST",
+          body: JSON.stringify({ status: status })
+        });
+        showNotice(response.message, "success");
+        await loadDashboard();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
+    }
+
+    async function logout() {
+      try {
+        await apiFetch("/auth/logout", { method: "POST", body: JSON.stringify({}) });
+      } catch (error) {
+        // ignore logout error and continue redirecting
+      }
+      window.location.href = HOME_PAGE_URL;
+    }
+
+    document.addEventListener("click", function (event) {
+      const userButton = event.target.closest("[data-user-id]");
+      if (userButton) {
+        updateUserStatus(Number(userButton.dataset.userId), userButton.dataset.status);
+        return;
+      }
+
+      const reportButton = event.target.closest("[data-report-id]");
+      if (reportButton) {
+        updateReportStatus(Number(reportButton.dataset.reportId), reportButton.dataset.reportStatus);
+      }
+    });
+
+    navButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        switchSection(button.dataset.section);
+      });
+    });
+
+    refreshButton.addEventListener("click", loadDashboard);
+    logoutButton.addEventListener("click", logout);
+    searchInput.addEventListener("input", renderAll);
+
+    (async function bootstrap() {
+      const ok = await loadCurrentUser();
+      if (!ok) {
+        return;
+      }
+      switchSection("overview");
+      await loadDashboard();
+    })();
+  </script>
+</body>
+</html>

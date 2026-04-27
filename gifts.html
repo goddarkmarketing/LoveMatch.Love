@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveMatch Gifts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-left: #f9a0b0;
+      --bg-right: #f4c6ef;
+      --panel: rgba(255, 244, 248, 0.82);
+      --panel-strong: rgba(255, 255, 255, 0.92);
+      --line: rgba(255, 255, 255, 0.48);
+      --line-soft: rgba(222, 201, 214, 0.72);
+      --text: #2e2230;
+      --muted: #736274;
+      --heading: #d5537c;
+      --pink: linear-gradient(90deg, #ff68a0 0%, #d94a78 100%);
+      --cyan: linear-gradient(90deg, #35b0ff 0%, #11d4e9 100%);
+      --gold: linear-gradient(90deg, #ffcc00 0%, #ffb300 100%);
+      --blue: linear-gradient(90deg, #58a7ff 0%, #0fd0f0 100%);
+      --gray: linear-gradient(90deg, #68708a 0%, #58607a 100%);
+      --shadow: 0 22px 54px rgba(201, 92, 131, 0.16);
+      --font-body: 16px;
+      --font-small: 13px;
+      --font-label: 14px;
+      --font-sidebar: 15px;
+      --font-card-title: 18px;
+      --font-button: 16px;
+      --font-page-title: clamp(34px, 4.8vw, 68px);
+      --font-section-title: clamp(28px, 3vw, 40px);
+      --leading-body: 1.6;
+      --leading-copy: 1.65;
+      --leading-tight: 1.28;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Bai Jamjuree", sans-serif;
+      font-size: var(--font-body);
+      line-height: var(--leading-body);
+      color: var(--text);
+      background: linear-gradient(90deg, var(--bg-left) 0%, var(--bg-right) 100%);
+      min-height: 100vh;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 20px;
+      background: rgba(255, 219, 230, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #eb5b89;
+      min-width: 240px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .brand-name {
+      font-family: "Bai Jamjuree", sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .nav,
+    .auth-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(220, 170, 191, 0.9);
+      border-radius: 16px;
+      background: rgba(255, 251, 253, 0.9);
+      color: #d5537c;
+      box-shadow: 0 14px 28px rgba(194, 102, 137, 0.14);
+      position: relative;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .menu-toggle span,
+    .menu-toggle::before,
+    .menu-toggle::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 22px;
+      height: 2.5px;
+      border-radius: 999px;
+      background: currentColor;
+      transition: transform 0.22s ease, opacity 0.22s ease, top 0.22s ease;
+    }
+
+    .menu-toggle::before {
+      top: 16px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle span {
+      top: 22px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle::after {
+      top: 28px;
+      transform: translateX(-50%);
+    }
+
+    .menu-toggle[aria-expanded="true"] span {
+      opacity: 0;
+    }
+
+    .menu-toggle[aria-expanded="true"]::before {
+      top: 22px;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .menu-toggle[aria-expanded="true"]::after {
+      top: 22px;
+      transform: translateX(-50%) rotate(-45deg);
+    }
+
+    .pill {
+      min-width: 134px;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: var(--font-button);
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(137, 101, 144, 0.15);
+      line-height: 1;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .pill svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .pill-pink { background: var(--pink); }
+    .pill-cyan { background: var(--cyan); }
+    .pill-blue { background: var(--blue); }
+    .pill-gold { background: var(--gold); color: #fff; }
+    .pill-gray { background: var(--gray); }
+    .pill.is-current {
+      box-shadow: inset 0 0 0 2px rgba(42, 16, 30, 0.55), 0 8px 20px rgba(137, 101, 144, 0.15);
+    }
+
+    .main {
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.28fr) minmax(380px, 0.92fr);
+      gap: 24px;
+      align-items: stretch;
+      padding: 30px 30px 0;
+    }
+
+    .hero-copy,
+    .hero-side {
+      min-height: 100%;
+    }
+
+    .hero-copy {
+      padding: 38px 42px 34px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 84% 24%, rgba(236, 120, 164, 0.16) 0%, rgba(236, 120, 164, 0) 32%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 246, 250, 0.93) 100%);
+      border: 1px solid rgba(232, 210, 221, 0.86);
+      box-shadow: 0 28px 64px rgba(201, 92, 131, 0.11);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 360px;
+    }
+
+    .hero-copy::before {
+      content: "";
+      position: absolute;
+      right: -92px;
+      top: -70px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(230, 92, 138, 0.18) 0%, rgba(230, 92, 138, 0) 74%);
+      pointer-events: none;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      left: 40px;
+      bottom: 0;
+      width: 180px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(239, 93, 144, 1) 0%, rgba(239, 93, 144, 0) 100%);
+      opacity: 0.7;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      color: #d5537c;
+      font-size: var(--font-label);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .eyebrow svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .hero h1 {
+      margin: 18px 0 0;
+      font-size: clamp(28px, 3vw, 48px);
+      line-height: 0.98;
+      color: var(--heading);
+      font-weight: 700;
+      max-width: none;
+      letter-spacing: -0.025em;
+      white-space: nowrap;
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 60ch;
+      font-size: 17px;
+      line-height: 1.72;
+      color: #6d5b6e;
+    }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-side {
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-content: start;
+      position: sticky;
+      top: 73px;
+      min-height: auto;
+    }
+
+    .wallet-card,
+    .context-card,
+    .tip-card {
+      padding: 22px 22px 20px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 248, 251, 0.94) 100%);
+      border: 1px solid rgba(223, 207, 220, 0.92);
+      box-shadow: 0 18px 40px rgba(202, 130, 157, 0.1);
+    }
+
+    .wallet-card {
+      grid-column: 1 / -1;
+    }
+
+    .context-card,
+    .tip-card {
+      min-height: 176px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .card-kicker {
+      font-size: var(--font-small);
+      line-height: 1.55;
+      font-weight: 700;
+      color: #826f81;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .wallet-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .wallet-amount {
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 700;
+      color: #2c2330;
+    }
+
+    .wallet-amount span {
+      font-size: 16px;
+      color: #7b6b7a;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .wallet-note,
+    .context-copy,
+    .tip-card p {
+      margin-top: 8px;
+      font-size: var(--font-label);
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .context-name {
+      margin-top: 8px;
+      font-size: 20px;
+      line-height: 1.35;
+      font-weight: 700;
+      color: #2d2230;
+    }
+
+    .grid-shell {
+      margin-top: 18px;
+      padding: 0 30px 34px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.32fr) minmax(360px, 0.88fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .catalog-panel,
+    .composer-panel {
+      padding: 30px 30px 32px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255, 252, 253, 0.97) 0%, rgba(255, 247, 250, 0.93) 100%);
+      border: 1px solid rgba(232, 210, 221, 0.86);
+      box-shadow: 0 28px 60px rgba(201, 92, 131, 0.1);
+      backdrop-filter: blur(12px);
+      min-height: 100%;
+    }
+
+    .catalog-panel {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .catalog-panel::before {
+      content: "";
+      position: absolute;
+      right: -124px;
+      top: -94px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 122, 164, 0.1) 0%, rgba(245, 122, 164, 0) 74%);
+      pointer-events: none;
+    }
+
+    .composer-panel {
+      position: sticky;
+      top: 95px;
+      align-self: start;
+      box-shadow: 0 30px 60px rgba(181, 85, 122, 0.12);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: var(--font-section-title);
+      line-height: 1.08;
+      font-weight: 700;
+      color: #2d2230;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-subtitle {
+      margin: 10px 0 0;
+      font-size: var(--font-label);
+      line-height: var(--leading-copy);
+      color: var(--muted);
+    }
+
+    .gift-grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .gift-option {
+      position: relative;
+      border: 1px solid rgba(226, 215, 225, 0.9);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 18px 18px 20px;
+      min-height: 236px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+      box-shadow: 0 18px 32px rgba(204, 122, 153, 0.09);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gift-option::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, #f15d97 0%, #d84f7a 100%);
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .gift-option:hover {
+      transform: translateY(-3px);
+      border-color: rgba(239, 93, 144, 0.34);
+      box-shadow: 0 22px 38px rgba(204, 122, 153, 0.16);
+    }
+
+    .gift-option.is-selected {
+      background: #fff2f7;
+      border-color: #ef5d90;
+      box-shadow: 0 0 0 3px rgba(239, 93, 144, 0.08), 0 18px 34px rgba(204, 122, 153, 0.14);
+    }
+
+    .gift-option:hover::before,
+    .gift-option.is-selected::before {
+      opacity: 1;
+    }
+
+    .gift-emoji {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 1 / 0.75;
+      font-size: 60px;
+      line-height: 1;
+      margin-bottom: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #fff7fa 0%, #fff1f6 100%);
+      border: 1px solid rgba(242, 214, 226, 0.9);
+    }
+
+    .gift-name {
+      font-size: 18px;
+      line-height: 1.25;
+      color: #221b26;
+      font-weight: 700;
+    }
+
+    .gift-price {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f15d97 0%, #d84f7a 100%);
+      font-size: 14px;
+      line-height: 1;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .gift-desc {
+      margin-top: 14px;
+      font-size: var(--font-label);
+      line-height: 1.55;
+      color: #00a852;
+    }
+
+    .composer-panel .panel-title,
+    .catalog-panel .panel-title {
+      font-size: clamp(30px, 3vw, 42px);
+      line-height: 1.02;
+    }
+
+    .composer-panel .panel-subtitle,
+    .catalog-panel .panel-subtitle {
+      max-width: 52ch;
+    }
+
+    .composer-section + .composer-section {
+      margin-top: 22px;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2c2d3f;
+      line-height: 1.4;
+    }
+
+    .field-select,
+    .field-input,
+    .field-textarea {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid #d8dfea;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 0 18px;
+      color: #4d5c71;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+    }
+
+    .field-select,
+    .field-input {
+      height: 58px;
+      font-size: var(--font-body);
+      line-height: 1.5;
+    }
+
+    .field-textarea {
+      min-height: 132px;
+      resize: vertical;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      font-size: var(--font-body);
+      line-height: 1.6;
+    }
+
+    .recipient-hint {
+      margin-top: 8px;
+      font-size: var(--font-small);
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .selected-summary {
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 247, 251, 0.94) 100%);
+      border: 1px solid rgba(223, 207, 220, 0.88);
+      display: grid;
+      gap: 8px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 700;
+      color: #251f29;
+    }
+
+    .summary-copy {
+      font-size: var(--font-label);
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .form-notice {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: var(--font-label);
+      line-height: 1.6;
+    }
+
+    .form-notice.is-visible {
+      display: block;
+    }
+
+    .form-notice.is-success {
+      background: #ecfff5;
+      color: #087b48;
+      border: 1px solid #bde8ce;
+    }
+
+    .form-notice.is-error {
+      background: #fff1f4;
+      color: #bf2e60;
+      border: 1px solid #f4bed0;
+    }
+
+    .gift-submit {
+      width: 100%;
+      height: 62px;
+      margin-top: 24px;
+      border: 0;
+      border-radius: 20px;
+      background: var(--pink);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: var(--font-button);
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 18px 30px rgba(220, 73, 121, 0.22);
+      line-height: 1;
+    }
+
+    .gift-submit svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .page-toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      min-width: 260px;
+      max-width: 360px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: var(--font-label);
+      line-height: 1.6;
+      box-shadow: 0 16px 34px rgba(40, 20, 30, 0.22);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+
+    .page-toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-toast.is-success { background: linear-gradient(90deg, #18b875 0%, #0f9d68 100%); }
+    .page-toast.is-error { background: linear-gradient(90deg, #ff5e7e 0%, #d94672 100%); }
+    .page-toast.is-info { background: linear-gradient(90deg, #4a89ff 0%, #2ec5ff 100%); }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(52, 22, 36, 0.48);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-y: auto;
+      z-index: 110;
+    }
+
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .auth-modal {
+      width: min(100%, 628px);
+      background: #fff;
+      border-radius: 30px;
+      padding: 28px 38px 34px;
+      box-shadow: 0 26px 60px rgba(35, 15, 27, 0.28);
+      margin: auto 0;
+    }
+
+    .auth-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .auth-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ef5d90;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .auth-title svg {
+      width: 30px;
+      height: 30px;
+      fill: currentColor;
+    }
+
+    .modal-close {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 20px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .auth-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: #293140;
+      line-height: 1.4;
+    }
+
+    .auth-input {
+      width: 100%;
+      height: 62px;
+      border-radius: 14px;
+      border: 1px solid #d8dfea;
+      padding: 0 18px;
+      font-size: var(--font-body);
+      color: #4d5c71;
+      outline: none;
+      line-height: 1.5;
+    }
+
+    .auth-submit {
+      width: 100%;
+      height: 60px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--pink);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: var(--font-button);
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 16px 28px rgba(220, 73, 121, 0.22);
+      line-height: 1;
+    }
+
+    .register-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .hero,
+      .grid-shell {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-side,
+      .composer-panel {
+        position: static;
+        min-height: auto;
+      }
+
+      .hero-side {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .wallet-card {
+        grid-column: 1 / -1;
+      }
+
+      .hero-copy,
+      .hero-side,
+      .catalog-panel,
+      .composer-panel {
+        border-left: 1px solid rgba(232, 210, 221, 0.86);
+        border-right: 1px solid rgba(232, 210, 221, 0.86);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        padding: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        min-width: 0;
+      }
+
+      .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+      }
+
+      .topbar .nav,
+      .topbar .auth-nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(255, 244, 248, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.48);
+        box-shadow: 0 18px 36px rgba(196, 102, 137, 0.16);
+        backdrop-filter: blur(12px);
+      }
+
+      .topbar.is-menu-open .nav,
+      .topbar.is-menu-open .auth-nav {
+        display: flex;
+      }
+
+      .topbar .nav {
+        margin-top: 4px;
+        border-radius: 28px 28px 18px 18px;
+      }
+
+      .topbar .auth-nav {
+        margin-top: -6px;
+        border-radius: 18px 18px 28px 28px;
+      }
+
+      .pill {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .hero-copy,
+      .hero-side,
+      .catalog-panel,
+      .composer-panel {
+        padding: 24px;
+        border-radius: 28px;
+      }
+
+      .hero,
+      .grid-shell {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .hero h1 {
+        margin-top: 14px;
+        font-size: clamp(34px, 8.6vw, 46px);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        white-space: normal;
+        text-wrap: balance;
+      }
+
+      .hero p {
+        max-width: none;
+        font-size: 16px;
+        line-height: 1.66;
+      }
+
+      .hero-actions {
+        margin-top: 20px;
+      }
+
+      .hero-side {
+        grid-template-columns: 1fr;
+      }
+
+      .wallet-card {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .gift-grid,
+      .register-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .wallet-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .wallet-amount {
+        font-size: 40px;
+      }
+
+      .gift-option {
+        min-height: 196px;
+      }
+
+      .gift-name {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .main {
+        padding: 24px 14px 56px;
+      }
+
+      .hero,
+      .grid-shell {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .hero-copy,
+      .hero-side,
+      .catalog-panel,
+      .composer-panel,
+      .auth-modal {
+        padding: 18px;
+        border-radius: 24px;
+        margin: 0;
+      }
+
+      .hero-copy {
+        padding-top: 16px;
+        min-height: auto;
+      }
+
+      .hero-side {
+        padding: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+        gap: 14px;
+      }
+
+      .eyebrow {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .hero h1 {
+        font-size: clamp(28px, 9.4vw, 38px);
+        line-height: 1.08;
+      }
+
+      .hero p {
+        margin-top: 14px;
+        font-size: 15px;
+        line-height: 1.58;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .gift-grid,
+      .register-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel-title {
+        font-size: clamp(24px, 8vw, 34px);
+      }
+
+      .panel-subtitle {
+        font-size: 14px;
+      }
+
+      .gift-grid {
+        margin-top: 20px;
+        gap: 14px;
+      }
+
+      .gift-option {
+        min-height: 0;
+        padding: 14px 14px 16px;
+        border-radius: 24px;
+      }
+
+      .gift-emoji {
+        margin-bottom: 12px;
+        font-size: 50px;
+        border-radius: 18px;
+      }
+
+      .wallet-card,
+      .context-card,
+      .tip-card {
+        width: 100%;
+        padding: 18px;
+        border-radius: 24px;
+      }
+
+      .wallet-row {
+        gap: 12px;
+      }
+
+      .wallet-amount {
+        font-size: 34px;
+      }
+
+      .gift-name {
+        font-size: 16px;
+      }
+
+      .gift-price {
+        padding: 7px 11px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.24 2 12.09 2 8.23 2 5.08 4.42 2.7 7.5 2.7c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.38 5.5 5.53 0 3.86-3.4 7.01-8.55 11.78L12 21.35Z"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><path d="M20 7h-2.18A2.99 2.99 0 0 0 18 6c0-1.66-1.34-3-3-3-1.54 0-2.8 1.18-2.96 2.68L12 6l-.04-.32A3 3 0 0 0 9 3C7.34 3 6 4.34 6 6c0 .35.06.69.18 1H4a2 2 0 0 0-2 2v2h20V9a2 2 0 0 0-2-2ZM9 5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1Zm6 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1ZM2 13h9v9H4a2 2 0 0 1-2-2v-7Zm11 9v-9h9v7a2 2 0 0 1-2 2h-7Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="m3 18 1.8-10 5.2 4 2-5 2 5 5.2-4L21 18H3Z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 9h-3.11a15.5 15.5 0 0 0-1.21-5.01A8.02 8.02 0 0 1 18.93 11ZM12 4.07c.97 1.4 1.75 3.56 2.01 6.93H9.99c.26-3.37 1.04-5.53 2.01-6.93ZM4.07 13h3.11c.13 1.8.54 3.53 1.21 5.01A8.02 8.02 0 0 1 4.07 13ZM7.18 11H4.07a8.02 8.02 0 0 1 4.32-5.01A15.5 15.5 0 0 0 7.18 11Zm1.79 2h6.06c-.26 3.37-1.04 5.53-2.01 6.93-.97-1.4-1.75-3.56-2.01-6.93Zm6.64 5.01c.67-1.48 1.08-3.21 1.21-5.01h3.11a8.02 8.02 0 0 1-4.32 5.01Z"/></symbol>
+    <symbol id="i-login" viewBox="0 0 24 24"><path d="M10 17v-3H3v-4h7V7l5 5-5 5Zm6-14h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+  </svg>
+
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="./">
+        <svg class="brand-icon"><use href="#i-heart"></use></svg>
+        <span class="brand-name">LoveMatch.Love</span>
+      </a>
+      <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+      </button>
+
+      <nav class="nav">
+        <button class="pill pill-pink is-current" id="giftMenuButton" type="button"><svg><use href="#i-gift"></use></svg>Gifts</button>
+        <button class="pill pill-cyan" id="chatMenuButton" type="button"><svg><use href="#i-chat"></use></svg>Chat</button>
+        <button class="pill pill-blue" id="premiumMenuButton" type="button"><svg><use href="#i-crown"></use></svg>Premium</button>
+        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>Language</button>
+      </nav>
+
+      <div class="auth-nav">
+        <button class="pill pill-pink" id="loginMenuButton" type="button"><svg><use href="#i-login"></use></svg>เข้าสู่ระบบ</button>
+        <button class="pill pill-blue" id="registerMenuButton" type="button"><svg><use href="#i-user"></use></svg>สมัครสมาชิก</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow"><svg><use href="#i-gift"></use></svg>Gift Unlock</div>
+            <h1>เลือกของขวัญเพื่อเริ่มคุยให้ประทับใจ</h1>
+            <p>ส่งของขวัญถึงคนที่คุณสนใจได้ทันที เลือกผู้รับ เขียนข้อความแนบ และตรวจสอบรายละเอียดก่อนกดส่งได้จากหน้านี้เลย</p>
+            <div class="hero-actions">
+              <button class="pill pill-pink" id="scrollToCatalogButton" type="button"><svg><use href="#i-gift"></use></svg>เลือกของขวัญเลย</button>
+              <a class="pill pill-gray" href="./"><svg><use href="#i-chat"></use></svg>กลับหน้าเว็บหลัก</a>
+            </div>
+          </div>
+
+          <aside class="hero-side">
+            <div class="wallet-card">
+              <div class="card-kicker">Wallet</div>
+              <div class="wallet-row">
+                <div class="wallet-amount" id="walletBalance">--<span>เหรียญ</span></div>
+                <button class="pill pill-gold" id="walletActionButton" type="button">เติมเหรียญ</button>
+              </div>
+              <div class="wallet-note" id="walletHint">เข้าสู่ระบบเพื่อดูยอดเหรียญและส่งของขวัญ</div>
+            </div>
+
+            <div class="context-card">
+              <div class="card-kicker">Recipient Context</div>
+              <div class="context-name" id="recipientContextName">ยังไม่ได้เลือกผู้รับ</div>
+              <div class="context-copy" id="recipientContextCopy">ถ้าคุณเปิดหน้านี้จาก discover หรือแชท ระบบจะใส่ข้อมูลคู่สนทนามาให้โดยอัตโนมัติ</div>
+            </div>
+
+            <div class="tip-card">
+              <div class="card-kicker">Unlock Tip</div>
+              <p>ดอกกุหลาบเหมาะกับการเริ่มคุยแบบเบา ๆ ส่วนของขวัญระดับสูงจะปลดล็อกแชทได้นานขึ้นและเหมาะกับคนที่คุณสนใจจริงจัง</p>
+            </div>
+          </aside>
+        </section>
+
+        <section class="grid-shell" id="giftCatalogSection">
+          <section class="catalog-panel">
+            <h2 class="panel-title">แคตตาล็อกของขวัญ</h2>
+            <p class="panel-subtitle">เลือกจากของขวัญทั้งหมดด้านล่าง ระบบจะอัปเดตสรุปด้านขวาให้ทันทีเมื่อคุณคลิกการ์ด</p>
+            <div class="gift-grid" id="giftGrid"></div>
+          </section>
+
+          <aside class="composer-panel">
+            <h2 class="panel-title">เตรียมส่งของขวัญ</h2>
+            <p class="panel-subtitle">เลือกผู้รับ ใส่ข้อความ และตรวจสอบของขวัญที่เลือกก่อนกดส่ง</p>
+
+            <div class="composer-section">
+              <label class="field-label" for="recipientSelect">เลือกผู้รับ</label>
+              <select class="field-select" id="recipientSelect"></select>
+              <div class="recipient-hint" id="recipientHint">โหลดรายชื่อผู้รับที่ส่งได้อยู่...</div>
+            </div>
+
+            <div class="composer-section">
+              <div class="field-label">ของขวัญที่เลือก</div>
+              <div class="selected-summary">
+                <div class="summary-title" id="selectedGiftTitle">ยังไม่ได้เลือกของขวัญ</div>
+                <div class="summary-copy" id="selectedGiftCopy">คลิกการ์ดของขวัญทางซ้ายเพื่อเลือกของที่ต้องการส่ง</div>
+              </div>
+            </div>
+
+            <div class="composer-section">
+              <label class="field-label" for="giftMessageInput">ข้อความแนบ</label>
+              <textarea class="field-textarea" id="giftMessageInput" placeholder="เขียนข้อความหวาน ๆ ถึงคนที่คุณสนใจ..."></textarea>
+            </div>
+
+            <div class="form-notice" id="giftNotice"></div>
+            <button class="gift-submit" id="giftSubmitButton" type="button"><svg><use href="#i-send"></use></svg>ส่งของขวัญ</button>
+          </aside>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="page-toast" id="pageToast"></div>
+
+  <div class="modal-backdrop" id="loginModal" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+      <div class="auth-header">
+        <div class="auth-title" id="loginModalTitle">
+          <svg><use href="#i-login"></use></svg>
+          <span>เข้าสู่ระบบ</span>
+        </div>
+        <button class="modal-close" id="loginModalClose" type="button" aria-label="Close login popup">×</button>
+      </div>
+
+      <form class="auth-form" id="loginForm">
+        <label class="auth-field">
+          <span class="auth-label">อีเมล</span>
+          <input class="auth-input" id="loginEmail" type="email" placeholder="your@email.com">
+        </label>
+        <label class="auth-field">
+          <span class="auth-label">รหัสผ่าน</span>
+          <input class="auth-input" id="loginPassword" type="password" placeholder="รหัสผ่าน">
+        </label>
+        <div class="form-notice" id="loginNotice"></div>
+        <button class="auth-submit" id="loginSubmitButton" type="submit"><svg><use href="#i-login"></use></svg>เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="registerModal" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
+      <div class="auth-header">
+        <div class="auth-title" id="registerModalTitle">
+          <svg><use href="#i-user"></use></svg>
+          <span>สมัครสมาชิก</span>
+        </div>
+        <button class="modal-close" id="registerModalClose" type="button" aria-label="Close register popup">×</button>
+      </div>
+
+      <form class="auth-form" id="registerForm">
+        <div class="register-grid">
+          <label class="auth-field">
+            <span class="auth-label">ชื่อ</span>
+            <input class="auth-input" id="registerFirstName" type="text" placeholder="ชื่อ">
+          </label>
+          <label class="auth-field">
+            <span class="auth-label">นามสกุล</span>
+            <input class="auth-input" id="registerLastName" type="text" placeholder="นามสกุล">
+          </label>
+        </div>
+        <label class="auth-field">
+          <span class="auth-label">อีเมล</span>
+          <input class="auth-input" id="registerEmail" type="email" placeholder="your@email.com">
+        </label>
+        <label class="auth-field">
+          <span class="auth-label">รหัสผ่าน</span>
+          <input class="auth-input" id="registerPassword" type="password" placeholder="รหัสผ่าน">
+        </label>
+        <div class="register-grid">
+          <label class="auth-field">
+            <span class="auth-label">เพศของคุณ</span>
+            <select class="field-select" id="registerGender">
+              <option value="">เลือกเพศ</option>
+              <option value="male">ชาย</option>
+              <option value="female">หญิง</option>
+              <option value="other">อื่น ๆ</option>
+            </select>
+          </label>
+          <label class="auth-field">
+            <span class="auth-label">ต้องการพบ</span>
+            <select class="field-select" id="registerInterestedIn">
+              <option value="">เลือกเพศ</option>
+              <option value="male">ชาย</option>
+              <option value="female">หญิง</option>
+              <option value="everyone">ทุกเพศ</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-notice" id="registerNotice"></div>
+        <button class="auth-submit" id="registerSubmitButton" type="submit"><svg><use href="#i-user"></use></svg>สมัครสมาชิก</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const appBasePath = window.location.pathname.replace(/\/gifts\.html$/, "").replace(/\/$/, "");
+    const API_BASE = window.location.origin + (appBasePath || "") + "/api";
+    const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
+    const GIFTS_PAGE_URL = window.location.origin + (appBasePath || "") + "/gifts.html";
+    const CHAT_PAGE_URL = window.location.origin + (appBasePath || "") + "/chat.html";
+    const ADMIN_PAGE_URL = window.location.origin + (appBasePath || "") + "/admin.html";
+    const PREMIUM_PAGE_URL = window.location.origin + (appBasePath || "") + "/premium.html";
+    const PROFILE_PAGE_URL = window.location.origin + (appBasePath || "") + "/profile.html";
+    const params = new URLSearchParams(window.location.search);
+
+    const giftGrid = document.getElementById("giftGrid");
+    const recipientSelect = document.getElementById("recipientSelect");
+    const recipientHint = document.getElementById("recipientHint");
+    const selectedGiftTitle = document.getElementById("selectedGiftTitle");
+    const selectedGiftCopy = document.getElementById("selectedGiftCopy");
+    const giftMessageInput = document.getElementById("giftMessageInput");
+    const giftNotice = document.getElementById("giftNotice");
+    const giftSubmitButton = document.getElementById("giftSubmitButton");
+    const walletBalance = document.getElementById("walletBalance");
+    const walletHint = document.getElementById("walletHint");
+    const walletActionButton = document.getElementById("walletActionButton");
+    const recipientContextName = document.getElementById("recipientContextName");
+    const recipientContextCopy = document.getElementById("recipientContextCopy");
+    const topbar = document.querySelector(".topbar");
+    const loginMenuButton = document.getElementById("loginMenuButton");
+    const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+    const registerMenuButton = document.getElementById("registerMenuButton");
+    const chatMenuButton = document.getElementById("chatMenuButton");
+    const premiumMenuButton = document.getElementById("premiumMenuButton");
+    const languageMenuButton = document.getElementById("languageMenuButton");
+    const scrollToCatalogButton = document.getElementById("scrollToCatalogButton");
+    const pageToast = document.getElementById("pageToast");
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+    const loginModalClose = document.getElementById("loginModalClose");
+    const registerModalClose = document.getElementById("registerModalClose");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const loginNotice = document.getElementById("loginNotice");
+    const registerNotice = document.getElementById("registerNotice");
+    const loginSubmitButton = document.getElementById("loginSubmitButton");
+    const registerSubmitButton = document.getElementById("registerSubmitButton");
+
+    const defaultLoginButtonHTML = loginMenuButton.innerHTML;
+    const defaultRegisterButtonHTML = registerMenuButton.innerHTML;
+
+    const contextReceiverId = Number(params.get("receiver_user_id") || 0);
+    const contextRoomId = Number(params.get("room_id") || 0) || null;
+    const contextReceiverName = params.get("receiver_name") || "";
+
+    let currentUser = null;
+    let currentWallet = null;
+    let selectedGift = null;
+    let currentLanguage = "th";
+    let availableMatches = [];
+
+    function openModal(modal) {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      if (!loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open")) {
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    function closeMobileMenu() {
+      if (!topbar || !mobileMenuToggle) {
+        return;
+      }
+      topbar.classList.remove("is-menu-open");
+      mobileMenuToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMobileMenu() {
+      if (!topbar || !mobileMenuToggle) {
+        return;
+      }
+      const isOpen = topbar.classList.toggle("is-menu-open");
+      mobileMenuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    function showNotice(element, message, type) {
+      element.textContent = message;
+      element.className = "form-notice is-visible " + (type === "success" ? "is-success" : "is-error");
+    }
+
+    function clearNotice(element) {
+      element.textContent = "";
+      element.className = "form-notice";
+    }
+
+    let toastTimer = null;
+
+    function showToast(message, type) {
+      pageToast.textContent = message;
+      pageToast.className = "page-toast is-visible " + (type || "is-info");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(function () {
+        pageToast.className = "page-toast";
+      }, 2600);
+    }
+
+    async function apiFetch(path, options) {
+      const response = await fetch(API_BASE + path, {
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        ...options
+      });
+
+      const data = await response.json().catch(function () {
+        return { success: false, message: "Invalid server response" };
+      });
+
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
+
+      return data;
+    }
+
+    function redirectToAdminDashboard() {
+      window.location.href = ADMIN_PAGE_URL;
+    }
+
+    function updateAuthUI() {
+      if (currentUser) {
+        loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
+        registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
+      } else {
+        loginMenuButton.innerHTML = defaultLoginButtonHTML;
+        registerMenuButton.innerHTML = defaultRegisterButtonHTML;
+      }
+    }
+
+    function updateWalletCard() {
+      if (!currentWallet) {
+        walletBalance.innerHTML = '--<span>เหรียญ</span>';
+        walletHint.textContent = "เข้าสู่ระบบเพื่อดูยอดเหรียญและส่งของขวัญ";
+        walletActionButton.textContent = "เข้าสู่ระบบ";
+        walletActionButton.className = "pill pill-pink";
+        return;
+      }
+
+      walletBalance.innerHTML = Number(currentWallet.coin_balance || 0).toLocaleString("th-TH") + '<span>เหรียญ</span>';
+      walletHint.textContent = "ยอดเหรียญปัจจุบันของคุณพร้อมใช้งานสำหรับการส่งของขวัญ";
+      walletActionButton.textContent = "กลับหน้าแพ็กเกจ";
+      walletActionButton.className = "pill pill-gold";
+      giftSubmitButton.title = "เหรียญคงเหลือ " + currentWallet.coin_balance;
+    }
+
+    function updateContextCard() {
+      if (contextReceiverId && contextReceiverName) {
+        recipientContextName.textContent = contextReceiverName;
+        recipientContextCopy.textContent = contextRoomId
+          ? "หน้านี้เปิดมาพร้อมบริบทของห้องแชต ระบบจะส่งของขวัญพร้อม room_id เดิมให้โดยอัตโนมัติ"
+          : "หน้านี้เปิดมาจากโปรไฟล์หรือ discover ของคนที่คุณเลือกไว้แล้ว";
+        return;
+      }
+
+      recipientContextName.textContent = currentUser ? "เลือกจากรายการ match ของคุณ" : "ยังไม่ได้เลือกผู้รับ";
+      recipientContextCopy.textContent = currentUser
+        ? "หากยังไม่มี match ระบบจะยังไม่สามารถส่งของขวัญให้ใครได้จากหน้านี้"
+        : "เข้าสู่ระบบก่อน แล้วระบบจะโหลดรายชื่อคู่แมตช์หรือคู่สนทนาที่คุณส่งของขวัญได้";
+    }
+
+    function setSelectedGift(gift) {
+      selectedGift = gift || null;
+      if (!selectedGift) {
+        selectedGiftTitle.textContent = "ยังไม่ได้เลือกของขวัญ";
+        selectedGiftCopy.textContent = "คลิกการ์ดของขวัญทางซ้ายเพื่อเลือกของที่ต้องการส่ง";
+        return;
+      }
+
+      selectedGiftTitle.textContent = (selectedGift.emoji || "🎁") + " " + selectedGift.name;
+      selectedGiftCopy.textContent = "ราคา " + Number(selectedGift.coin_cost).toLocaleString("th-TH") + " เหรียญ · " + (selectedGift.description || "ของขวัญพิเศษสำหรับปลดล็อกแชท");
+    }
+
+    function bindGiftSelection() {
+      const giftOptions = document.querySelectorAll(".gift-option");
+      giftOptions.forEach(function (option) {
+        option.addEventListener("click", function () {
+          giftOptions.forEach(function (item) {
+            item.classList.remove("is-selected");
+          });
+          option.classList.add("is-selected");
+          setSelectedGift({
+            id: Number(option.dataset.giftId || 0),
+            name: option.dataset.giftName || option.dataset.gift || "",
+            coin_cost: Number(option.dataset.giftCoins || 0),
+            description: option.dataset.giftDescription || "",
+            emoji: option.dataset.giftEmoji || "🎁"
+          });
+        });
+      });
+    }
+
+    function renderGifts(gifts) {
+      if (!Array.isArray(gifts) || gifts.length === 0) {
+        giftGrid.innerHTML = '<div class="selected-summary"><div class="summary-title">ยังไม่มีของขวัญ</div><div class="summary-copy">กรุณาเพิ่มของขวัญในฐานข้อมูลก่อน</div></div>';
+        setSelectedGift(null);
+        return;
+      }
+
+      giftGrid.innerHTML = gifts.map(function (gift, index) {
+        return '<button class="gift-option' + (index === 0 ? ' is-selected' : '') + '" type="button" data-gift-id="' + gift.id + '" data-gift-name="' + gift.name + '" data-gift-coins="' + gift.coin_cost + '" data-gift-description="' + (gift.description || "") + '" data-gift-emoji="' + (gift.emoji || "🎁") + '">' +
+          '<span class="gift-emoji">' + (gift.emoji || "🎁") + '</span>' +
+          '<div class="gift-name">' + gift.name + '</div>' +
+          '<div class="gift-price">' + gift.coin_cost + ' เหรียญ</div>' +
+          '<div class="gift-desc">' + (gift.description || "ของขวัญปลดล็อกแชท") + '</div>' +
+        '</button>';
+      }).join("");
+
+      bindGiftSelection();
+      setSelectedGift({
+        id: Number(gifts[0].id),
+        name: gifts[0].name,
+        coin_cost: Number(gifts[0].coin_cost || 0),
+        description: gifts[0].description || "",
+        emoji: gifts[0].emoji || "🎁"
+      });
+    }
+
+    function populateRecipientOptions() {
+      const seen = new Set();
+      const options = [];
+
+      if (contextReceiverId) {
+        options.push({
+          id: contextReceiverId,
+          display_name: contextReceiverName || "ผู้รับที่เลือกไว้"
+        });
+        seen.add(String(contextReceiverId));
+      }
+
+      availableMatches.forEach(function (match) {
+        const receiverId = Number(match.other_user_id || 0);
+        if (!receiverId || seen.has(String(receiverId))) {
+          return;
+        }
+        options.push({
+          id: receiverId,
+          display_name: match.display_name || ("สมาชิก #" + receiverId)
+        });
+        seen.add(String(receiverId));
+      });
+
+      if (!currentUser) {
+        recipientSelect.innerHTML = '<option value="">เข้าสู่ระบบก่อนเพื่อเลือกผู้รับ</option>';
+        recipientSelect.disabled = true;
+        recipientHint.textContent = "คุณต้องเข้าสู่ระบบก่อนจึงจะส่งของขวัญได้";
+        updateContextCard();
+        return;
+      }
+
+      if (options.length === 0) {
+        recipientSelect.innerHTML = '<option value="">ยังไม่มีผู้รับที่ส่งได้</option>';
+        recipientSelect.disabled = true;
+        recipientHint.textContent = "ยังไม่มี match ให้ส่งของขวัญ ลองกลับไปจับคู่ก่อน";
+        updateContextCard();
+        return;
+      }
+
+      recipientSelect.disabled = false;
+      recipientSelect.innerHTML = options.map(function (item) {
+        return '<option value="' + item.id + '">' + item.display_name + '</option>';
+      }).join("");
+      recipientHint.textContent = contextReceiverId
+        ? "คุณสามารถเปลี่ยนผู้รับได้จากรายการนี้หากต้องการ"
+        : "ระบบดึงรายชื่อจาก match ล่าสุดของคุณมาให้แล้ว";
+      updateContextCard();
+    }
+
+    async function hydrateCurrentUser() {
+      try {
+        const response = await apiFetch("/auth/me", { method: "GET" });
+        currentUser = response.data.user;
+      } catch (error) {
+        currentUser = null;
+      }
+
+      if (currentUser && ["admin", "moderator"].includes(currentUser.role_code)) {
+        redirectToAdminDashboard();
+        return;
+      }
+
+      updateAuthUI();
+      await hydrateWallet();
+      await hydrateMatches();
+    }
+
+    async function hydrateWallet() {
+      if (!currentUser) {
+        currentWallet = null;
+        updateWalletCard();
+        return;
+      }
+
+      try {
+        const response = await apiFetch("/wallet", { method: "GET" });
+        currentWallet = response.data.wallet;
+      } catch (error) {
+        currentWallet = null;
+      }
+
+      updateWalletCard();
+    }
+
+    async function hydrateMatches() {
+      if (!currentUser) {
+        availableMatches = [];
+        populateRecipientOptions();
+        return;
+      }
+
+      try {
+        const response = await apiFetch("/matches", { method: "GET" });
+        availableMatches = response.data.matches || [];
+      } catch (error) {
+        availableMatches = [];
+      }
+
+      populateRecipientOptions();
+    }
+
+    async function bootstrapGiftCatalog() {
+      try {
+        const response = await apiFetch("/gifts", { method: "GET" });
+        renderGifts(response.data.gifts || []);
+      } catch (error) {
+        giftGrid.innerHTML = '<div class="selected-summary"><div class="summary-title">โหลดของขวัญไม่สำเร็จ</div><div class="summary-copy">' + error.message + '</div></div>';
+      }
+    }
+
+    async function handleGiftSend() {
+      clearNotice(giftNotice);
+
+      if (!currentUser) {
+        openModal(loginModal);
+        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนส่งของขวัญ", "error");
+        return;
+      }
+
+      if (!selectedGift || !selectedGift.id) {
+        showNotice(giftNotice, "กรุณาเลือกของขวัญ", "error");
+        return;
+      }
+
+      if (!recipientSelect.value) {
+        showNotice(giftNotice, "กรุณาเลือกผู้รับก่อนส่งของขวัญ", "error");
+        return;
+      }
+
+      giftSubmitButton.disabled = true;
+
+      try {
+        const response = await apiFetch("/gifts/send", {
+          method: "POST",
+          body: JSON.stringify({
+            gift_id: selectedGift.id,
+            receiver_user_id: Number(recipientSelect.value),
+            room_id: contextRoomId,
+            message_text: giftMessageInput.value
+          })
+        });
+
+        showNotice(giftNotice, response.message + " เหลือ " + response.data.wallet.coin_balance + " เหรียญ", "success");
+        giftMessageInput.value = "";
+        await hydrateWallet();
+        showToast("ส่งของขวัญเรียบร้อย", "is-success");
+      } catch (error) {
+        showNotice(giftNotice, error.message, "error");
+      } finally {
+        giftSubmitButton.disabled = false;
+      }
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      clearNotice(loginNotice);
+      loginSubmitButton.disabled = true;
+
+      try {
+        const response = await apiFetch("/auth/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email: document.getElementById("loginEmail").value,
+            password: document.getElementById("loginPassword").value
+          })
+        });
+
+        currentUser = response.data.user;
+        if (currentUser && ["admin", "moderator"].includes(currentUser.role_code)) {
+          redirectToAdminDashboard();
+          return;
+        }
+
+        updateAuthUI();
+        await hydrateWallet();
+        await hydrateMatches();
+        showNotice(loginNotice, response.message || "เข้าสู่ระบบสำเร็จ", "success");
+        loginForm.reset();
+        setTimeout(function () {
+          closeModal(loginModal);
+          clearNotice(loginNotice);
+        }, 700);
+      } catch (error) {
+        showNotice(loginNotice, error.message, "error");
+      } finally {
+        loginSubmitButton.disabled = false;
+      }
+    }
+
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+      clearNotice(registerNotice);
+      registerSubmitButton.disabled = true;
+
+      try {
+        const response = await apiFetch("/auth/register", {
+          method: "POST",
+          body: JSON.stringify({
+            first_name: document.getElementById("registerFirstName").value,
+            last_name: document.getElementById("registerLastName").value,
+            email: document.getElementById("registerEmail").value,
+            password: document.getElementById("registerPassword").value,
+            gender: document.getElementById("registerGender").value,
+            interested_in: document.getElementById("registerInterestedIn").value
+          })
+        });
+
+        currentUser = response.data.user;
+        updateAuthUI();
+        await hydrateWallet();
+        await hydrateMatches();
+        showNotice(registerNotice, response.message || "สมัครสมาชิกสำเร็จ", "success");
+        registerForm.reset();
+        setTimeout(function () {
+          closeModal(registerModal);
+          clearNotice(registerNotice);
+        }, 700);
+      } catch (error) {
+        showNotice(registerNotice, error.message, "error");
+      } finally {
+        registerSubmitButton.disabled = false;
+      }
+    }
+
+    async function handleRegisterButtonClick() {
+      if (currentUser) {
+        try {
+          await apiFetch("/auth/logout", { method: "POST", body: JSON.stringify({}) });
+          currentUser = null;
+          currentWallet = null;
+          availableMatches = [];
+          updateAuthUI();
+          updateWalletCard();
+          populateRecipientOptions();
+          showToast("ออกจากระบบแล้ว", "is-info");
+        } catch (error) {
+          showToast(error.message, "is-error");
+        }
+        return;
+      }
+
+      openModal(registerModal);
+    }
+
+    function handleLanguageMenu() {
+      currentLanguage = currentLanguage === "th" ? "en" : "th";
+      showToast(currentLanguage === "en" ? "Language switched to English (UI translation pending)" : "เปลี่ยนภาษาเป็นไทย", "is-info");
+    }
+
+    chatMenuButton.addEventListener("click", function () {
+      const nextUrl = new URL(CHAT_PAGE_URL, window.location.origin);
+      if (contextReceiverId) {
+        nextUrl.searchParams.set("target_user_id", String(contextReceiverId));
+      }
+      if (contextReceiverName) {
+        nextUrl.searchParams.set("target_name", contextReceiverName);
+      }
+      if (contextRoomId) {
+        nextUrl.searchParams.set("room_id", String(contextRoomId));
+      }
+      window.location.href = nextUrl.toString();
+    });
+
+    premiumMenuButton.addEventListener("click", function () {
+      window.location.href = PREMIUM_PAGE_URL;
+    });
+
+    languageMenuButton.addEventListener("click", handleLanguageMenu);
+    walletActionButton.addEventListener("click", function () {
+      if (!currentUser) {
+        openModal(loginModal);
+        return;
+      }
+      window.location.href = PREMIUM_PAGE_URL;
+    });
+    scrollToCatalogButton.addEventListener("click", function () {
+      document.getElementById("giftCatalogSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    giftSubmitButton.addEventListener("click", handleGiftSend);
+    loginMenuButton.addEventListener("click", function () {
+      if (currentUser) {
+        window.location.href = PROFILE_PAGE_URL;
+        return;
+      }
+      openModal(loginModal);
+    });
+    registerMenuButton.addEventListener("click", handleRegisterButtonClick);
+    if (mobileMenuToggle && topbar) {
+      mobileMenuToggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+        toggleMobileMenu();
+      });
+      topbar.querySelectorAll(".nav button, .auth-nav button, .brand").forEach(function (element) {
+        element.addEventListener("click", function () {
+          if (window.innerWidth <= 860) {
+            closeMobileMenu();
+          }
+        });
+      });
+      document.addEventListener("click", function (event) {
+        if (window.innerWidth > 860) {
+          return;
+        }
+        if (!topbar.contains(event.target)) {
+          closeMobileMenu();
+        }
+      });
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 860) {
+          closeMobileMenu();
+        }
+      });
+    }
+    loginModalClose.addEventListener("click", function () { closeModal(loginModal); });
+    registerModalClose.addEventListener("click", function () { closeModal(registerModal); });
+    loginForm.addEventListener("submit", handleLoginSubmit);
+    registerForm.addEventListener("submit", handleRegisterSubmit);
+    loginModal.addEventListener("click", function (event) {
+      if (event.target === loginModal) {
+        closeModal(loginModal);
+      }
+    });
+    registerModal.addEventListener("click", function (event) {
+      if (event.target === registerModal) {
+        closeModal(registerModal);
+      }
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        if (loginModal.classList.contains("is-open")) {
+          closeModal(loginModal);
+        }
+        if (registerModal.classList.contains("is-open")) {
+          closeModal(registerModal);
+        }
+      }
+    });
+
+    bootstrapGiftCatalog();
+    hydrateCurrentUser();
+    updateContextCard();
+  </script>
+</body>
+</html>
