@@ -1,5 +1,3 @@
-USE lovematch_love;
-
 SET NAMES utf8mb4;
 
 SET @member_role_id := (SELECT id FROM roles WHERE code = 'member' LIMIT 1);

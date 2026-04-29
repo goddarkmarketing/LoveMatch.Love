@@ -1,9 +1,3 @@
-CREATE DATABASE IF NOT EXISTS lovematch_love
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE lovematch_love;
-
 SET NAMES utf8mb4;
 
 CREATE TABLE roles (

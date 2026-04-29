@@ -717,6 +717,95 @@
       background: linear-gradient(90deg, #4a89ff 0%, #2ec5ff 100%);
     }
 
+    .intro-toast-stack {
+      position: fixed;
+      top: 84px;
+      right: 20px;
+      width: min(360px, calc(100vw - 28px));
+      display: grid;
+      gap: 10px;
+      z-index: 120;
+      pointer-events: none;
+    }
+
+    .intro-toast {
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: #fff;
+      box-shadow: 0 16px 34px rgba(40, 20, 30, 0.24);
+      opacity: 0;
+      transform: translateX(20px) scale(0.98);
+      transition: opacity 0.26s ease, transform 0.26s ease;
+      will-change: opacity, transform;
+    }
+
+    .intro-toast.is-visible {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+
+    .intro-toast.is-success {
+      background: linear-gradient(90deg, #166f34 0%, #195829 100%);
+    }
+
+    .intro-toast.is-warning {
+      background: linear-gradient(90deg, #8a5600 0%, #7b4d00 100%);
+    }
+
+    .intro-toast-pass {
+      display: none;
+      background: linear-gradient(90deg, #31b75f 0%, #2a9f54 100%);
+    }
+
+    .intro-toast-pass.is-visible {
+      display: block;
+    }
+
+    .intro-toast-like {
+      display: none;
+      background: linear-gradient(90deg, #31b75f 0%, #2a9f54 100%);
+    }
+
+    .intro-toast-like.is-visible {
+      display: block;
+    }
+
+    .intro-toast-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .intro-toast-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+
+    .intro-toast-head svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 860px) {
+      .intro-toast-stack {
+        top: 74px;
+        right: 12px;
+        width: min(340px, calc(100vw - 24px));
+      }
+    }
+
     .admin-modal {
       width: min(1180px, calc(100vw - 40px));
       max-height: min(900px, calc(100vh - 36px));
@@ -1753,6 +1842,88 @@
       margin: auto 0;
     }
 
+    .match-modal {
+      width: min(100%, 560px);
+      background: #fff;
+      border-radius: 30px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 28px 68px rgba(34, 14, 25, 0.26);
+      margin: auto 0;
+      text-align: center;
+    }
+
+    .match-title {
+      margin: 0;
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      background: linear-gradient(90deg, #f04f89 0%, #e87f2f 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .match-hearts {
+      margin: 14px 0 12px;
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #ff4f8f;
+    }
+
+    .match-hearts span:first-child {
+      font-size: 48px;
+      line-height: 1;
+      transform: translateY(6px);
+    }
+
+    .match-hearts span:last-child {
+      font-size: 34px;
+      line-height: 1;
+      transform: translateY(-16px);
+    }
+
+    .match-copy {
+      margin: 0 0 20px;
+      font-size: clamp(18px, 3.2vw, 28px);
+      line-height: 1.35;
+      color: #1a1a1a;
+    }
+
+    .match-actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-action-btn {
+      height: 58px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      font: inherit;
+      font-size: 21px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(47, 43, 58, 0.16);
+    }
+
+    .match-action-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .match-action-btn.is-chat { background: linear-gradient(90deg, #f16b9a 0%, #cf4b79 100%); }
+    .match-action-btn.is-gift { background: linear-gradient(90deg, #49a4f1 0%, #17d2dd 100%); }
+    .match-action-btn.is-later { background: linear-gradient(90deg, #767d8e 0%, #676f82 100%); }
+
     .register-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2252,7 +2423,34 @@
   </div>
 
   <div class="page-toast" id="pageToast"></div>
-
+  <div class="intro-toast-stack" id="introToastStack" aria-live="polite" aria-atomic="true">
+    <div class="intro-toast is-success" id="introToastWelcome">
+      <div class="intro-toast-head">
+        <span class="intro-toast-icon">✓</span>
+        <span><svg><use href="#i-heart"></use></svg> ยินดีต้อนรับสู่ LoveMatch.Love! พร้อมระบบป้องกันสแกม AI</span>
+      </div>
+    </div>
+    <div class="intro-toast is-warning" id="introToastSecurity">
+      <div class="intro-toast-head">
+        <span class="intro-toast-icon">!</span>
+        <span><svg><use href="#i-shield"></use></svg> ระบบ AI ป้องกันสแกมเมอร์เปิดใช้งานแล้ว</span>
+      </div>
+    </div>
+  </div>
+  <div class="intro-toast-stack" aria-live="polite" aria-atomic="true">
+    <div class="intro-toast intro-toast-pass" id="discoverPassToast">
+      <div class="intro-toast-head">
+        <span class="intro-toast-icon">✓</span>
+        <span><svg><use href="#i-close"></use></svg> ผ่าน</span>
+      </div>
+    </div>
+    <div class="intro-toast intro-toast-like" id="discoverLikeToast">
+      <div class="intro-toast-head">
+        <span class="intro-toast-icon">✓</span>
+        <span><svg><use href="#i-heart"></use></svg> ไลค์แล้ว!</span>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="adminModal" aria-hidden="true">
     <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
       <div class="admin-header">
@@ -2597,6 +2795,22 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="matchModal" aria-hidden="true">
+    <div class="match-modal" role="dialog" aria-modal="true" aria-labelledby="matchModalTitle">
+      <h3 class="match-title" id="matchModalTitle">IT'S A MATCH!</h3>
+      <div class="match-hearts" aria-hidden="true">
+        <span>💗</span>
+        <span>💖</span>
+      </div>
+      <p class="match-copy" id="matchModalCopy">คุณและสมาชิกถูกใจกัน!</p>
+      <div class="match-actions">
+        <button class="match-action-btn is-chat" id="matchStartChatButton" type="button"><svg><use href="#i-chat"></use></svg>เริ่มแชท</button>
+        <button class="match-action-btn is-gift" id="matchSendGiftButton" type="button"><svg><use href="#i-gift"></use></svg>ส่งของขวัญจุใจ</button>
+        <button class="match-action-btn is-later" id="matchLaterButton" type="button">ดูภายหลัง</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const appBasePath = window.location.pathname.replace(/\/index\.html$/, "").replace(/\/$/, "");
     const API_BASE = window.location.origin + (appBasePath || "") + "/api";
@@ -2644,6 +2858,10 @@
     const adminGiftsList = document.getElementById("adminGiftsList");
     const languageMenuButton = document.getElementById("languageMenuButton");
     const pageToast = document.getElementById("pageToast");
+    const introToastWelcome = document.getElementById("introToastWelcome");
+    const introToastSecurity = document.getElementById("introToastSecurity");
+    const discoverPassToast = document.getElementById("discoverPassToast");
+    const discoverLikeToast = document.getElementById("discoverLikeToast");
     const featureCards = Array.from(document.querySelectorAll(".feature-card"));
     const planCards = Array.from(document.querySelectorAll(".price-card"));
     const topbar = document.querySelector(".topbar");
@@ -2654,6 +2872,11 @@
     const registerMenuButton = document.getElementById("registerMenuButton");
     const registerModal = document.getElementById("registerModal");
     const registerModalClose = document.getElementById("registerModalClose");
+    const matchModal = document.getElementById("matchModal");
+    const matchModalCopy = document.getElementById("matchModalCopy");
+    const matchStartChatButton = document.getElementById("matchStartChatButton");
+    const matchSendGiftButton = document.getElementById("matchSendGiftButton");
+    const matchLaterButton = document.getElementById("matchLaterButton");
     const discoverProfileImage = document.getElementById("discoverProfileImage");
     const discoverProfileName = document.getElementById("discoverProfileName");
     const discoverProfileMeta = document.getElementById("discoverProfileMeta");
@@ -2697,6 +2920,16 @@
     let currentLanguage = "th";
     let currentPlan = null;
     let adminDashboard = null;
+    let pendingMatchProfile = null;
+    let discoverPassToastTimer = null;
+    let discoverLikeToastTimer = null;
+    const demoDiscoverProfiles = [
+      { id: 9001, display_name: "Emma", age: 29, location: "Bangkok, Thailand", bio: "Creative producer, ชอบคาเฟ่และทริปทะเลสุดสัปดาห์", avatar_url: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=80" },
+      { id: 9002, display_name: "Noah", age: 31, location: "Chiang Mai, Thailand", bio: "Developer สายท่องเที่ยวธรรมชาติและดริปกาแฟ", avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80" },
+      { id: 9003, display_name: "Mina", age: 27, location: "Phuket, Thailand", bio: "นักออกแบบอิสระ รักดนตรีและการวิ่งตอนเช้า", avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80" },
+      { id: 9004, display_name: "Luca", age: 33, location: "Pattaya, Thailand", bio: "Photographer ที่ชอบดูหนังและคุยเรื่องอาหาร", avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80" },
+      { id: 9005, display_name: "Aiko", age: 28, location: "Khon Kaen, Thailand", bio: "สายสุขภาพ ทำอาหารเก่ง และอยากเจอคนจริงใจ", avatar_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" }
+    ];
 
     function openModal(modal) {
       modal.classList.add("is-open");
@@ -2707,7 +2940,7 @@
     function closeModal(modal) {
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
-      if (!giftModal.classList.contains("is-open") && !adminModal.classList.contains("is-open") && !chatModal.classList.contains("is-open") && !premiumModal.classList.contains("is-open") && !loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open")) {
+      if (!giftModal.classList.contains("is-open") && !adminModal.classList.contains("is-open") && !chatModal.classList.contains("is-open") && !premiumModal.classList.contains("is-open") && !loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open") && !matchModal.classList.contains("is-open")) {
         document.body.classList.remove("modal-open");
       }
     }
@@ -2723,7 +2956,6 @@
     }
 
     let toastTimer = null;
-
     function showToast(message, type) {
       pageToast.textContent = message;
       pageToast.className = "page-toast is-visible " + (type || "is-info");
@@ -2731,6 +2963,82 @@
       toastTimer = window.setTimeout(function () {
         pageToast.className = "page-toast";
       }, 2600);
+    }
+
+    function showIntroToasts() {
+      if (!introToastWelcome || !introToastSecurity) {
+        return;
+      }
+
+      window.setTimeout(function () {
+        introToastWelcome.classList.add("is-visible");
+      }, 320);
+
+      window.setTimeout(function () {
+        introToastWelcome.classList.remove("is-visible");
+      }, 3400);
+
+      window.setTimeout(function () {
+        introToastSecurity.classList.add("is-visible");
+      }, 1760);
+
+      window.setTimeout(function () {
+        introToastSecurity.classList.remove("is-visible");
+      }, 4680);
+    }
+
+    function showDiscoverPassToast() {
+      if (!discoverPassToast) {
+        return;
+      }
+      discoverPassToast.classList.add("is-visible");
+      window.clearTimeout(discoverPassToastTimer);
+      discoverPassToastTimer = window.setTimeout(function () {
+        discoverPassToast.classList.remove("is-visible");
+      }, 1200);
+    }
+
+    function showDiscoverLikeToast() {
+      if (!discoverLikeToast) {
+        return;
+      }
+      discoverLikeToast.classList.add("is-visible");
+      window.clearTimeout(discoverLikeToastTimer);
+      discoverLikeToastTimer = window.setTimeout(function () {
+        discoverLikeToast.classList.remove("is-visible");
+      }, 1200);
+    }
+
+    function advanceDiscoverProfile() {
+      if (!discoverProfiles.length) {
+        return;
+      }
+      currentDiscoverIndex = (currentDiscoverIndex + 1) % discoverProfiles.length;
+      renderDiscoverProfile();
+    }
+
+    function closeMatchModal() {
+      closeModal(matchModal);
+    }
+
+    function openMatchModal(profile) {
+      pendingMatchProfile = profile || null;
+      if (matchModalCopy) {
+        matchModalCopy.textContent = pendingMatchProfile
+          ? "คุณและ " + pendingMatchProfile.display_name + " ถูกใจกัน!"
+          : "คุณและสมาชิกถูกใจกัน!";
+      }
+      openModal(matchModal);
+    }
+
+    function requireLoginForMatchAction(message) {
+      if (currentUser) {
+        return true;
+      }
+      closeMatchModal();
+      openModal(loginModal);
+      showNotice(loginNotice, message, "error");
+      return false;
     }
 
     function redirectToAdminDashboard() {
@@ -3163,22 +3471,26 @@
     }
 
     async function loadDiscoverProfiles() {
+      if (!currentUser) {
+        discoverProfiles = demoDiscoverProfiles.slice();
+        currentDiscoverIndex = 0;
+        renderDiscoverProfile();
+        return;
+      }
+
       try {
         const response = await apiFetch("/discover", { method: "GET" });
-        discoverProfiles = response.data.profiles || [];
+        discoverProfiles = (response.data.profiles && response.data.profiles.length ? response.data.profiles : demoDiscoverProfiles).slice();
         currentDiscoverIndex = 0;
         renderDiscoverProfile();
       } catch (error) {
-        console.error(error);
+        discoverProfiles = demoDiscoverProfiles.slice();
+        currentDiscoverIndex = 0;
+        renderDiscoverProfile();
       }
     }
 
     async function runDiscoverRevealLoading() {
-      if (!currentUser) {
-        openModal(registerModal);
-        return;
-      }
-
       if (discoverLoadingTimer) {
         clearTimeout(discoverLoadingTimer);
       }
@@ -3206,28 +3518,42 @@
         return;
       }
 
-      if (!currentUser) {
-        openModal(loginModal);
-        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนใช้งานการค้นหาคู่", "error");
-        return;
+      if (currentUser) {
+        try {
+          const response = await apiFetch("/swipes", {
+            method: "POST",
+            body: JSON.stringify({
+              target_user_id: profile.id,
+              action: action
+            })
+          });
+
+          await hydrateMatches();
+          showNotice(discoverNotice, response.message, "success");
+        } catch (error) {
+          showNotice(discoverNotice, error.message, "error");
+        }
       }
 
-      try {
-        const response = await apiFetch("/swipes", {
-          method: "POST",
-          body: JSON.stringify({
-            target_user_id: profile.id,
-            action: action
-          })
+      if (action === "like") {
+        showDiscoverLikeToast();
+        await new Promise(function (resolve) {
+          window.setTimeout(resolve, 480);
         });
-
-        await hydrateMatches();
-        showNotice(discoverNotice, response.message, response.data && response.data.matched ? "success" : "success");
-        currentDiscoverIndex += 1;
-        renderDiscoverProfile();
-      } catch (error) {
-        showNotice(discoverNotice, error.message, "error");
+        openMatchModal(profile);
       }
+      if (action === "super_like") {
+        openMatchModal(profile);
+      }
+      if (action === "pass") {
+        showDiscoverPassToast();
+        setDiscoverLoadingState(true, "กำลังค้นหาโปรไฟล์ถัดไป...");
+        await new Promise(function (resolve) {
+          window.setTimeout(resolve, 520);
+        });
+        setDiscoverLoadingState(false);
+      }
+      advanceDiscoverProfile();
     }
 
     function renderMessages(room, messages) {
@@ -3377,6 +3703,7 @@
       await hydrateWallet();
       await hydrateMatches();
       await hydrateCurrentPlan();
+      await loadDiscoverProfiles();
     }
 
     async function hydrateWallet() {
@@ -3700,12 +4027,8 @@
     }
 
     function handleHeroCta() {
-      if (currentUser) {
-        showToast("กำลังค้นหาโปรไฟล์ใหม่ให้คุณ", "is-info");
-        runDiscoverRevealLoading();
-      } else {
-        openModal(registerModal);
-      }
+      showToast("กำลังค้นหาโปรไฟล์ใหม่ให้คุณ", "is-info");
+      runDiscoverRevealLoading();
     }
 
     function handleAdminMenu() {
@@ -3876,6 +4199,11 @@
       openGiftPage();
     });
     discoverGiftButton.addEventListener("click", function () {
+      if (!currentUser) {
+        openModal(loginModal);
+        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนส่งของขวัญ", "error");
+        return;
+      }
       const profile = discoverProfiles[currentDiscoverIndex];
       if (profile) {
         openGiftPage({
@@ -3951,6 +4279,35 @@
       });
     }
     registerModalClose.addEventListener("click", closeRegisterModal);
+    matchStartChatButton.addEventListener("click", function () {
+      if (!requireLoginForMatchAction("กรุณาเข้าสู่ระบบก่อนเริ่มแชท")) {
+        return;
+      }
+      closeMatchModal();
+      if (pendingMatchProfile) {
+        openChatPage({
+          targetUserId: Number(pendingMatchProfile.id),
+          targetName: pendingMatchProfile.display_name
+        });
+        return;
+      }
+      openChatPage();
+    });
+    matchSendGiftButton.addEventListener("click", function () {
+      if (!requireLoginForMatchAction("กรุณาเข้าสู่ระบบก่อนส่งของขวัญ")) {
+        return;
+      }
+      closeMatchModal();
+      if (pendingMatchProfile) {
+        openGiftPage({
+          receiverUserId: Number(pendingMatchProfile.id),
+          receiverName: pendingMatchProfile.display_name
+        });
+        return;
+      }
+      openGiftPage();
+    });
+    matchLaterButton.addEventListener("click", closeMatchModal);
     giftMenuButton.addEventListener("click", function () {
       openGiftPage();
     });
@@ -3985,6 +4342,11 @@
         closeRegisterModal();
       }
     });
+    matchModal.addEventListener("click", function (event) {
+      if (event.target === matchModal) {
+        closeMatchModal();
+      }
+    });
 
     giftModal.addEventListener("click", function (event) {
       if (event.target === giftModal) {
@@ -4012,12 +4374,16 @@
         if (registerModal.classList.contains("is-open")) {
           closeRegisterModal();
         }
+        if (matchModal.classList.contains("is-open")) {
+          closeMatchModal();
+        }
       }
     });
 
     bootstrapAppData();
     hydrateCurrentUser();
     loadDiscoverProfiles();
+    showIntroToasts();
   </script>
 </body>
 </html>
