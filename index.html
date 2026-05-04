@@ -1170,6 +1170,8 @@
 
     .modal-backdrop.is-open {
       display: flex;
+      /* Above Cupid overlay (120000) so close buttons and backdrop clicks work */
+      z-index: 400000;
     }
 
     .gift-modal {
@@ -3228,6 +3230,20 @@
       { id: 9005, display_name: "Aiko", age: 28, location: "Khon Kaen, Thailand", bio: "สายสุขภาพ ทำอาหารเก่ง และอยากเจอคนจริงใจ", avatar_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" }
     ];
 
+    // Fail-safe: keep auth buttons working even if later bindings fail.
+    if (loginMenuButton) {
+      loginMenuButton.addEventListener("click", function () {
+        if (currentUser) {
+          window.location.href = PROFILE_PAGE_URL;
+          return;
+        }
+        openLoginModal();
+      });
+    }
+    if (registerMenuButton) {
+      registerMenuButton.addEventListener("click", handleRegisterButtonClick);
+    }
+
     function openModal(modal) {
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden", "false");
@@ -3240,6 +3256,31 @@
       if (!giftModal.classList.contains("is-open") && !adminModal.classList.contains("is-open") && !chatModal.classList.contains("is-open") && !premiumModal.classList.contains("is-open") && !loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open") && !matchModal.classList.contains("is-open")) {
         document.body.classList.remove("modal-open");
       }
+    }
+
+    if (loginModalClose && loginModal) {
+      loginModalClose.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeModal(loginModal);
+      });
+      loginModal.addEventListener("click", function (event) {
+        if (event.target === loginModal) {
+          closeModal(loginModal);
+        }
+      });
+    }
+    if (registerModalClose && registerModal) {
+      registerModalClose.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeModal(registerModal);
+      });
+      registerModal.addEventListener("click", function (event) {
+        if (event.target === registerModal) {
+          closeModal(registerModal);
+        }
+      });
     }
 
     function showNotice(element, message, type) {
@@ -4596,15 +4637,6 @@
       window.location.href = PREMIUM_PAGE_URL;
     });
     premiumModalClose.addEventListener("click", closePremiumModal);
-    loginMenuButton.addEventListener("click", function () {
-      if (currentUser) {
-        window.location.href = PROFILE_PAGE_URL;
-        return;
-      }
-      openLoginModal();
-    });
-    loginModalClose.addEventListener("click", closeLoginModal);
-    registerMenuButton.addEventListener("click", handleRegisterButtonClick);
     if (mobileMenuToggle && topbar) {
       mobileMenuToggle.addEventListener("click", function (event) {
         event.stopPropagation();
@@ -4631,7 +4663,6 @@
         }
       });
     }
-    registerModalClose.addEventListener("click", closeRegisterModal);
     matchStartChatButton.addEventListener("click", function () {
       if (!requireLoginForMatchAction("กรุณาเข้าสู่ระบบก่อนเริ่มแชท")) {
         return;
@@ -4684,17 +4715,6 @@
       }
     });
 
-    loginModal.addEventListener("click", function (event) {
-      if (event.target === loginModal) {
-        closeLoginModal();
-      }
-    });
-
-    registerModal.addEventListener("click", function (event) {
-      if (event.target === registerModal) {
-        closeRegisterModal();
-      }
-    });
     matchModal.addEventListener("click", function (event) {
       if (event.target === matchModal) {
         closeMatchModal();
