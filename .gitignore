@@ -1,3 +1,4 @@
 chat.html.bak-encoding-fix
 tmp-chat-check.js
 vendor/
+config/database.local.php

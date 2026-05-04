@@ -15,8 +15,14 @@
 - username: `root`
 - password: ว่าง
 
-ถ้าค่าไม่ตรง ให้แก้ที่:
-- [config/database.php](/C:/xampp/htdocs/rwmlouey/config/database.php)
+ถ้าค่าไม่ตรง ให้ตั้งค่าแบบใดแบบหนึ่ง:
+- **บนเซิร์ฟเวอร์ / ลูกค้า:** คัดลอก [config/database.local.php.example](/C:/xampp/htdocs/rwmlouey/config/database.local.php.example) เป็น `config/database.local.php` แล้วใส่ user/password จริง (ไฟล์นี้ถูก gitignore)
+- **หรือใช้ environment:** `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+
+### เข้าไม่ได้ / ข้อความ `1698 Access denied for user 'root'@'localhost'`
+บน Linux (Ubuntu ฯลฯ) บัญชี `root` ของ MySQL/MariaDB มักใช้ `auth_socket` ไม่ให้ PHP ล็อกอินด้วยรหัสผ่าน
+
+แก้โดยสร้าง user สำหรับแอปแล้วใส่ใน `database.local.php` หรือ env — ตัวอย่างคำสั่งอยู่ใน [db/grant-app-user.sql](/C:/xampp/htdocs/rwmlouey/db/grant-app-user.sql) และในไฟล์ `.example` ด้านบน
 
 ## 2. ทดสอบ API
 เมื่อ Apache ทำงานแล้ว ใช้ URL เหล่านี้ได้:

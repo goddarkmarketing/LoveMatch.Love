@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Copy to database.local.php (same folder) and set real credentials.
+ * database.local.php is gitignored — safe on servers.
+ *
+ * Fix MySQL "1698 Access denied for user 'root'@'localhost'" (common on Ubuntu):
+ *   1. sudo mysql
+ *   2. Run:
+ *        CREATE DATABASE IF NOT EXISTS lovematch_love CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ *        CREATE USER IF NOT EXISTS 'lovematch'@'localhost' IDENTIFIED BY 'choose_a_strong_password';
+ *        GRANT ALL PRIVILEGES ON lovematch_love.* TO 'lovematch'@'localhost';
+ *        FLUSH PRIVILEGES;
+ *   3. Import db/schema.sql (and seed) as that user or as root from mysql CLI.
+ *   4. Put username/password below and save as database.local.php
+ */
+
+return [
+    'host' => '127.0.0.1',
+    'port' => 3306,
+    'database' => 'lovematch_love',
+    'username' => 'lovematch',
+    'password' => 'choose_a_strong_password',
+];
