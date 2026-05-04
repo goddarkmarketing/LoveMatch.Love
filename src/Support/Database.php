@@ -32,7 +32,12 @@ class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
         } catch (PDOException $exception) {
-            throw new RuntimeException('Database connection failed: ' . $exception->getMessage());
+            $detail = $exception->getMessage();
+            $msg = 'Database connection failed: ' . $detail;
+            if (strpos($detail, '1698') !== false || strpos($detail, "Access denied for user 'root'") !== false) {
+                $msg .= ' — บน Linux มักต้องใช้ user แอปที่มีรหัสผ่าน (ไม่ใช้ root); ดู config/database.local.php.example';
+            }
+            throw new RuntimeException($msg);
         }
 
         return self::$connection;
