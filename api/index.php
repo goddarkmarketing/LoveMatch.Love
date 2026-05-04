@@ -18,6 +18,7 @@ use App\Repositories\DiscoverRepository;
 use App\Repositories\GiftRepository;
 use App\Repositories\MatchRepository;
 use App\Repositories\SubscriptionRepository;
+use App\Repositories\PaymentRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\WalletRepository;
 use App\Support\Database;
@@ -28,6 +29,8 @@ require_once dirname(__DIR__) . '/src/Support/Database.php';
 require_once dirname(__DIR__) . '/src/Support/Request.php';
 require_once dirname(__DIR__) . '/src/Support/Response.php';
 require_once dirname(__DIR__) . '/src/Repositories/UserRepository.php';
+require_once dirname(__DIR__) . '/src/Repositories/PaymentRepository.php';
+require_once dirname(__DIR__) . '/src/Support/OmiseClient.php';
 require_once dirname(__DIR__) . '/src/Repositories/AppDataRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/AdminRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/ChatRepository.php';
@@ -64,8 +67,14 @@ $request = new Request();
 
 try {
     $db = Database::connection();
-    $authController = new AuthController(new UserRepository($db));
-    $appDataController = new AppDataController(new AppDataRepository($db));
+    $paymentConfig = require dirname(__DIR__) . '/config/payments.php';
+    $authController = new AuthController(
+        new UserRepository($db),
+        new PaymentRepository($db),
+        $paymentConfig,
+        $db
+    );
+    $appDataController = new AppDataController(new AppDataRepository($db), $paymentConfig);
     $adminController = new AdminController(new AdminRepository($db));
     $chatController = new ChatController(new ChatRepository($db), new MatchRepository($db));
     $discoverController = new DiscoverController(new DiscoverRepository($db));
@@ -118,6 +127,7 @@ $routes = [
         'success' => true,
         'message' => 'API is running',
     ])],
+    ['GET', '#^/payments/registration-options$#', static fn (Request $request): mixed => $appDataController->registrationPaymentOptions()],
     ['POST', '#^/auth/register$#', static fn (Request $request): mixed => $authController->register($request)],
     ['POST', '#^/auth/login$#', static fn (Request $request): mixed => $authController->login($request)],
     ['POST', '#^/auth/logout$#', static fn (Request $request): mixed => $authController->logout()],

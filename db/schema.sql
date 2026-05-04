@@ -278,7 +278,7 @@ CREATE TABLE payments (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT UNSIGNED NOT NULL,
   subscription_id BIGINT UNSIGNED NULL,
-  payment_target ENUM('subscription','coin_topup','gift') NOT NULL,
+  payment_target ENUM('subscription','coin_topup','gift','registration') NOT NULL,
   payment_method ENUM('credit_card','promptpay_qr','bank_transfer') NOT NULL,
   amount_thb DECIMAL(10,2) NOT NULL,
   currency CHAR(3) NOT NULL DEFAULT 'THB',

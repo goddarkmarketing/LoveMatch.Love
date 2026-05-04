@@ -64,7 +64,7 @@ class UserRepository
             'display_name' => trim($payload['display_name']),
             'gender' => $payload['gender'] ?: null,
             'interested_in' => $payload['interested_in'] ?: null,
-            'status' => 'active',
+            'status' => $payload['status'] ?? 'active',
             'is_profile_completed' => 1,
         ]);
 
@@ -77,6 +77,18 @@ class UserRepository
     public function touchLastSeen(int $userId): void
     {
         $statement = $this->db->prepare('UPDATE users SET last_seen_at = NOW(), updated_at = NOW() WHERE id = :id');
+        $statement->execute(['id' => $userId]);
+    }
+
+    public function updateStatus(int $userId, string $status): void
+    {
+        $statement = $this->db->prepare('UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id');
+        $statement->execute(['status' => $status, 'id' => $userId]);
+    }
+
+    public function deleteById(int $userId): void
+    {
+        $statement = $this->db->prepare('DELETE FROM users WHERE id = :id');
         $statement->execute(['id' => $userId]);
     }
 

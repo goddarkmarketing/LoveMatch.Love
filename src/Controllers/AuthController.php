@@ -2,16 +2,22 @@
 
 namespace App\Controllers;
 
+use App\Repositories\PaymentRepository;
 use App\Repositories\UserRepository;
+use App\Support\OmiseClient;
 use App\Support\Request;
 use App\Support\Response;
-use InvalidArgumentException;
+use PDO;
 use RuntimeException;
 
 class AuthController
 {
-    public function __construct(private UserRepository $users)
-    {
+    public function __construct(
+        private UserRepository $users,
+        private PaymentRepository $payments,
+        private array $paymentConfig,
+        private PDO $pdo
+    ) {
     }
 
     public function userRecord(int $userId): ?array
@@ -58,6 +64,62 @@ class AuthController
             ], 409);
         }
 
+        $fee = (float) ($this->paymentConfig['registration_fee_thb'] ?? 0);
+        $paymentMethod = trim((string) ($payload['payment_method'] ?? 'bank_transfer'));
+
+        if ($fee > 0) {
+            if (!in_array($paymentMethod, ['bank_transfer', 'credit_card'], true)) {
+                Response::json([
+                    'success' => false,
+                    'message' => 'เลือกวิธีชำระเงิน: bank_transfer หรือ credit_card',
+                ], 422);
+            }
+            if ($paymentMethod === 'credit_card' && trim((string) ($this->paymentConfig['omise_secret_key'] ?? '')) === '') {
+                Response::json([
+                    'success' => false,
+                    'message' => 'ระบบยังไม่ตั้งค่า Omise (secret key) สำหรับรับบัตร',
+                ], 503);
+            }
+        }
+
+        if ($fee <= 0) {
+            try {
+                $user = $this->users->create([
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'display_name' => trim($firstName . ' ' . $lastName),
+                    'email' => $email,
+                    'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                    'gender' => $gender,
+                    'interested_in' => $interestedIn,
+                ]);
+            } catch (RuntimeException $exception) {
+                Response::json([
+                    'success' => false,
+                    'message' => $exception->getMessage(),
+                ], 500);
+            }
+
+            $_SESSION['user_id'] = $user['id'];
+
+            Response::json([
+                'success' => true,
+                'message' => 'สมัครสมาชิกสำเร็จ',
+                'data' => ['user' => $user],
+            ], 201);
+        }
+
+        $omiseToken = trim((string) ($payload['omise_token'] ?? ''));
+        if ($paymentMethod === 'credit_card' && $omiseToken === '') {
+            Response::json([
+                'success' => false,
+                'message' => 'กรุณากรอกข้อมูลบัตรให้ครบ หรือเลือกโอนผ่านธนาคาร',
+            ], 422);
+        }
+
+        $userId = 0;
+        $this->pdo->beginTransaction();
+
         try {
             $user = $this->users->create([
                 'first_name' => $firstName,
@@ -67,20 +129,79 @@ class AuthController
                 'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                 'gender' => $gender,
                 'interested_in' => $interestedIn,
+                'status' => 'pending_verification',
             ]);
-        } catch (RuntimeException $exception) {
+            $userId = (int) $user['id'];
+
+            if ($paymentMethod === 'credit_card') {
+                $omise = new OmiseClient();
+                $satang = (int) round($fee * 100);
+                $result = $omise->createCharge(
+                    (string) $this->paymentConfig['omise_secret_key'],
+                    $satang,
+                    $omiseToken,
+                    [
+                        'email' => mb_strtolower($email),
+                        'purpose' => 'registration',
+                    ]
+                );
+
+                if (!$result['ok']) {
+                    $this->pdo->rollBack();
+                    Response::json([
+                        'success' => false,
+                        'message' => $result['message'] ?? 'ชำระเงินด้วยบัตรไม่สำเร็จ',
+                    ], 402);
+                }
+
+                $this->payments->createRegistrationPayment(
+                    $userId,
+                    'credit_card',
+                    $fee,
+                    $result['charge_id'] ?? null,
+                    'paid'
+                );
+                $this->users->updateStatus($userId, 'active');
+            } else {
+                $this->payments->createRegistrationPayment(
+                    $userId,
+                    'bank_transfer',
+                    $fee,
+                    null,
+                    'pending'
+                );
+            }
+
+            $this->pdo->commit();
+        } catch (\Throwable $exception) {
+            $this->pdo->rollBack();
             Response::json([
                 'success' => false,
                 'message' => $exception->getMessage(),
             ], 500);
         }
 
-        $_SESSION['user_id'] = $user['id'];
+        $fresh = $this->users->findById($userId);
+        $_SESSION['user_id'] = $userId;
+
+        $data = ['user' => $fresh];
+        if ($paymentMethod === 'bank_transfer') {
+            $data['registration_payment'] = [
+                'status' => 'pending',
+                'amount_thb' => $fee,
+                'bank_name' => (string) ($this->paymentConfig['bank_name'] ?? ''),
+                'bank_account_name' => (string) ($this->paymentConfig['bank_account_name'] ?? ''),
+                'bank_account_number' => (string) ($this->paymentConfig['bank_account_number'] ?? ''),
+                'transfer_reference_note' => (string) ($this->paymentConfig['transfer_reference_note'] ?? ''),
+            ];
+        }
 
         Response::json([
             'success' => true,
-            'message' => 'สมัครสมาชิกสำเร็จ',
-            'data' => ['user' => $user],
+            'message' => $paymentMethod === 'bank_transfer'
+                ? 'สมัครสมาชิกสำเร็จ กรุณาโอนค่าสมัครตามข้อมูลด้านล่าง'
+                : 'สมัครสมาชิกและชำระเงินสำเร็จ',
+            'data' => $data,
         ], 201);
     }
 

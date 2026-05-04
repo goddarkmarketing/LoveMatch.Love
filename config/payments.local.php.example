@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * Copy to payments.local.php (same folder). Never commit real keys.
+ *
+ * ⚠️ If a secret key was pasted in chat/email, rotate it in Omise Dashboard.
+ */
+
+return [
+    'registration_fee_thb' => 199.0,
+    'omise_public_key' => 'pkey_test_xxxxxxxxxxxxxxxx',
+    'omise_secret_key' => 'skey_test_xxxxxxxxxxxxxxxx',
+    'bank_name' => 'ธนาคารกสิกรไทย',
+    'bank_account_name' => 'ชื่อบัญชีตามจริง',
+    'bank_account_number' => 'เลขบัญชี',
+    'transfer_reference_note' => 'ระบุอีเมลที่สมัครในช่องหมายเหตุ',
+];

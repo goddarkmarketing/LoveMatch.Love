@@ -2137,6 +2137,63 @@
       background: #fff;
     }
 
+    .register-payment-block {
+      margin-top: 8px;
+      padding: 16px 0 4px;
+      border-top: 1px solid rgba(216, 196, 206, 0.65);
+    }
+
+    .register-payment-block .auth-label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .register-fee-hint {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #d5537c;
+      line-height: 1.45;
+    }
+
+    .register-pay-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .register-pay-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      color: #3a2a32;
+    }
+
+    .register-pay-option input {
+      width: 18px;
+      height: 18px;
+      accent-color: #eb5b89;
+    }
+
+    .register-bank-preview {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #506070;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 248, 252, 0.95);
+      border: 1px solid rgba(232, 200, 216, 0.85);
+      margin-bottom: 8px;
+    }
+
+    .register-card-fields {
+      margin-top: 8px;
+    }
+
     @media (max-width: 1180px) {
       .features,
       .pricing-grid {
@@ -3026,6 +3083,46 @@
           </label>
         </div>
 
+        <div class="register-payment-block" id="registerPaymentBlock" hidden>
+          <span class="auth-label">ค่าสมัครและชำระเงิน</span>
+          <p class="register-fee-hint" id="registerFeeHint">กำลังโหลด...</p>
+          <div class="register-pay-methods" id="registerPayMethods">
+            <label class="register-pay-option">
+              <input type="radio" name="registerPaymentMethod" value="bank_transfer" checked>
+              <span>โอนเงินผ่านธนาคาร</span>
+            </label>
+            <label class="register-pay-option" id="registerPayCardOption">
+              <input type="radio" name="registerPaymentMethod" value="credit_card">
+              <span>บัตรเครดิต / เดบิต (Omise)</span>
+            </label>
+          </div>
+          <div class="register-bank-preview" id="registerBankPreview" hidden></div>
+          <div class="register-card-fields" id="registerCardFields" hidden>
+            <label class="auth-field">
+              <span class="auth-label">ชื่อบนบัตร</span>
+              <input class="auth-input" id="omiseCardName" type="text" placeholder="NAME ON CARD" autocomplete="cc-name">
+            </label>
+            <label class="auth-field">
+              <span class="auth-label">หมายเลขบัตร</span>
+              <input class="auth-input" id="omiseCardNumber" type="text" placeholder="4242424242424242" autocomplete="cc-number" inputmode="numeric">
+            </label>
+            <div class="register-grid">
+              <label class="auth-field">
+                <span class="auth-label">เดือนหมดอายุ</span>
+                <input class="auth-input" id="omiseExpMonth" type="text" placeholder="MM" maxlength="2" autocomplete="cc-exp-month" inputmode="numeric">
+              </label>
+              <label class="auth-field">
+                <span class="auth-label">ปีหมดอายุ (ค.ศ.)</span>
+                <input class="auth-input" id="omiseExpYear" type="text" placeholder="2029" maxlength="4" autocomplete="cc-exp-year" inputmode="numeric">
+              </label>
+            </div>
+            <label class="auth-field">
+              <span class="auth-label">รหัสหลังบัตร (CVV)</span>
+              <input class="auth-input" id="omiseSecurityCode" type="password" placeholder="123" autocomplete="cc-csc" maxlength="4" inputmode="numeric">
+            </label>
+          </div>
+        </div>
+
         <div class="form-notice" id="registerNotice"></div>
 
         <button class="auth-submit" id="registerSubmitButton" type="submit">
@@ -3059,6 +3156,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.omise.co/omise.js"></script>
   <script>
     const appBasePath = window.location.pathname.replace(/\/index\.html$/, "").replace(/\/$/, "");
     const API_BASE = window.location.origin + (appBasePath || "") + "/api";
@@ -3157,6 +3255,7 @@
     const defaultChatBodyHTML = chatBody.innerHTML;
 
     let currentUser = null;
+    let registrationPayOpts = null;
     let currentWallet = null;
     let selectedGift = null;
     let publicRooms = [];
@@ -3999,6 +4098,95 @@
       updateWalletHints();
     }
 
+    async function loadRegistrationPaymentOptions() {
+      const response = await apiFetch("/payments/registration-options", { method: "GET" });
+      registrationPayOpts = response.data;
+      const block = document.getElementById("registerPaymentBlock");
+      const fee = Number(registrationPayOpts.registration_fee_thb || 0);
+      if (fee <= 0) {
+        if (block) {
+          block.hidden = true;
+        }
+        return;
+      }
+      if (block) {
+        block.hidden = false;
+      }
+      const hint = document.getElementById("registerFeeHint");
+      if (hint) {
+        hint.textContent = "ค่าสมัคร ฿" + fee.toLocaleString("th-TH") + " — เลือกวิธีชำระด้านล่าง";
+      }
+      const cardOpt = document.getElementById("registerPayCardOption");
+      if (cardOpt) {
+        cardOpt.style.display = registrationPayOpts.card_enabled ? "" : "none";
+      }
+      if (registrationPayOpts.omise_public_key && typeof Omise !== "undefined") {
+        Omise.setPublicKey(registrationPayOpts.omise_public_key);
+      }
+      const bankPrev = document.getElementById("registerBankPreview");
+      const b = registrationPayOpts.bank || {};
+      if (bankPrev) {
+        bankPrev.hidden = false;
+        bankPrev.textContent = [
+          b.bank_name,
+          "เลขบัญชี " + b.bank_account_number,
+          "ชื่อบัญชี " + b.bank_account_name,
+          b.transfer_reference_note
+        ].filter(Boolean).join(" · ");
+      }
+      syncRegisterPayMethodUI();
+    }
+
+    function getRegisterPaymentMethod() {
+      const el = document.querySelector('input[name="registerPaymentMethod"]:checked');
+      return el ? el.value : "bank_transfer";
+    }
+
+    function syncRegisterPayMethodUI() {
+      const cardFields = document.getElementById("registerCardFields");
+      const isCard = getRegisterPaymentMethod() === "credit_card";
+      if (cardFields) {
+        cardFields.hidden = !isCard;
+      }
+    }
+
+    function createOmiseToken() {
+      return new Promise(function (resolve, reject) {
+        if (typeof Omise === "undefined") {
+          reject(new Error("ระบบ Omise ยังไม่พร้อม โปรดรีเฟรชหน้า"));
+          return;
+        }
+        const month = parseInt(document.getElementById("omiseExpMonth").value, 10);
+        const year = parseInt(document.getElementById("omiseExpYear").value, 10);
+        Omise.createToken({
+          card: {
+            name: document.getElementById("omiseCardName").value.trim(),
+            number: document.getElementById("omiseCardNumber").value.replace(/\s/g, ""),
+            expiration_month: month,
+            expiration_year: year,
+            security_code: document.getElementById("omiseSecurityCode").value.trim()
+          }
+        }, function (statusCode, response) {
+          if (statusCode !== 200) {
+            const msg = (response && response.message) ? response.message : "สร้างโทเค็นบัตรไม่สำเร็จ";
+            reject(new Error(msg));
+            return;
+          }
+          resolve(response.id);
+        });
+      });
+    }
+
+    async function openRegisterModal() {
+      try {
+        await loadRegistrationPaymentOptions();
+      } catch (error) {
+        console.error(error);
+        registrationPayOpts = null;
+      }
+      openModal(registerModal);
+    }
+
     async function handleLoginSubmit(event) {
       event.preventDefault();
       clearNotice(loginNotice);
@@ -4044,19 +4232,44 @@
         return;
       }
 
+      const fee = registrationPayOpts && Number(registrationPayOpts.registration_fee_thb) > 0;
+      const method = fee ? getRegisterPaymentMethod() : "bank_transfer";
+      let omiseToken = "";
+
+      if (fee && method === "credit_card") {
+        if (!registrationPayOpts.card_enabled) {
+          showNotice(registerNotice, "ไม่สามารถชำระด้วยบัตรได้ในขณะนี้ กรุณาเลือกโอนธนาคาร", "error");
+          return;
+        }
+        try {
+          omiseToken = await createOmiseToken();
+        } catch (tokenErr) {
+          showNotice(registerNotice, tokenErr.message || "ข้อมูลบัตรไม่ถูกต้อง", "error");
+          return;
+        }
+      }
+
       registerSubmitButton.disabled = true;
 
       try {
+        const payload = {
+          first_name: document.getElementById("registerFirstName").value,
+          last_name: document.getElementById("registerLastName").value,
+          email: document.getElementById("registerEmail").value,
+          password: document.getElementById("registerPassword").value,
+          gender: document.getElementById("registerGender").value,
+          interested_in: document.getElementById("registerInterestedIn").value
+        };
+        if (fee) {
+          payload.payment_method = method;
+          if (method === "credit_card") {
+            payload.omise_token = omiseToken;
+          }
+        }
+
         const response = await apiFetch("/auth/register", {
           method: "POST",
-          body: JSON.stringify({
-            first_name: document.getElementById("registerFirstName").value,
-            last_name: document.getElementById("registerLastName").value,
-            email: document.getElementById("registerEmail").value,
-            password: document.getElementById("registerPassword").value,
-            gender: document.getElementById("registerGender").value,
-            interested_in: document.getElementById("registerInterestedIn").value
-          })
+          body: JSON.stringify(payload)
         });
 
         currentUser = response.data.user;
@@ -4065,12 +4278,23 @@
         await hydrateMatches();
         await hydrateCurrentPlan();
         await loadDiscoverProfiles();
-        showNotice(registerNotice, response.message || "สมัครสมาชิกสำเร็จ", "success");
+
+        let msg = response.message || "สมัครสมาชิกสำเร็จ";
+        if (response.data && response.data.registration_payment && response.data.registration_payment.status === "pending") {
+          const p = response.data.registration_payment;
+          msg += " โอน ฿" + Number(p.amount_thb).toLocaleString("th-TH") + " ไปที่ " + p.bank_name + " เลข " + p.bank_account_number + " (" + p.bank_account_name + ") — " + (p.transfer_reference_note || "");
+        }
+        showNotice(registerNotice, msg, "success");
         registerForm.reset();
+        const bankRadioReset = document.querySelector('input[name="registerPaymentMethod"][value="bank_transfer"]');
+        if (bankRadioReset) {
+          bankRadioReset.checked = true;
+        }
+        syncRegisterPayMethodUI();
         setTimeout(function () {
           closeModal(registerModal);
           clearNotice(registerNotice);
-        }, 700);
+        }, fee && method === "bank_transfer" ? 1400 : 700);
       } catch (error) {
         showNotice(registerNotice, error.message, "error");
       } finally {
@@ -4218,7 +4442,7 @@
         return;
       }
 
-      openModal(registerModal);
+      openRegisterModal();
     }
 
     function openGiftPage(context) {
@@ -4327,7 +4551,7 @@
       });
       showToast(currentUser ? "บัญชีของคุณใช้งานแพ็กเกจ Free ได้อยู่แล้ว" : "สมัครสมาชิกหรือเข้าสู่ระบบเพื่อเริ่มใช้งานแพ็กเกจ Free", "is-info");
       if (!currentUser) {
-        openModal(registerModal);
+        openRegisterModal();
       }
     }
 
@@ -4356,7 +4580,7 @@
 
       if (!currentUser) {
         showToast("สมัครสมาชิกหรือเข้าสู่ระบบเพื่อเริ่มใช้งานแพ็กเกจ Free", "is-info");
-        openModal(registerModal);
+        openRegisterModal();
         return;
       }
 
@@ -4465,6 +4689,9 @@
     });
     loginForm.addEventListener("submit", handleLoginSubmit);
     registerForm.addEventListener("submit", handleRegisterSubmit);
+    document.querySelectorAll('input[name="registerPaymentMethod"]').forEach(function (radio) {
+      radio.addEventListener("change", syncRegisterPayMethodUI);
+    });
     giftSubmitButton.addEventListener("click", handleGiftSend);
     premiumCheckoutButton.addEventListener("click", handlePremiumCheckout);
     chatSendButton.addEventListener("click", handleChatSend);
