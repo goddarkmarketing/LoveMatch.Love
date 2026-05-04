@@ -15,24 +15,80 @@ class AppDataController
 
     public function registrationPaymentOptions(): void
     {
-        $fee = (float) ($this->paymentConfig['registration_fee_thb'] ?? 0);
         $pk = (string) ($this->paymentConfig['omise_public_key'] ?? '');
+        $plans = array_map(static function (array $row): array {
+            return [
+                'id' => (int) $row['id'],
+                'code' => $row['code'],
+                'name' => $row['name_th'],
+                'tier' => $row['tier'],
+                'billing_cycle' => $row['billing_cycle'],
+                'price_thb' => (float) $row['price_thb'],
+                'coin_bonus' => (int) $row['coin_bonus'],
+            ];
+        }, $this->repository->subscriptionPlans());
+
+        $hasPaidPlan = false;
+        foreach ($plans as $p) {
+            if ($p['price_thb'] > 0) {
+                $hasPaidPlan = true;
+                break;
+            }
+        }
+
+        $bankAccounts = $this->normalizedBankAccounts();
+        $first = $bankAccounts[0] ?? null;
 
         Response::json([
             'success' => true,
             'data' => [
-                'registration_fee_thb' => $fee,
+                'plans' => $plans,
                 'omise_public_key' => $pk,
-                'card_enabled' => $fee > 0 && $pk !== '',
-                'bank_transfer_enabled' => $fee > 0,
+                'card_enabled' => $hasPaidPlan && $pk !== '',
+                'bank_transfer_enabled' => $hasPaidPlan,
+                'bank_accounts' => $bankAccounts,
                 'bank' => [
-                    'bank_name' => (string) ($this->paymentConfig['bank_name'] ?? ''),
+                    'account_name' => (string) ($this->paymentConfig['bank_account_name'] ?? ''),
                     'bank_account_name' => (string) ($this->paymentConfig['bank_account_name'] ?? ''),
-                    'bank_account_number' => (string) ($this->paymentConfig['bank_account_number'] ?? ''),
                     'transfer_reference_note' => (string) ($this->paymentConfig['transfer_reference_note'] ?? ''),
+                    'bank_name' => $first ? $first['name_th'] : (string) ($this->paymentConfig['bank_name'] ?? ''),
+                    'bank_account_number' => $first ? $first['account_number'] : (string) ($this->paymentConfig['bank_account_number'] ?? ''),
                 ],
             ],
         ]);
+    }
+
+    /**
+     * @return list<array{code: string, name_th: string, account_number: string, logo: string, type: string}>
+     */
+    private function normalizedBankAccounts(): array
+    {
+        $cfg = $this->paymentConfig;
+        if (!empty($cfg['bank_accounts']) && is_array($cfg['bank_accounts'])) {
+            $out = [];
+            foreach ($cfg['bank_accounts'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $out[] = [
+                    'code' => (string) ($row['code'] ?? ''),
+                    'name_th' => (string) ($row['name_th'] ?? ''),
+                    'account_number' => (string) ($row['account_number'] ?? ''),
+                    'logo' => (string) ($row['logo'] ?? ''),
+                    'type' => (string) ($row['type'] ?? 'bank'),
+                ];
+            }
+
+            return $out;
+        }
+
+        return [[
+            'code' => 'default',
+            'name_th' => (string) ($cfg['bank_name'] ?? ''),
+            'account_number' => (string) ($cfg['bank_account_number'] ?? ''),
+            'logo' => '',
+            'type' => 'bank',
+        ]];
     }
 
     public function gifts(): void

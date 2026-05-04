@@ -93,4 +93,46 @@ class GiftRepository
             'unlock_type' => $gift['unlock_type'],
         ];
     }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listSentForUser(int $senderUserId, int $limit = 40): array
+    {
+        $limit = max(1, min(100, $limit));
+        $statement = $this->db->prepare(
+            "SELECT gt.id, gt.created_at, gt.message_text, gc.name_th AS gift_name, gc.emoji, gc.coin_cost,
+                    ru.display_name AS peer_name, ru.id AS peer_user_id
+             FROM gift_transactions gt
+             INNER JOIN gift_catalog gc ON gc.id = gt.gift_id
+             INNER JOIN users ru ON ru.id = gt.receiver_user_id
+             WHERE gt.sender_user_id = :sender
+             ORDER BY gt.id DESC
+             LIMIT {$limit}"
+        );
+        $statement->execute(['sender' => $senderUserId]);
+
+        return $statement->fetchAll() ?: [];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listReceivedForUser(int $receiverUserId, int $limit = 40): array
+    {
+        $limit = max(1, min(100, $limit));
+        $statement = $this->db->prepare(
+            "SELECT gt.id, gt.created_at, gt.message_text, gc.name_th AS gift_name, gc.emoji, gc.coin_cost,
+                    su.display_name AS peer_name, su.id AS peer_user_id
+             FROM gift_transactions gt
+             INNER JOIN gift_catalog gc ON gc.id = gt.gift_id
+             INNER JOIN users su ON su.id = gt.sender_user_id
+             WHERE gt.receiver_user_id = :receiver
+             ORDER BY gt.id DESC
+             LIMIT {$limit}"
+        );
+        $statement->execute(['receiver' => $receiverUserId]);
+
+        return $statement->fetchAll() ?: [];
+    }
 }

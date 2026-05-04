@@ -29,11 +29,11 @@ class WalletRepository
         }
 
         $statement = $this->db->prepare(
-            'SELECT transaction_type, source_type, amount, balance_before, balance_after, note, created_at
+            'SELECT id, transaction_type, source_type, amount, balance_before, balance_after, note, created_at
              FROM wallet_transactions
              WHERE user_id = :user_id
              ORDER BY id DESC
-             LIMIT 10'
+             LIMIT 80'
         );
         $statement->execute(['user_id' => $userId]);
 

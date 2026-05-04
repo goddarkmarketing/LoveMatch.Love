@@ -71,6 +71,7 @@ try {
     $authController = new AuthController(
         new UserRepository($db),
         new PaymentRepository($db),
+        new SubscriptionRepository($db),
         $paymentConfig,
         $db
     );
@@ -79,7 +80,7 @@ try {
     $chatController = new ChatController(new ChatRepository($db), new MatchRepository($db));
     $discoverController = new DiscoverController(new DiscoverRepository($db));
     $matchController = new MatchController(new MatchRepository($db));
-    $walletController = new WalletController(new WalletRepository($db));
+    $walletController = new WalletController(new WalletRepository($db), new GiftRepository($db));
     $giftController = new GiftController(new GiftRepository($db), new WalletRepository($db));
     $subscriptionController = new SubscriptionController(new SubscriptionRepository($db));
 } catch (Throwable $exception) {

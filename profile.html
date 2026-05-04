@@ -7,6 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/brand-logo.css">
+  <link rel="stylesheet" href="assets/css/language-picker.css">
+  <link rel="stylesheet" href="assets/css/coins-badge.css">
+  <link rel="stylesheet" href="assets/css/floating-contact.css">
   <style>
     :root {
       --bg-left: #f9a0b0;
@@ -617,6 +622,59 @@
     .page-toast.is-error { background: linear-gradient(90deg, #ff5e7e 0%, #d94672 100%); }
     .page-toast.is-info { background: linear-gradient(90deg, #4a89ff 0%, #2ec5ff 100%); }
 
+    .wallet-activity-block {
+      margin-top: 28px;
+      padding: 24px 28px;
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .wallet-history-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 18px;
+    }
+
+    .history-panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--heading);
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .history-table th,
+    .history-table td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .history-table th {
+      font-weight: 700;
+      color: #4a3d4f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .history-empty {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
     @media (max-width: 1180px) {
       .profile-workspace {
         grid-template-columns: 1fr;
@@ -680,6 +738,9 @@
       .stats-grid {
         grid-template-columns: 1fr;
       }
+      .wallet-history-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -710,9 +771,13 @@
         <button class="pill pill-pink" id="giftMenuButton" type="button"><svg><use href="#i-gift"></use></svg>Gifts</button>
         <button class="pill pill-cyan" id="chatMenuButton" type="button"><svg><use href="#i-chat"></use></svg>Chat</button>
         <button class="pill pill-blue" id="premiumMenuButton" type="button"><svg><use href="#i-crown"></use></svg>Premium</button>
-        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>Language</button>
+        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>แปลภาษา</button>
       </nav>
       <div class="auth-nav">
+        <a class="pill pill-coin-balance" id="coinBalancePill" href="gifts.html" hidden title="เหรียญของคุณ — ไปหน้าของขวัญ">
+          <span class="coin-gl" aria-hidden="true"></span>
+          <span class="coin-balance-num" id="coinBalanceValue">0</span>
+        </a>
         <button class="pill pill-pink" id="loginMenuButton" type="button"><svg><use href="#i-user"></use></svg>โปรไฟล์ของฉัน</button>
         <button class="pill pill-blue" id="registerMenuButton" type="button"><svg><use href="#i-login"></use></svg>ออกจากระบบ</button>
       </div>
@@ -777,6 +842,29 @@
               <a class="pill pill-gray" href="./"><svg><use href="#i-chat"></use></svg>กลับหน้าเว็บหลัก</a>
             </div>
           </div>
+
+          <section class="wallet-activity-block" id="walletActivitySection" aria-labelledby="walletActivityHeading">
+            <h2 class="section-title" id="walletActivityHeading">เหรียญ ของขวัญ และประวัติ</h2>
+            <p class="section-copy">ประวัติการเติมเหรียญ การใช้เหรียญ และของขวัญที่คุณส่งหรือได้รับจากระบบ</p>
+            <div class="wallet-history-grid">
+              <div class="history-panel">
+                <h3 class="history-panel-title">ประวัติการเติม / รับเหรียญ</h3>
+                <div id="walletHistoryCredit"></div>
+              </div>
+              <div class="history-panel">
+                <h3 class="history-panel-title">ประวัติการใช้เหรียญ</h3>
+                <div id="walletHistorySpend"></div>
+              </div>
+              <div class="history-panel">
+                <h3 class="history-panel-title">ประวัติการส่งของขวัญ</h3>
+                <div id="walletHistorySent"></div>
+              </div>
+              <div class="history-panel">
+                <h3 class="history-panel-title">ของขวัญที่ได้รับ</h3>
+                <div id="walletHistoryReceived"></div>
+              </div>
+            </div>
+          </section>
 
           <form id="profileForm">
             <div class="editor-grid">
@@ -927,6 +1015,8 @@
 
   <div class="page-toast" id="pageToast"></div>
 
+  <script src="assets/js/language-picker.js"></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=LoveMatchLanguagePicker.onTranslateReady"></script>
   <script>
     const appBasePath = window.location.pathname.replace(/\/profile\.html$/, "").replace(/\/$/, "");
     const API_BASE = window.location.origin + (appBasePath || "") + "/api";
@@ -958,6 +1048,10 @@
     const statCoins = document.getElementById("statCoins");
     const statMatches = document.getElementById("statMatches");
     const pageToast = document.getElementById("pageToast");
+    const walletHistoryCredit = document.getElementById("walletHistoryCredit");
+    const walletHistorySpend = document.getElementById("walletHistorySpend");
+    const walletHistorySent = document.getElementById("walletHistorySent");
+    const walletHistoryReceived = document.getElementById("walletHistoryReceived");
 
     const fields = {
       displayName: document.getElementById("profileDisplayName"),
@@ -983,7 +1077,6 @@
     let currentWallet = null;
     let currentPlan = null;
     let matches = [];
-    let currentLanguage = "th";
     let profileState = {
       photoDataUrl: "",
       interests: []
@@ -1007,6 +1100,141 @@
       toastTimer = window.setTimeout(function () {
         pageToast.className = "page-toast";
       }, 2600);
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function walletCoinBalance(data) {
+      if (!data) {
+        return 0;
+      }
+      if (data.wallet != null && data.wallet.coin_balance != null) {
+        return Number(data.wallet.coin_balance || 0);
+      }
+      if (data.coin_balance != null) {
+        return Number(data.coin_balance || 0);
+      }
+      return 0;
+    }
+
+    function formatHistoryDate(value) {
+      if (!value) {
+        return "—";
+      }
+      const date = new Date(String(value).replace(" ", "T"));
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+      return date.toLocaleString("th-TH", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function txnTypeLabel(type) {
+      const map = { credit: "เติม", bonus: "โบนัส", refund: "คืนเงิน", debit: "ใช้จ่าย" };
+      return map[type] || type || "—";
+    }
+
+    function sourceTypeLabel(source) {
+      const map = { gift_send: "ส่งของขวัญ" };
+      return map[source] || source || "";
+    }
+
+    function txnDetailCell(row) {
+      const parts = [];
+      if (row.note) {
+        parts.push(String(row.note));
+      }
+      if (row.source_type) {
+        const st = sourceTypeLabel(row.source_type);
+        if (st) {
+          parts.push(st);
+        }
+      }
+      return parts.length ? parts.join(" · ") : "—";
+    }
+
+    function truncateText(text, max) {
+      const t = String(text || "");
+      if (t.length <= max) {
+        return t;
+      }
+      return t.slice(0, max - 1) + "…";
+    }
+
+    function renderTxnTable(rows, mode) {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return '<p class="history-empty">ยังไม่มีรายการ</p>';
+      }
+      const head = mode === "credit"
+        ? "<tr><th>วันที่</th><th>ประเภท</th><th>จำนวน</th><th>รายละเอียด</th></tr>"
+        : "<tr><th>วันที่</th><th>ประเภท</th><th>ใช้ไป</th><th>รายละเอียด</th></tr>";
+      const body = rows.map(function (r) {
+        const amt = Number(r.amount || 0);
+        const amtCell = mode === "credit" ? "+" + amt.toLocaleString("th-TH") : "−" + amt.toLocaleString("th-TH");
+        return "<tr><td>" + escapeHtml(formatHistoryDate(r.created_at)) + "</td><td>" + escapeHtml(txnTypeLabel(r.transaction_type)) + "</td><td>" + amtCell + "</td><td>" + escapeHtml(txnDetailCell(r)) + "</td></tr>";
+      }).join("");
+      return '<table class="history-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>";
+    }
+
+    function renderGiftSentTable(rows) {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return '<p class="history-empty">ยังไม่มีประวัติการส่ง</p>';
+      }
+      const head = "<tr><th>วันที่</th><th>ของขวัญ</th><th>เหรียญ</th><th>ถึง</th><th>ข้อความ</th></tr>";
+      const body = rows.map(function (r) {
+        const title = (r.emoji || "") + " " + (r.gift_name || "");
+        return "<tr><td>" + escapeHtml(formatHistoryDate(r.created_at)) + "</td><td>" + escapeHtml(title.trim()) + "</td><td>" + Number(r.coin_cost || 0).toLocaleString("th-TH") + "</td><td>" + escapeHtml(r.receiver_name || "—") + "</td><td>" + escapeHtml(truncateText(r.message_text, 48)) + "</td></tr>";
+      }).join("");
+      return '<table class="history-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>";
+    }
+
+    function renderGiftReceivedTable(rows) {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return '<p class="history-empty">ยังไม่มีของขวัญที่ได้รับ</p>';
+      }
+      const head = "<tr><th>วันที่</th><th>ของขวัญ</th><th>จาก</th><th>ข้อความ</th></tr>";
+      const body = rows.map(function (r) {
+        const title = (r.emoji || "") + " " + (r.gift_name || "");
+        return "<tr><td>" + escapeHtml(formatHistoryDate(r.created_at)) + "</td><td>" + escapeHtml(title.trim()) + "</td><td>" + escapeHtml(r.sender_name || "—") + "</td><td>" + escapeHtml(truncateText(r.message_text, 48)) + "</td></tr>";
+      }).join("");
+      return '<table class="history-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>";
+    }
+
+    function renderWalletPanels() {
+      if (!walletHistoryCredit || !walletHistorySpend || !walletHistorySent || !walletHistoryReceived) {
+        return;
+      }
+      if (!currentWallet) {
+        walletHistoryCredit.innerHTML = '<p class="history-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+        walletHistorySpend.innerHTML = '<p class="history-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+        walletHistorySent.innerHTML = '<p class="history-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+        walletHistoryReceived.innerHTML = '<p class="history-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+        return;
+      }
+      walletHistoryCredit.innerHTML = renderTxnTable(currentWallet.credit_log || [], "credit");
+      walletHistorySpend.innerHTML = renderTxnTable(currentWallet.spend_log || [], "debit");
+      walletHistorySent.innerHTML = renderGiftSentTable(currentWallet.gifts_sent || []);
+      walletHistoryReceived.innerHTML = renderGiftReceivedTable(currentWallet.gifts_received || []);
+    }
+
+    function updateCoinPill() {
+      const pill = document.getElementById("coinBalancePill");
+      const val = document.getElementById("coinBalanceValue");
+      if (!pill || !val) {
+        return;
+      }
+      if (!currentUser) {
+        pill.hidden = true;
+        return;
+      }
+      val.textContent = walletCoinBalance(currentWallet).toLocaleString("th-TH");
+      pill.hidden = false;
     }
 
     async function apiFetch(path, options) {
@@ -1092,8 +1320,10 @@
 
     function renderStats() {
       statPackage.textContent = currentPlan && currentPlan.name ? currentPlan.name : "Free";
-      statCoins.textContent = currentWallet && currentWallet.wallet ? Number(currentWallet.wallet.coin_balance || 0).toLocaleString("th-TH") : "0";
+      statCoins.textContent = walletCoinBalance(currentWallet).toLocaleString("th-TH");
       statMatches.textContent = String(Array.isArray(matches) ? matches.length : 0);
+      renderWalletPanels();
+      updateCoinPill();
     }
 
     function renderInterestChips() {
@@ -1145,6 +1375,7 @@
         loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
         registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
       }
+      updateCoinPill();
     }
 
     async function hydrateCurrentUser() {
@@ -1211,8 +1442,7 @@
     }
 
     function handleLanguageMenu() {
-      currentLanguage = currentLanguage === "th" ? "en" : "th";
-      showToast(currentLanguage === "en" ? "Language switched to English (translation pending)" : "เปลี่ยนภาษาเป็นไทย", "is-info");
+      LoveMatchLanguagePicker.open();
     }
 
     function closeMobileMenu() {
@@ -1303,7 +1533,7 @@
         event.stopPropagation();
         toggleMobileMenu();
       });
-      topbar.querySelectorAll(".nav button, .auth-nav button, .brand").forEach(function (element) {
+      topbar.querySelectorAll(".nav button, .auth-nav button, .auth-nav a, .brand").forEach(function (element) {
         element.addEventListener("click", function () {
           if (window.innerWidth <= 860) {
             closeMobileMenu();
@@ -1337,5 +1567,6 @@
 
     hydrateCurrentUser();
   </script>
+  <script src="assets/js/floating-contact.js"></script>
 </body>
 </html>

@@ -1,19 +1,53 @@
 <?php
 
 /**
- * Registration payment (Omise + bank transfer). Secrets via env or payments.local.php (gitignored).
+ * Payment gateway (Omise + bank transfer). ราคาแพ็กเกจมาจาก subscription_plans ไม่ใช่คีย์ในไฟล์นี้
  *
- * Env: OMISE_PUBLIC_KEY, OMISE_SECRET_KEY, REGISTRATION_FEE_THB
+ * Env: OMISE_PUBLIC_KEY, OMISE_SECRET_KEY
  */
 
 $config = [
-    'registration_fee_thb' => 199.0,
     'omise_public_key' => '',
     'omise_secret_key' => '',
+    /** @deprecated ใช้ bank_accounts แทน — คีย์นี้ยังส่งเป็นบัญชีแรกเพื่อความเข้ากันได้ */
     'bank_name' => 'ธนาคารกสิกรไทย',
-    'bank_account_name' => 'บจก. ไทยเลิฟแมตช์',
-    'bank_account_number' => '000-0-00000-0',
+    'bank_account_name' => 'ลิษา มณีโชคอมต',
+    'bank_account_number' => '1211933336',
     'transfer_reference_note' => 'ระบุอีเมลที่ใช้สมัครในช่องหมายเหตุการโอน',
+    /**
+     * บัญชีรับโอนสมัครแพ็กเกจเสียเงิน (แสดงทุกบัญชีในหน้าสมัคร)
+     * logo = path ภายใต้โฟลเดอร์โปรเจกต์ (เช่น assets/banks/kbank.svg)
+     */
+    'bank_accounts' => [
+        [
+            'code' => 'kbank',
+            'name_th' => 'ธนาคารกสิกรไทย',
+            'account_number' => '1211933336',
+            'logo' => 'assets/banks/kbank.svg',
+            'type' => 'bank',
+        ],
+        [
+            'code' => 'krungsri',
+            'name_th' => 'ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน)',
+            'account_number' => '777 1 699966',
+            'logo' => 'assets/banks/krungsri.svg',
+            'type' => 'bank',
+        ],
+        [
+            'code' => 'krungthai',
+            'name_th' => 'ธนาคารกรุงไทย จำกัด (มหาชน)',
+            'account_number' => '661 9 44166 1',
+            'logo' => 'assets/banks/krungthai.svg',
+            'type' => 'bank',
+        ],
+        [
+            'code' => 'promptpay',
+            'name_th' => 'พร้อมเพย์ (PromptPay)',
+            'account_number' => '0926516969',
+            'logo' => 'assets/banks/promptpay.png',
+            'type' => 'promptpay',
+        ],
+    ],
 ];
 
 $local = __DIR__ . '/payments.local.php';
@@ -38,9 +72,6 @@ if (($v = $envStr('OMISE_PUBLIC_KEY')) !== null) {
 }
 if (($v = $envStr('OMISE_SECRET_KEY')) !== null) {
     $config['omise_secret_key'] = $v;
-}
-if (($v = $envStr('REGISTRATION_FEE_THB')) !== null) {
-    $config['registration_fee_thb'] = (float) $v;
 }
 
 return $config;

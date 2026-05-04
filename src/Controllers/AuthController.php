@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Repositories\PaymentRepository;
+use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Support\OmiseClient;
 use App\Support\Request;
@@ -15,6 +16,7 @@ class AuthController
     public function __construct(
         private UserRepository $users,
         private PaymentRepository $payments,
+        private SubscriptionRepository $subscriptions,
         private array $paymentConfig,
         private PDO $pdo
     ) {
@@ -35,6 +37,8 @@ class AuthController
         $password = (string) ($payload['password'] ?? '');
         $gender = (string) ($payload['gender'] ?? '');
         $interestedIn = (string) ($payload['interested_in'] ?? '');
+        $planId = (int) ($payload['plan_id'] ?? 0);
+        $paymentMethod = trim((string) ($payload['payment_method'] ?? 'bank_transfer'));
 
         if ($firstName === '' || $lastName === '' || $email === '' || $password === '') {
             Response::json([
@@ -57,6 +61,29 @@ class AuthController
             ], 422);
         }
 
+        if ($planId <= 0) {
+            Response::json([
+                'success' => false,
+                'message' => 'กรุณาเลือกแพ็กเกจสมาชิก (plan_id)',
+            ], 422);
+        }
+
+        $plan = $this->subscriptions->findPlanById($planId);
+        if (!$plan) {
+            Response::json([
+                'success' => false,
+                'message' => 'ไม่พบแพ็กเกจที่เลือก',
+            ], 422);
+        }
+
+        $price = (float) $plan['price_thb'];
+        $planSummary = [
+            'id' => $planId,
+            'name' => (string) $plan['name_th'],
+            'tier' => (string) $plan['tier'],
+            'price_thb' => $price,
+        ];
+
         if ($this->users->findByEmail($email)) {
             Response::json([
                 'success' => false,
@@ -64,10 +91,7 @@ class AuthController
             ], 409);
         }
 
-        $fee = (float) ($this->paymentConfig['registration_fee_thb'] ?? 0);
-        $paymentMethod = trim((string) ($payload['payment_method'] ?? 'bank_transfer'));
-
-        if ($fee > 0) {
+        if ($price > 0) {
             if (!in_array($paymentMethod, ['bank_transfer', 'credit_card'], true)) {
                 Response::json([
                     'success' => false,
@@ -82,7 +106,7 @@ class AuthController
             }
         }
 
-        if ($fee <= 0) {
+        if ($price <= 0) {
             try {
                 $user = $this->users->create([
                     'first_name' => $firstName,
@@ -93,6 +117,7 @@ class AuthController
                     'gender' => $gender,
                     'interested_in' => $interestedIn,
                 ]);
+                $this->subscriptions->insertSubscriptionForNewUser((int) $user['id'], $planId, 'active');
             } catch (RuntimeException $exception) {
                 Response::json([
                     'success' => false,
@@ -101,11 +126,15 @@ class AuthController
             }
 
             $_SESSION['user_id'] = $user['id'];
+            $fresh = $this->users->findById((int) $user['id']);
 
             Response::json([
                 'success' => true,
-                'message' => 'สมัครสมาชิกสำเร็จ',
-                'data' => ['user' => $user],
+                'message' => 'สมัครสมาชิกแพ็กเกจ ' . $plan['name_th'] . ' สำเร็จ',
+                'data' => [
+                    'user' => $fresh,
+                    'selected_plan' => $planSummary,
+                ],
             ], 201);
         }
 
@@ -118,6 +147,7 @@ class AuthController
         }
 
         $userId = 0;
+        $subscriptionId = 0;
         $this->pdo->beginTransaction();
 
         try {
@@ -132,17 +162,20 @@ class AuthController
                 'status' => 'pending_verification',
             ]);
             $userId = (int) $user['id'];
+            $subscriptionId = $this->subscriptions->insertSubscriptionForNewUser($userId, $planId, 'pending');
 
             if ($paymentMethod === 'credit_card') {
                 $omise = new OmiseClient();
-                $satang = (int) round($fee * 100);
+                $satang = (int) round($price * 100);
                 $result = $omise->createCharge(
                     (string) $this->paymentConfig['omise_secret_key'],
                     $satang,
                     $omiseToken,
                     [
                         'email' => mb_strtolower($email),
-                        'purpose' => 'registration',
+                        'purpose' => 'subscription_signup',
+                        'plan_id' => (string) $planId,
+                        'plan_code' => (string) $plan['code'],
                     ]
                 );
 
@@ -154,19 +187,23 @@ class AuthController
                     ], 402);
                 }
 
-                $this->payments->createRegistrationPayment(
+                $this->payments->createSubscriptionPayment(
                     $userId,
+                    $subscriptionId,
                     'credit_card',
-                    $fee,
+                    $price,
                     $result['charge_id'] ?? null,
                     'paid'
                 );
+                $expiresAt = date('Y-m-d H:i:s', strtotime('+1 month'));
+                $this->subscriptions->updateSubscriptionStatus($subscriptionId, 'active', $expiresAt);
                 $this->users->updateStatus($userId, 'active');
             } else {
-                $this->payments->createRegistrationPayment(
+                $this->payments->createSubscriptionPayment(
                     $userId,
+                    $subscriptionId,
                     'bank_transfer',
-                    $fee,
+                    $price,
                     null,
                     'pending'
                 );
@@ -184,25 +221,65 @@ class AuthController
         $fresh = $this->users->findById($userId);
         $_SESSION['user_id'] = $userId;
 
-        $data = ['user' => $fresh];
+        $data = [
+            'user' => $fresh,
+            'selected_plan' => $planSummary,
+        ];
         if ($paymentMethod === 'bank_transfer') {
+            $banks = $this->normalizedBankAccountsForPayment();
+            $first = $banks[0] ?? null;
             $data['registration_payment'] = [
                 'status' => 'pending',
-                'amount_thb' => $fee,
-                'bank_name' => (string) ($this->paymentConfig['bank_name'] ?? ''),
+                'amount_thb' => $price,
+                'plan_name' => (string) $plan['name_th'],
                 'bank_account_name' => (string) ($this->paymentConfig['bank_account_name'] ?? ''),
-                'bank_account_number' => (string) ($this->paymentConfig['bank_account_number'] ?? ''),
                 'transfer_reference_note' => (string) ($this->paymentConfig['transfer_reference_note'] ?? ''),
+                'bank_accounts' => $banks,
+                'bank_name' => $first ? $first['name_th'] : (string) ($this->paymentConfig['bank_name'] ?? ''),
+                'bank_account_number' => $first ? $first['account_number'] : (string) ($this->paymentConfig['bank_account_number'] ?? ''),
             ];
         }
 
         Response::json([
             'success' => true,
             'message' => $paymentMethod === 'bank_transfer'
-                ? 'สมัครสมาชิกสำเร็จ กรุณาโอนค่าสมัครตามข้อมูลด้านล่าง'
-                : 'สมัครสมาชิกและชำระเงินสำเร็จ',
+                ? 'สมัครสมาชิกสำเร็จ กรุณาโอนค่าแพ็กเกจ ' . $plan['name_th'] . ' ตามข้อมูลด้านล่าง'
+                : 'สมัครสมาชิกและชำระค่าแพ็กเกจ ' . $plan['name_th'] . ' สำเร็จ',
             'data' => $data,
         ], 201);
+    }
+
+    /**
+     * @return list<array{code: string, name_th: string, account_number: string, logo: string, type: string}>
+     */
+    private function normalizedBankAccountsForPayment(): array
+    {
+        $cfg = $this->paymentConfig;
+        if (!empty($cfg['bank_accounts']) && is_array($cfg['bank_accounts'])) {
+            $out = [];
+            foreach ($cfg['bank_accounts'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $out[] = [
+                    'code' => (string) ($row['code'] ?? ''),
+                    'name_th' => (string) ($row['name_th'] ?? ''),
+                    'account_number' => (string) ($row['account_number'] ?? ''),
+                    'logo' => (string) ($row['logo'] ?? ''),
+                    'type' => (string) ($row['type'] ?? 'bank'),
+                ];
+            }
+
+            return $out;
+        }
+
+        return [[
+            'code' => 'default',
+            'name_th' => (string) ($cfg['bank_name'] ?? ''),
+            'account_number' => (string) ($cfg['bank_account_number'] ?? ''),
+            'logo' => '',
+            'type' => 'bank',
+        ]];
     }
 
     public function login(Request $request): void

@@ -7,6 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/brand-logo.css">
+  <link rel="stylesheet" href="assets/css/register-payment.css">
+  <link rel="stylesheet" href="assets/css/language-picker.css">
+  <link rel="stylesheet" href="assets/css/coins-badge.css">
+  <link rel="stylesheet" href="assets/css/floating-contact.css">
   <style>
     :root {
       --bg-left: #f9a0b0;
@@ -1119,10 +1125,14 @@
         <button class="pill pill-pink is-current" id="giftMenuButton" type="button"><svg><use href="#i-gift"></use></svg>Gifts</button>
         <button class="pill pill-cyan" id="chatMenuButton" type="button"><svg><use href="#i-chat"></use></svg>Chat</button>
         <button class="pill pill-blue" id="premiumMenuButton" type="button"><svg><use href="#i-crown"></use></svg>Premium</button>
-        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>Language</button>
+        <button class="pill pill-blue" id="languageMenuButton" type="button"><svg><use href="#i-globe"></use></svg>แปลภาษา</button>
       </nav>
 
       <div class="auth-nav">
+        <a class="pill pill-coin-balance" id="coinBalancePill" href="gifts.html" hidden title="เหรียญของคุณ">
+          <span class="coin-gl" aria-hidden="true"></span>
+          <span class="coin-balance-num" id="coinBalanceValue">0</span>
+        </a>
         <button class="pill pill-pink" id="loginMenuButton" type="button"><svg><use href="#i-login"></use></svg>เข้าสู่ระบบ</button>
         <button class="pill pill-blue" id="registerMenuButton" type="button"><svg><use href="#i-user"></use></svg>สมัครสมาชิก</button>
       </div>
@@ -1261,29 +1271,78 @@
         <div class="register-grid">
           <label class="auth-field">
             <span class="auth-label">เพศของคุณ</span>
-            <select class="field-select" id="registerGender">
-              <option value="">เลือกเพศ</option>
+            <select class="register-select" id="registerGender" name="gender" required>
+              <option value="" selected disabled>เลือกเพศ</option>
               <option value="male">ชาย</option>
               <option value="female">หญิง</option>
-              <option value="other">อื่น ๆ</option>
+              <option value="prefer_not_to_say">ไม่ระบุ</option>
             </select>
           </label>
           <label class="auth-field">
             <span class="auth-label">ต้องการพบ</span>
-            <select class="field-select" id="registerInterestedIn">
-              <option value="">เลือกเพศ</option>
+            <select class="register-select" id="registerInterestedIn" name="interested_in" required>
+              <option value="" selected disabled>เลือกเพศ</option>
               <option value="male">ชาย</option>
               <option value="female">หญิง</option>
               <option value="everyone">ทุกเพศ</option>
             </select>
           </label>
         </div>
+
+        <div class="register-payment-block" id="registerPaymentBlock">
+          <span class="auth-label">เลือกแพ็กเกจสมาชิก</span>
+          <p class="register-fee-hint" id="registerPlanSummary">กำลังโหลดแพ็กเกจ...</p>
+          <div class="register-plan-choices" id="registerPlanChoices" role="radiogroup" aria-label="แพ็กเกจสมาชิก"></div>
+          <div id="registerPayMethodSection" hidden>
+            <span class="auth-label">ชำระเงิน</span>
+            <div class="register-pay-methods" id="registerPayMethods">
+              <label class="register-pay-option">
+                <input type="radio" name="registerPaymentMethod" value="bank_transfer" checked>
+                <span>โอนเงินผ่านธนาคาร</span>
+              </label>
+              <label class="register-pay-option" id="registerPayCardOption">
+                <input type="radio" name="registerPaymentMethod" value="credit_card">
+                <span>บัตรเครดิต / เดบิต (Omise)</span>
+              </label>
+            </div>
+            <div class="register-bank-preview" id="registerBankPreview" hidden></div>
+            <div class="register-card-fields" id="registerCardFields" hidden>
+              <label class="auth-field">
+                <span class="auth-label">ชื่อบนบัตร</span>
+                <input class="auth-input" id="omiseCardName" type="text" placeholder="NAME ON CARD" autocomplete="cc-name">
+              </label>
+              <label class="auth-field">
+                <span class="auth-label">หมายเลขบัตร</span>
+                <input class="auth-input" id="omiseCardNumber" type="text" placeholder="4242424242424242" autocomplete="cc-number" inputmode="numeric">
+              </label>
+              <div class="register-grid">
+                <label class="auth-field">
+                  <span class="auth-label">เดือนหมดอายุ</span>
+                  <input class="auth-input" id="omiseExpMonth" type="text" placeholder="MM" maxlength="2" autocomplete="cc-exp-month" inputmode="numeric">
+                </label>
+                <label class="auth-field">
+                  <span class="auth-label">ปีหมดอายุ (ค.ศ.)</span>
+                  <input class="auth-input" id="omiseExpYear" type="text" placeholder="2029" maxlength="4" autocomplete="cc-exp-year" inputmode="numeric">
+                </label>
+              </div>
+              <label class="auth-field">
+                <span class="auth-label">รหัสหลังบัตร (CVV)</span>
+                <input class="auth-input" id="omiseSecurityCode" type="password" placeholder="123" autocomplete="cc-csc" maxlength="4" inputmode="numeric">
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div class="form-notice" id="registerNotice"></div>
         <button class="auth-submit" id="registerSubmitButton" type="submit"><svg><use href="#i-user"></use></svg>สมัครสมาชิก</button>
       </form>
     </div>
   </div>
 
+  <script src="https://cdn.omise.co/omise.js"></script>
+  <script src="assets/js/register-payment.js"></script>
+  <script src="assets/js/language-picker.js"></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=LoveMatchLanguagePicker.onTranslateReady"></script>
   <script>
     const appBasePath = window.location.pathname.replace(/\/gifts\.html$/, "").replace(/\/$/, "");
     const API_BASE = window.location.origin + (appBasePath || "") + "/api";
@@ -1338,7 +1397,6 @@
     let currentUser = null;
     let currentWallet = null;
     let selectedGift = null;
-    let currentLanguage = "th";
     let availableMatches = [];
 
     function openModal(modal) {
@@ -1416,6 +1474,21 @@
       window.location.href = ADMIN_PAGE_URL;
     }
 
+    function updateCoinPill() {
+      const pill = document.getElementById("coinBalancePill");
+      const val = document.getElementById("coinBalanceValue");
+      if (!pill || !val) {
+        return;
+      }
+      if (!currentUser) {
+        pill.hidden = true;
+        return;
+      }
+      const n = currentWallet ? Number(currentWallet.coin_balance || 0) : 0;
+      val.textContent = n.toLocaleString("th-TH");
+      pill.hidden = false;
+    }
+
     function updateAuthUI() {
       if (currentUser) {
         loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
@@ -1424,6 +1497,7 @@
         loginMenuButton.innerHTML = defaultLoginButtonHTML;
         registerMenuButton.innerHTML = defaultRegisterButtonHTML;
       }
+      updateCoinPill();
     }
 
     function updateWalletCard() {
@@ -1432,14 +1506,17 @@
         walletHint.textContent = "เข้าสู่ระบบเพื่อดูยอดเหรียญและส่งของขวัญ";
         walletActionButton.textContent = "เข้าสู่ระบบ";
         walletActionButton.className = "pill pill-pink";
+        giftSubmitButton.title = "";
+        updateCoinPill();
         return;
       }
 
-      walletBalance.innerHTML = Number(currentWallet.coin_balance || 0).toLocaleString("th-TH") + '<span>เหรียญ</span>';
+      walletBalance.innerHTML = '<span class="wallet-coin-gl" aria-hidden="true"></span>' + Number(currentWallet.coin_balance || 0).toLocaleString("th-TH") + '<span>เหรียญ</span>';
       walletHint.textContent = "ยอดเหรียญปัจจุบันของคุณพร้อมใช้งานสำหรับการส่งของขวัญ";
       walletActionButton.textContent = "กลับหน้าแพ็กเกจ";
       walletActionButton.className = "pill pill-gold";
       giftSubmitButton.title = "เหรียญคงเหลือ " + currentWallet.coin_balance;
+      updateCoinPill();
     }
 
     function updateContextCard() {
@@ -1704,39 +1781,46 @@
       }
     }
 
-    async function handleRegisterSubmit(event) {
-      event.preventDefault();
-      clearNotice(registerNotice);
-      registerSubmitButton.disabled = true;
+    async function loadRegistrationPaymentOptions() {
+      await RegisterPaymentUI.loadRegistrationPaymentOptions(apiFetch, appBasePath);
+    }
 
+    function closeRegisterModal() {
+      closeModal(registerModal);
+    }
+
+    async function openRegisterModal() {
       try {
-        const response = await apiFetch("/auth/register", {
-          method: "POST",
-          body: JSON.stringify({
-            first_name: document.getElementById("registerFirstName").value,
-            last_name: document.getElementById("registerLastName").value,
-            email: document.getElementById("registerEmail").value,
-            password: document.getElementById("registerPassword").value,
-            gender: document.getElementById("registerGender").value,
-            interested_in: document.getElementById("registerInterestedIn").value
-          })
-        });
-
-        currentUser = response.data.user;
-        updateAuthUI();
-        await hydrateWallet();
-        await hydrateMatches();
-        showNotice(registerNotice, response.message || "สมัครสมาชิกสำเร็จ", "success");
-        registerForm.reset();
-        setTimeout(function () {
-          closeModal(registerModal);
-          clearNotice(registerNotice);
-        }, 700);
+        await loadRegistrationPaymentOptions();
       } catch (error) {
-        showNotice(registerNotice, error.message, "error");
-      } finally {
-        registerSubmitButton.disabled = false;
+        console.error(error);
+        const summary = document.getElementById("registerPlanSummary");
+        if (summary) {
+          summary.textContent = "โหลดแพ็กเกจไม่สำเร็จ — ตรวจสอบการเชื่อมต่อ API";
+        }
       }
+      openModal(registerModal);
+    }
+
+    function handleRegisterSubmit(event) {
+      return RegisterPaymentUI.handleRegisterSubmit(event, {
+        apiFetch: apiFetch,
+        appBasePath: appBasePath,
+        registerForm: registerForm,
+        registerNotice: registerNotice,
+        registerSubmitButton: registerSubmitButton,
+        clearNotice: clearNotice,
+        showNotice: showNotice,
+        closeRegisterModal: closeRegisterModal,
+        onSuccess: async function (response) {
+          currentUser = response.data.user;
+          updateAuthUI();
+          await hydrateWallet();
+          await hydrateMatches();
+          updateWalletCard();
+          populateRecipientOptions();
+        }
+      });
     }
 
     async function handleRegisterButtonClick() {
@@ -1756,12 +1840,11 @@
         return;
       }
 
-      openModal(registerModal);
+      openRegisterModal();
     }
 
     function handleLanguageMenu() {
-      currentLanguage = currentLanguage === "th" ? "en" : "th";
-      showToast(currentLanguage === "en" ? "Language switched to English (UI translation pending)" : "เปลี่ยนภาษาเป็นไทย", "is-info");
+      LoveMatchLanguagePicker.open();
     }
 
     chatMenuButton.addEventListener("click", function () {
@@ -1807,7 +1890,7 @@
         event.stopPropagation();
         toggleMobileMenu();
       });
-      topbar.querySelectorAll(".nav button, .auth-nav button, .brand").forEach(function (element) {
+      topbar.querySelectorAll(".nav button, .auth-nav button, .auth-nav a, .brand").forEach(function (element) {
         element.addEventListener("click", function () {
           if (window.innerWidth <= 860) {
             closeMobileMenu();
@@ -1829,7 +1912,7 @@
       });
     }
     loginModalClose.addEventListener("click", function () { closeModal(loginModal); });
-    registerModalClose.addEventListener("click", function () { closeModal(registerModal); });
+    registerModalClose.addEventListener("click", closeRegisterModal);
     loginForm.addEventListener("submit", handleLoginSubmit);
     registerForm.addEventListener("submit", handleRegisterSubmit);
     loginModal.addEventListener("click", function (event) {
@@ -1857,5 +1940,6 @@
     hydrateCurrentUser();
     updateContextCard();
   </script>
+  <script src="assets/js/floating-contact.js"></script>
 </body>
 </html>

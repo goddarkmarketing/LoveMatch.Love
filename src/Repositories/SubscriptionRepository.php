@@ -166,4 +166,56 @@ class SubscriptionRepository
         );
         $statement->execute(['user_id' => $userId]);
     }
+
+    /**
+     * New signup: one subscription row (no cancel — user is new).
+     */
+    public function insertSubscriptionForNewUser(int $userId, int $planId, string $status): int
+    {
+        $plan = $this->findPlanById($planId);
+        if (!$plan) {
+            throw new RuntimeException('ไม่พบแพ็กเกจที่เลือก');
+        }
+
+        $startedAt = date('Y-m-d H:i:s');
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+1 month'));
+
+        $statement = $this->db->prepare(
+            'INSERT INTO subscriptions (
+                user_id, plan_id, started_at, expires_at, status, auto_renew, created_at, updated_at
+             ) VALUES (
+                :user_id, :plan_id, :started_at, :expires_at, :status, 0, NOW(), NOW()
+             )'
+        );
+        $statement->execute([
+            'user_id' => $userId,
+            'plan_id' => $planId,
+            'started_at' => $startedAt,
+            'expires_at' => $expiresAt,
+            'status' => $status,
+        ]);
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function updateSubscriptionStatus(int $subscriptionId, string $status, ?string $expiresAt = null): void
+    {
+        if ($expiresAt !== null) {
+            $statement = $this->db->prepare(
+                'UPDATE subscriptions SET status = :status, expires_at = :expires_at, updated_at = NOW() WHERE id = :id'
+            );
+            $statement->execute([
+                'status' => $status,
+                'expires_at' => $expiresAt,
+                'id' => $subscriptionId,
+            ]);
+
+            return;
+        }
+
+        $statement = $this->db->prepare(
+            'UPDATE subscriptions SET status = :status, updated_at = NOW() WHERE id = :id'
+        );
+        $statement->execute(['status' => $status, 'id' => $subscriptionId]);
+    }
 }

@@ -10,11 +10,11 @@
 
 - [db/migrations/001_payment_target_registration.sql](/C:/xampp/htdocs/rwmlouey/db/migrations/001_payment_target_registration.sql)
 
-## 0b. ชำระเงินตอนสมัคร (Omise + โอนธนาคาร)
-- ตั้งค่า: คัดลอก [config/payments.local.php.example](/C:/xampp/htdocs/rwmlouey/config/payments.local.php.example) เป็น `config/payments.local.php` แล้วใส่ **Public / Secret key** (test หรือ live) และข้อมูลบัญชีรับโอน
-- หรือใช้ environment: `OMISE_PUBLIC_KEY`, `OMISE_SECRET_KEY`, `REGISTRATION_FEE_THB`
+## 0b. ชำระเงินตอนสมัคร (เลือกแพ็กเกจ Free / Premium / VIP + Omise + โอนธนาคาร)
+- ยอดชำระตาม `price_thb` ใน `subscription_plans` (ดู [db/schema.sql](/C:/xampp/htdocs/rwmlouey/db/schema.sql))
+- ตั้งค่า Omise + บัญชีรับโอน: คัดลอก [config/payments.local.php.example](/C:/xampp/htdocs/rwmlouey/config/payments.local.php.example) เป็น `config/payments.local.php`
+- หรือใช้ environment: `OMISE_PUBLIC_KEY`, `OMISE_SECRET_KEY`
 - **อย่า commit** `payments.local.php` — มีใน `.gitignore` แล้ว
-- ค่าสมัครเริ่มต้น ฿199 — ตั้ง `registration_fee_thb` เป็น `0` ใน local ได้ถ้าต้องการข้ามการชำระระหว่างพัฒนา
 
 ## 1. สร้างฐานข้อมูล
 เปิด `phpMyAdmin` หรือ MySQL client แล้ว import ไฟล์นี้:

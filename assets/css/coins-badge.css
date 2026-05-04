@@ -1,0 +1,71 @@
+/* Gold coin balance pill in topbar */
+
+/* `display: inline-flex` must not override the HTML hidden attribute */
+.pill-coin-balance[hidden] {
+  display: none !important;
+}
+
+.pill-coin-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 0 12px;
+  min-height: 48px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 168, 75, 0.85);
+  background: linear-gradient(135deg, #ffe082 0%, #ffb300 38%, #f57f17 100%);
+  color: #3e2723;
+  font-weight: 800;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(245, 127, 23, 0.28);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pill-coin-balance:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 12px 28px rgba(245, 127, 23, 0.34);
+}
+
+.pill-coin-balance .coin-gl {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 32% 28%, #fffde7 0%, #ffecb3 35%, #ffc107 62%, #ff8f00 92%);
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 255, 255, 0.65),
+    inset -3px -4px 6px rgba(183, 77, 0, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 213, 79, 0.9);
+}
+
+.pill-coin-balance .coin-balance-num {
+  letter-spacing: 0.02em;
+}
+
+.wallet-card .wallet-amount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-coin-gl {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 32% 28%, #fffde7 0%, #ffecb3 35%, #ffc107 62%, #ff8f00 92%);
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 255, 255, 0.65),
+    inset -3px -4px 6px rgba(183, 77, 0, 0.35);
+  border: 1px solid rgba(255, 213, 79, 0.9);
+}
+
+.wallet-card .wallet-amount span {
+  font-size: 0.55em;
+  font-weight: 700;
+  opacity: 0.9;
+  margin-left: 4px;
+}

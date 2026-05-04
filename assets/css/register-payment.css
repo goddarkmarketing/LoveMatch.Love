@@ -1,0 +1,202 @@
+/* Shared: register plan + bank transfer UI (index, chat, gifts, premium) */
+
+.register-payment-block {
+  margin-top: 8px;
+  padding: 16px 0 4px;
+  border-top: 1px solid rgba(216, 196, 206, 0.65);
+}
+
+.register-payment-block .auth-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.register-fee-hint {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #d5537c;
+  line-height: 1.45;
+}
+
+.register-pay-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.register-pay-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3a2a32;
+}
+
+.register-pay-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: #eb5b89;
+}
+
+.register-bank-preview {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #506070;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 248, 252, 0.95);
+  border: 1px solid rgba(232, 200, 216, 0.85);
+  margin-bottom: 8px;
+}
+
+.register-bank-preview-note {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(200, 180, 195, 0.9);
+  font-size: 13px;
+  color: #5a6570;
+}
+
+.register-bank-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-bank-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(220, 200, 212, 0.75);
+}
+
+.register-bank-logo-wrap {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(216, 206, 214, 0.85);
+}
+
+.register-bank-logo {
+  max-width: 46px;
+  max-height: 46px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.register-bank-row.is-tall-logo .register-bank-logo {
+  max-height: 40px;
+  max-width: 36px;
+}
+
+.register-bank-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.register-bank-meta strong {
+  display: block;
+  font-size: 15px;
+  color: #2e2230;
+  margin-bottom: 4px;
+}
+
+.register-bank-account {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a4a6e;
+  word-break: break-all;
+}
+
+.register-card-fields {
+  margin-top: 8px;
+}
+
+.register-plan-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.register-plan-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(216, 196, 206, 0.95);
+  background: rgba(255, 255, 255, 0.72);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.register-plan-choice:has(input:checked) {
+  border-color: #eb5b89;
+  box-shadow: 0 6px 18px rgba(235, 91, 137, 0.14);
+}
+
+.register-plan-choice input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: #eb5b89;
+  flex-shrink: 0;
+}
+
+.register-plan-choice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.35;
+}
+
+.register-plan-choice-body strong {
+  font-size: 17px;
+  color: #2e2230;
+}
+
+.register-plan-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #d5537c;
+}
+
+#registerPayMethodSection .auth-label {
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.register-select {
+  width: 100%;
+  height: 62px;
+  border-radius: 14px;
+  border: 1px solid #d8dfea;
+  padding: 0 18px;
+  font-family: inherit;
+  font-size: 18px;
+  color: #111;
+  outline: none;
+  background: #fff;
+}
+
+.auth-modal:has(.register-payment-block),
+.register-modal:has(.register-payment-block) {
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+}
