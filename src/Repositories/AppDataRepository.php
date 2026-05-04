@@ -41,11 +41,31 @@ class AppDataRepository
              ORDER BY coin_cost ASC'
         );
 
-        return $statement->fetchAll();
+        return $statement->fetchAll(        );
+    }
+
+    private function ensureDefaultSubscriptionPlans(): void
+    {
+        $this->db->exec(
+            'INSERT INTO subscription_plans (code, name_th, tier, billing_cycle, price_thb, coin_bonus, feature_json, is_active) VALUES
+                ("free_monthly", "Free", "free", "monthly", 0.00, 50, JSON_OBJECT("likes_per_day", 10, "private_chat", false), 1),
+                ("premium_monthly", "Premium", "premium", "monthly", 499.00, 0, JSON_OBJECT("likes_per_day", -1, "private_chat", true, "see_who_likes_you", true), 1),
+                ("vip_monthly", "VIP", "vip", "monthly", 1999.00, 0, JSON_OBJECT("likes_per_day", -1, "private_chat", true, "priority_protection", true, "boost_profile", true), 1)
+             ON DUPLICATE KEY UPDATE
+                name_th = VALUES(name_th),
+                tier = VALUES(tier),
+                billing_cycle = VALUES(billing_cycle),
+                price_thb = VALUES(price_thb),
+                coin_bonus = VALUES(coin_bonus),
+                feature_json = VALUES(feature_json),
+                is_active = VALUES(is_active)'
+        );
     }
 
     public function subscriptionPlans(): array
     {
+        $this->ensureDefaultSubscriptionPlans();
+
         $statement = $this->db->query(
             'SELECT id, code, name_th, tier, billing_cycle, price_thb, coin_bonus, feature_json
              FROM subscription_plans
