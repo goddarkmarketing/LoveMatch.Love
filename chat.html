@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ถ้า API ไม่อยู่ที่โฟลเดอร์เดียวกับเว็บ: <meta name="lovematch-api-base" content="https://api.example.com"> -->
   <title>LoveMatch Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1529,8 +1530,9 @@
   <script src="assets/js/language-picker.js"></script>
   <script src="https://translate.google.com/translate_a/element.js?cb=LoveMatchLanguagePicker.onTranslateReady"></script>
   <script>
-    const appBasePath = window.location.pathname.replace(/\/chat\.html$/, "").replace(/\/$/, "");
-    const API_BASE = window.location.origin + (appBasePath || "") + "/api";
+    const appBasePath = LoveMatchApiConfig.appBasePath(window.location.pathname, "chat.html");
+    const API_BASE = LoveMatchApiConfig.apiBase(window.location.pathname, "chat.html");
+    const apiFetch = LoveMatchApiConfig.createApiFetch(API_BASE);
     const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
     const GIFTS_PAGE_URL = window.location.origin + (appBasePath || "") + "/gifts.html";
     const CHAT_PAGE_URL = window.location.origin + (appBasePath || "") + "/chat.html";
@@ -1713,24 +1715,6 @@
 
     function saveMutedRooms() {
       window.localStorage.setItem(getMuteStorageKey(), JSON.stringify(mutedRoomIds));
-    }
-
-    async function apiFetch(path, options) {
-      const response = await fetch(API_BASE + path, {
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        ...options
-      });
-
-      const data = await response.json().catch(function () {
-        return { success: false, message: "Invalid server response" };
-      });
-
-      if (!response.ok) {
-        throw new Error(data.message || "Request failed");
-      }
-
-      return data;
     }
 
     function redirectToAdminDashboard() {
@@ -2397,7 +2381,10 @@
         console.error(error);
         const summary = document.getElementById("registerPlanSummary");
         if (summary) {
-          summary.textContent = "โหลดแพ็กเกจไม่สำเร็จ — ตรวจสอบการเชื่อมต่อ API";
+          const detail = error && error.message ? String(error.message) : "";
+          summary.textContent = detail
+            ? "โหลดแพ็กเกจไม่สำเร็จ — " + detail
+            : "โหลดแพ็กเกจไม่สำเร็จ — ตรวจสอบการเชื่อมต่อ API";
         }
       }
       openModal(registerModal);

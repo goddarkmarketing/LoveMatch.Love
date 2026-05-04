@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ถ้า API ไม่อยู่ที่โฟลเดอร์เดียวกับเว็บ: <meta name="lovematch-api-base" content="https://api.example.com"> -->
   <title>LoveMatch Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -660,9 +661,11 @@
     </main>
   </div>
 
+  <script src="assets/js/api-config.js"></script>
   <script>
-    const appBasePath = window.location.pathname.replace(/\/admin\.html$/, "").replace(/\/$/, "");
-    const API_BASE = window.location.origin + (appBasePath || "") + "/api";
+    const appBasePath = LoveMatchApiConfig.appBasePath(window.location.pathname, "admin.html");
+    const API_BASE = LoveMatchApiConfig.apiBase(window.location.pathname, "admin.html");
+    const apiFetch = LoveMatchApiConfig.createApiFetch(API_BASE);
     const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
 
     const profileName = document.getElementById("adminProfileName");
@@ -688,26 +691,6 @@
     let currentUser = null;
     let adminDashboard = null;
     let currentSection = "overview";
-
-    async function apiFetch(path, options) {
-      const response = await fetch(API_BASE + path, {
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        ...options
-      });
-
-      const data = await response.json().catch(function () {
-        return { success: false, message: "Invalid server response" };
-      });
-
-      if (!response.ok) {
-        throw new Error(data.message || "Request failed");
-      }
-
-      return data;
-    }
 
     function showNotice(message, type) {
       notice.textContent = message;

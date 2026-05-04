@@ -13,13 +13,23 @@ class Request
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
-        $scriptName = dirname($_SERVER['SCRIPT_NAME'] ?? '') ?: '';
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '') ?: '';
 
-        if ($scriptName !== '/' && str_starts_with($path, $scriptName)) {
-            $path = substr($path, strlen($scriptName));
+        if ($scriptDir !== '/' && $scriptDir !== '' && str_starts_with($path, $scriptDir)) {
+            $path = substr($path, strlen($scriptDir));
         }
 
-        return '/' . ltrim($path, '/');
+        $path = '/' . ltrim($path, '/');
+
+        // nginx / some PHP-FPM setups leave an extra /api segment in the path
+        if (str_starts_with($path, '/api/')) {
+            $path = substr($path, strlen('/api'));
+            $path = '/' . ltrim($path, '/');
+        } elseif ($path === '/api') {
+            $path = '/';
+        }
+
+        return $path;
     }
 
     public function json(): array
