@@ -3104,8 +3104,8 @@
         <div class="register-grid">
           <label class="auth-field">
             <span class="auth-label">เพศของคุณ</span>
-            <select class="register-select" id="registerGender">
-              <option selected disabled>เลือกเพศ</option>
+            <select class="register-select" id="registerGender" name="gender" required>
+              <option value="" selected disabled>เลือกเพศ</option>
               <option value="male">ชาย</option>
               <option value="female">หญิง</option>
               <option value="prefer_not_to_say">ไม่ระบุ</option>
@@ -3114,8 +3114,8 @@
 
           <label class="auth-field">
             <span class="auth-label">ต้องการพบ</span>
-            <select class="register-select" id="registerInterestedIn">
-              <option selected disabled>เลือกเพศ</option>
+            <select class="register-select" id="registerInterestedIn" name="interested_in" required>
+              <option value="" selected disabled>เลือกเพศ</option>
               <option value="male">ชาย</option>
               <option value="female">หญิง</option>
               <option value="everyone">ทุกเพศ</option>
@@ -4140,6 +4140,11 @@
     async function handleRegisterSubmit(event) {
       event.preventDefault();
       clearNotice(registerNotice);
+      if (!registerForm.checkValidity()) {
+        registerForm.reportValidity();
+        return;
+      }
+
       registerSubmitButton.disabled = true;
 
       try {
