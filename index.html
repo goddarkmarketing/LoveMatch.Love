@@ -2057,164 +2057,64 @@
     .match-action-btn.is-gift { background: linear-gradient(90deg, #49a4f1 0%, #17d2dd 100%); }
     .match-action-btn.is-later { background: linear-gradient(90deg, #767d8e 0%, #676f82 100%); }
 
-    .cupid-modal {
-      width: min(100%, 400px);
-      margin: auto 0;
-      position: relative;
-      border-radius: 32px;
-      padding: 28px 24px 26px;
-      overflow: hidden;
-      background: linear-gradient(165deg, #ffe0ec 0%, #ffc8dc 42%, #f8b4d4 100%);
-      box-shadow: 0 28px 56px rgba(180, 60, 110, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.55);
-    }
-
-    .cupid-modal .cupid-modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 2;
-      color: #8a3d5c;
-      background: rgba(255, 255, 255, 0.55);
-    }
-
-    .cupid-modal-bg {
-      pointer-events: none;
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-
-    .cupid-float-heart {
-      position: absolute;
-      font-size: 22px;
-      line-height: 1;
-      opacity: 0.85;
-      animation: cupidHeartFloat 4.2s ease-in-out infinite;
-    }
-
-    .cupid-float-heart:nth-child(1) { left: 8%; top: 18%; animation-delay: 0s; }
-    .cupid-float-heart:nth-child(2) { right: 10%; top: 12%; animation-delay: 0.6s; font-size: 18px; }
-    .cupid-float-heart:nth-child(3) { left: 14%; bottom: 22%; animation-delay: 1.1s; font-size: 26px; }
-    .cupid-float-heart:nth-child(4) { right: 8%; bottom: 16%; animation-delay: 1.8s; }
-    .cupid-float-heart:nth-child(5) { left: 42%; top: 6%; animation-delay: 0.3s; font-size: 16px; }
-
-    .cupid-modal-inner {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-    }
-
-    .cupid-kicker {
-      margin: 0 0 8px;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: #d5537c;
-    }
-
-    .cupid-emoji-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px 14px;
-      margin: 6px 0 14px;
-      flex-wrap: wrap;
-    }
-
-    .cupid-emoji {
-      font-size: clamp(52px, 14vw, 76px);
-      line-height: 1;
-      display: inline-block;
-      filter: drop-shadow(0 6px 12px rgba(210, 80, 120, 0.25));
-      animation: cupidEmojiBob 2.4s ease-in-out infinite;
-    }
-
-    .cupid-emoji-dance {
-      animation-delay: 0.35s;
-    }
-
-    .cupid-message {
-      margin: 0 0 18px;
-      font-size: 17px;
-      line-height: 1.55;
-      font-weight: 600;
-      color: #4a3042;
-      padding: 0 6px;
-    }
-
-    .cupid-pulse-hearts {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      margin-bottom: 18px;
-      color: #ff5a96;
-    }
-
-    .cupid-pulse-line {
-      font-size: 22px;
-      line-height: 1;
-      opacity: 0.75;
-      animation: cupidPulseLine 1.2s ease-in-out infinite;
-    }
-
-    .cupid-pulse-line:last-child {
-      animation-delay: 0.15s;
-    }
-
-    .cupid-pulse-core {
-      font-size: 40px;
-      line-height: 1;
-      animation: cupidHeartPulse 1.1s ease-in-out infinite;
-    }
-
-    .cupid-dismiss {
-      width: 100%;
-      max-width: 280px;
-      margin: 0 auto;
-      height: 48px;
-      border: 0;
+    .hero h1.hero-title-tappable {
       cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    @keyframes cupidHeartFloat {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.65;
+    .cupid-float-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 160;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .cupid-float-overlay.is-active {
+      visibility: visible;
+    }
+
+    .cupid-float-pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.06em;
+      font-size: clamp(52px, 18vmin, 104px);
+      line-height: 1;
+      filter: drop-shadow(0 10px 28px rgba(190, 70, 120, 0.38));
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .cupid-float-overlay.is-active .cupid-float-pair {
+      animation: cupidFloatSweep 2.85s cubic-bezier(0.42, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes cupidFloatSweep {
+      0% {
+        opacity: 0;
+        transform: translateX(-42vw);
       }
-      50% {
-        transform: translateY(-14px) scale(1.08);
+      10% {
         opacity: 1;
       }
-    }
-
-    @keyframes cupidEmojiBob {
-      0%, 100% {
-        transform: translateY(0) rotate(-2deg);
+      32% {
+        transform: translateX(38vw);
       }
-      50% {
-        transform: translateY(-10px) rotate(3deg);
+      56% {
+        transform: translateX(-30vw);
       }
-    }
-
-    @keyframes cupidHeartPulse {
-      0%, 100% {
-        transform: scale(1);
+      78% {
+        opacity: 1;
+        transform: translateX(22vw);
       }
-      50% {
-        transform: scale(1.12);
-      }
-    }
-
-    @keyframes cupidPulseLine {
-      0%, 100% {
-        transform: scaleX(1);
-        opacity: 0.5;
-      }
-      50% {
-        transform: scaleX(1.15);
-        opacity: 0.95;
+      100% {
+        opacity: 0;
+        transform: translateX(0);
       }
     }
 
@@ -2594,7 +2494,7 @@
 
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" id="brandLogoLink" href="#" aria-label="LoveMatch.Love — คิวปิดทักทาย">
+      <a class="brand" id="brandLogoLink" href="#" aria-label="LoveMatch.Love — แอนิเมชันไอคอน">
         <svg class="brand-icon" aria-hidden="true"><use href="#i-heart"></use></svg>
         <span class="brand-name">LoveMatch.Love</span>
       </a>
@@ -2618,7 +2518,7 @@
     <main class="main">
       <div class="container">
         <section class="hero">
-          <h1>ค้นหาความรักแท้ได้ที่นี่</h1>
+          <h1 class="hero-title-tappable" id="heroMatchTitle" title="คิวปิดทักทาย" tabindex="0">ค้นหาความรักแท้ได้ที่นี่</h1>
           <p>เว็บไซต์หาคู่ที่ทันสมัยที่สุด พร้อมระบบแมทช์ AI, ป้องกันสแกม และแปลภาษา 100+ ภาษา</p>
           <div class="cta-wrap">
             <button class="cta" id="heroCtaButton" type="button"><svg><use href="#i-heart"></use></svg>เริ่มหาคู่เลย!</button>
@@ -3149,30 +3049,10 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="cupidModal" aria-hidden="true">
-    <div class="cupid-modal" role="dialog" aria-modal="true" aria-labelledby="cupidModalTitle">
-      <button class="modal-close cupid-modal-close" id="cupidModalClose" type="button" aria-label="ปิด">×</button>
-      <div class="cupid-modal-bg" aria-hidden="true">
-        <span class="cupid-float-heart">💕</span>
-        <span class="cupid-float-heart">💖</span>
-        <span class="cupid-float-heart">💗</span>
-        <span class="cupid-float-heart">💝</span>
-        <span class="cupid-float-heart">✨</span>
-      </div>
-      <div class="cupid-modal-inner">
-        <p class="cupid-kicker" id="cupidModalTitle">LoveMatch.Love</p>
-        <div class="cupid-emoji-row" aria-hidden="true">
-          <span class="cupid-emoji cupid-emoji-angel">👼</span>
-          <span class="cupid-emoji cupid-emoji-dance">💃</span>
-        </div>
-        <p class="cupid-message">คิวปิดมอบความรักให้คุณแล้วนะ! ขอให้เจอคนที่ใจตรงกัน 💘</p>
-        <div class="cupid-pulse-hearts" aria-hidden="true">
-          <span class="cupid-pulse-line">〰</span>
-          <span class="cupid-pulse-core">💗</span>
-          <span class="cupid-pulse-line">〰</span>
-        </div>
-        <button type="button" class="cupid-dismiss pill pill-pink" id="cupidModalOk">เก็บความรักไว้</button>
-      </div>
+  <div class="cupid-float-overlay" id="cupidFloatOverlay" aria-hidden="true">
+    <div class="cupid-float-pair" id="cupidFloatPair">
+      <span class="cupid-float-emoji" aria-hidden="true">👼</span>
+      <span class="cupid-float-emoji" aria-hidden="true">💃</span>
     </div>
   </div>
 
@@ -3231,9 +3111,9 @@
     const planCards = Array.from(document.querySelectorAll(".price-card"));
     const topbar = document.querySelector(".topbar");
     const brandLogoLink = document.getElementById("brandLogoLink");
-    const cupidModal = document.getElementById("cupidModal");
-    const cupidModalClose = document.getElementById("cupidModalClose");
-    const cupidModalOk = document.getElementById("cupidModalOk");
+    const cupidFloatOverlay = document.getElementById("cupidFloatOverlay");
+    const cupidFloatPair = document.getElementById("cupidFloatPair");
+    const heroMatchTitle = document.getElementById("heroMatchTitle");
     const loginMenuButton = document.getElementById("loginMenuButton");
     const mobileMenuToggle = document.getElementById("mobileMenuToggle");
     const loginModal = document.getElementById("loginModal");
@@ -3309,7 +3189,7 @@
     function closeModal(modal) {
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
-      if (!giftModal.classList.contains("is-open") && !adminModal.classList.contains("is-open") && !chatModal.classList.contains("is-open") && !premiumModal.classList.contains("is-open") && !loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open") && !matchModal.classList.contains("is-open") && !cupidModal.classList.contains("is-open")) {
+      if (!giftModal.classList.contains("is-open") && !adminModal.classList.contains("is-open") && !chatModal.classList.contains("is-open") && !premiumModal.classList.contains("is-open") && !loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open") && !matchModal.classList.contains("is-open")) {
         document.body.classList.remove("modal-open");
       }
     }
@@ -3390,12 +3270,28 @@
       closeModal(matchModal);
     }
 
-    function openCupidModal() {
-      openModal(cupidModal);
-    }
-
-    function closeCupidModal() {
-      closeModal(cupidModal);
+    let cupidFloatTimer = null;
+    function playCupidIconFloat() {
+      if (!cupidFloatOverlay || !cupidFloatPair) {
+        return;
+      }
+      if (cupidFloatOverlay.classList.contains("is-active")) {
+        return;
+      }
+      cupidFloatOverlay.classList.remove("is-active");
+      void cupidFloatPair.offsetWidth;
+      cupidFloatOverlay.setAttribute("aria-hidden", "false");
+      cupidFloatOverlay.classList.add("is-active");
+      window.clearTimeout(cupidFloatTimer);
+      const finish = function () {
+        window.clearTimeout(cupidFloatTimer);
+        cupidFloatTimer = null;
+        cupidFloatPair.removeEventListener("animationend", finish);
+        cupidFloatOverlay.classList.remove("is-active");
+        cupidFloatOverlay.setAttribute("aria-hidden", "true");
+      };
+      cupidFloatPair.addEventListener("animationend", finish);
+      cupidFloatTimer = window.setTimeout(finish, 3000);
     }
 
     function openMatchModal(profile) {
@@ -4739,26 +4635,23 @@
     if (brandLogoLink) {
       brandLogoLink.addEventListener("click", function (event) {
         event.preventDefault();
-        openCupidModal();
+        playCupidIconFloat();
       });
     }
-    if (cupidModalClose) {
-      cupidModalClose.addEventListener("click", closeCupidModal);
+    if (heroMatchTitle) {
+      heroMatchTitle.addEventListener("click", function () {
+        playCupidIconFloat();
+      });
+      heroMatchTitle.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          playCupidIconFloat();
+        }
+      });
     }
-    if (cupidModalOk) {
-      cupidModalOk.addEventListener("click", closeCupidModal);
-    }
-    cupidModal.addEventListener("click", function (event) {
-      if (event.target === cupidModal) {
-        closeCupidModal();
-      }
-    });
 
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
-        if (cupidModal.classList.contains("is-open")) {
-          closeCupidModal();
-        }
         if (giftModal.classList.contains("is-open")) {
           closeGiftModal();
         }
