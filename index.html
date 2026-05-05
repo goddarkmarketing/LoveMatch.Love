@@ -4545,7 +4545,9 @@
     loginForm.addEventListener("submit", handleLoginSubmit);
     registerForm.addEventListener("submit", handleRegisterSubmit);
     document.querySelectorAll('input[name="registerPaymentMethod"]').forEach(function (radio) {
-      radio.addEventListener("change", syncRegisterPayMethodUI);
+      radio.addEventListener("change", function () {
+        RegisterPaymentUI.syncRegisterPayMethodUI();
+      });
     });
     giftSubmitButton.addEventListener("click", handleGiftSend);
     premiumCheckoutButton.addEventListener("click", handlePremiumCheckout);
