@@ -3203,9 +3203,9 @@
     const loginSubmitButton = document.getElementById("loginSubmitButton");
     const registerSubmitButton = document.getElementById("registerSubmitButton");
 
-    const defaultLoginButtonHTML = loginMenuButton.innerHTML;
-    const defaultRegisterButtonHTML = registerMenuButton.innerHTML;
-    const defaultChatBodyHTML = chatBody.innerHTML;
+    const defaultLoginButtonHTML = loginMenuButton ? loginMenuButton.innerHTML : "";
+    const defaultRegisterButtonHTML = registerMenuButton ? registerMenuButton.innerHTML : "";
+    const defaultChatBodyHTML = chatBody ? chatBody.innerHTML : "";
 
     let currentUser = null;
     let currentWallet = null;
@@ -3437,12 +3437,14 @@
     }
 
     function updateAuthUI() {
-      if (currentUser) {
-        loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
-        registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
-      } else {
-        loginMenuButton.innerHTML = defaultLoginButtonHTML;
-        registerMenuButton.innerHTML = defaultRegisterButtonHTML;
+      if (loginMenuButton && registerMenuButton) {
+        if (currentUser) {
+          loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
+          registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
+        } else {
+          loginMenuButton.innerHTML = defaultLoginButtonHTML;
+          registerMenuButton.innerHTML = defaultRegisterButtonHTML;
+        }
       }
       updateCoinPill();
     }
@@ -4409,27 +4411,8 @@
       runDiscoverRevealLoading();
     }
 
-    function handleAdminMenu() {
-      showToast("ระบบหลังบ้าน Admin จะเชื่อมต่อในรอบถัดไป", "is-info");
-    }
-
     function handleLanguageMenu() {
       LoveMatchLanguagePicker.open();
-    }
-
-    function handleFreePlanSelection() {
-      document.querySelectorAll(".price-card").forEach(function (card) {
-        card.classList.toggle("is-selected", card.dataset.planTier === "free");
-      });
-      showToast(currentUser ? "บัญชีของคุณใช้งานแพ็กเกจ Free ได้อยู่แล้ว" : "สมัครสมาชิกหรือเข้าสู่ระบบเพื่อเริ่มใช้งานแพ็กเกจ Free", "is-info");
-      if (!currentUser) {
-        openRegisterModal();
-      }
-    }
-
-    function handlePaidPlanSelection(tier) {
-      setSelectedPlanByTier(tier);
-      openModal(premiumModal);
     }
 
     function handleAdminMenu() {
