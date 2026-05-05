@@ -1525,6 +1525,7 @@
     </div>
   </div>
 
+  <script src="assets/js/api-config.js"></script>
   <script src="https://cdn.omise.co/omise.js"></script>
   <script src="assets/js/register-payment.js"></script>
   <script src="assets/js/language-picker.js"></script>
@@ -1581,8 +1582,8 @@
     const mobileProfileButton = document.getElementById("mobileProfileButton");
     const mobileBackToChatButton = document.getElementById("mobileBackToChatButton");
 
-    const defaultLoginButtonHTML = loginMenuButton.innerHTML;
-    const defaultRegisterButtonHTML = registerMenuButton.innerHTML;
+    const defaultLoginButtonHTML = loginMenuButton ? loginMenuButton.innerHTML : "";
+    const defaultRegisterButtonHTML = registerMenuButton ? registerMenuButton.innerHTML : "";
     const requestedRoomId = Number(params.get("room_id") || 0);
     const requestedTargetUserId = Number(params.get("target_user_id") || 0);
     const requestedTargetName = params.get("target_name") || "";
@@ -1749,12 +1750,14 @@
     }
 
     function updateAuthUI() {
-      if (currentUser) {
-        loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
-        registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
-      } else {
-        loginMenuButton.innerHTML = defaultLoginButtonHTML;
-        registerMenuButton.innerHTML = defaultRegisterButtonHTML;
+      if (loginMenuButton && registerMenuButton) {
+        if (currentUser) {
+          loginMenuButton.innerHTML = '<svg><use href="#i-user"></use></svg>' + currentUser.display_name;
+          registerMenuButton.innerHTML = '<svg><use href="#i-login"></use></svg>ออกจากระบบ';
+        } else {
+          loginMenuButton.innerHTML = defaultLoginButtonHTML;
+          registerMenuButton.innerHTML = defaultRegisterButtonHTML;
+        }
       }
       updateCoinPill();
     }
