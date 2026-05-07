@@ -85,20 +85,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #eb5b89;
-      min-width: 240px;
-    }
-
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      fill: currentColor;
-    }
-
-    .brand-name {
-      font-size: 24px;
-      font-weight: 600;
-      line-height: 1;
+      min-width: 0;
     }
 
     .nav, .auth-nav {
@@ -1305,7 +1292,7 @@
   <div class="page-shell">
     <header class="topbar">
       <a class="brand" href="./">
-        <svg class="brand-icon"><use href="#i-heart"></use></svg>
+        <img class="brand-mark" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async">
         <span class="brand-name">LoveMatch.Love</span>
       </a>
       <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">

@@ -38,7 +38,7 @@
 ## 2. ทดสอบ API
 เมื่อ Apache ทำงานแล้ว ใช้ URL เหล่านี้ได้:
 
-- `GET /rwmlouey/api/health`
+- `GET /rwmlouey/api/health` (ไม่ต้องมี MySQL — ใช้ตรวจว่า PHP รันได้)
 - `POST /rwmlouey/api/auth/register`
 - `POST /rwmlouey/api/auth/login`
 - `POST /rwmlouey/api/auth/logout`
@@ -76,6 +76,22 @@ Content-Type: application/json
   "password": "123456"
 }
 ```
+
+### ทดสอบอัตโนมัติ (PHPUnit)
+โปรเจกต์มีชุดทดสอบหน้า HTML (สัญญาไฟล์) และ API (ต้องมีเซิร์ฟเวอร์ + MySQL สำหรับเทสที่ไม่ใช่ health)
+
+1. ติดตั้ง dependencies: `php composer.phar install` (หรือ `composer install`)
+2. เปิดเซิร์ฟเวอร์แบบ router (แนะนำเมื่อไม่ใช้ Apache):
+
+   `php -S 127.0.0.1:8888 server-router.php`
+
+3. รันจากโฟลเดอร์โปรเจกต์:
+
+   - ทุกเทส: `vendor\bin\phpunit`
+   - หน้าเว็บ + smoke `/health`: `vendor\bin\phpunit tests/Frontend tests/Smoke` (หรือ `composer test:frontend`)
+   - API (ต้องมี DB + seed): `vendor\bin\phpunit tests/Feature` (หรือ `composer test:api`; ถ้า MySQL ไม่เปิดจะ **skip**)
+
+ถ้า API อยู่ใต้ Apache ให้ตั้งค่า: `set LOVEMATCH_TEST_BASE_URL=http://localhost/rwmlouey/api` แล้วรัน PHPUnit
 
 ## 3. โครงสร้างไฟล์
 - [api/index.php](/C:/xampp/htdocs/rwmlouey/api/index.php): router หลัก

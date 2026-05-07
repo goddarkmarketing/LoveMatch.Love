@@ -1,5 +1,7 @@
 chat.html.bak-encoding-fix
 tmp-chat-check.js
 vendor/
+composer.phar
+.phpunit.cache/
 config/database.local.php
 config/payments.local.php

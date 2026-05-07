@@ -75,6 +75,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
 
 $request = new Request();
 
+// Liveness probe: no database (load balancers / CI / php -S smoke test).
+if ($request->method() === 'GET' && $request->path() === '/health') {
+    Response::json([
+        'success' => true,
+        'message' => 'API is running',
+    ]);
+}
+
 try {
     $db = Database::connection();
     $paymentConfig = require dirname(__DIR__) . '/config/payments.php';
@@ -86,13 +94,15 @@ try {
         $db
     );
     $appDataController = new AppDataController(new AppDataRepository($db), $paymentConfig);
-    $adminController = new AdminController(new AdminRepository($db));
+    $subscriptionRepository = new SubscriptionRepository($db);
+    $paymentRepository = new PaymentRepository($db);
+    $adminController = new AdminController(new AdminRepository($db), $subscriptionRepository);
     $chatController = new ChatController(new ChatRepository($db), new MatchRepository($db));
     $discoverController = new DiscoverController(new DiscoverRepository($db));
     $matchController = new MatchController(new MatchRepository($db));
     $walletController = new WalletController(new WalletRepository($db), new GiftRepository($db));
     $giftController = new GiftController(new GiftRepository($db), new WalletRepository($db));
-    $subscriptionController = new SubscriptionController(new SubscriptionRepository($db));
+    $subscriptionController = new SubscriptionController($subscriptionRepository, $paymentRepository, $paymentConfig, $db);
 } catch (Throwable $exception) {
     Response::json([
         'success' => false,
@@ -134,10 +144,6 @@ $routes = [
         $userId = requireAuthUserId();
         return $walletController->show($userId);
     }],
-    ['GET', '#^/health$#', static fn (Request $request): mixed => Response::json([
-        'success' => true,
-        'message' => 'API is running',
-    ])],
     ['GET', '#^/payments/registration-options$#', static fn (Request $request): mixed => $appDataController->registrationPaymentOptions()],
     ['POST', '#^/auth/register$#', static fn (Request $request): mixed => $authController->register($request)],
     ['POST', '#^/auth/login$#', static fn (Request $request): mixed => $authController->login($request)],
@@ -177,6 +183,10 @@ $routes = [
     ['POST', '#^/admin/reports/(\d+)/status$#', static function (Request $request, string $reportId) use ($adminController, $authController): mixed {
         $adminUser = requireAdminUser($authController);
         return $adminController->updateReportStatus($request, (int) $reportId, (int) $adminUser['id']);
+    }],
+    ['POST', '#^/admin/subscriptions/(\d+)/approve$#', static function (Request $request, string $subscriptionId) use ($adminController, $authController): mixed {
+        requireAdminUser($authController);
+        return $adminController->approvePendingSubscription((int) $subscriptionId);
     }],
     ['POST', '#^/swipes$#', static function (Request $request) use ($matchController): mixed {
         $userId = requireAuthUserId();

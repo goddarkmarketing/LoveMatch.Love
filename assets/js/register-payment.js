@@ -41,8 +41,7 @@
     }
   }
 
-  function renderBankPreview(appBasePath) {
-    var bankPrev = document.getElementById("registerBankPreview");
+  function renderBankPreviewElement(bankPrev, appBasePath) {
     if (!bankPrev || !registrationPayOpts) {
       return;
     }
@@ -115,6 +114,11 @@
     }
   }
 
+  function renderBankPreview(appBasePath) {
+    var bankPrev = document.getElementById("registerBankPreview");
+    renderBankPreviewElement(bankPrev, appBasePath);
+  }
+
   function syncRegisterPlanAndPaymentUI(appBasePath) {
     var plan = getSelectedRegisterPlan();
     var summary = document.getElementById("registerPlanSummary");
@@ -156,20 +160,42 @@
   }
 
   function createOmiseToken() {
+    return createOmiseTokenWithFields({
+      name: "omiseCardName",
+      number: "omiseCardNumber",
+      month: "omiseExpMonth",
+      year: "omiseExpYear",
+      security: "omiseSecurityCode"
+    });
+  }
+
+  function createOmiseTokenWithFields(fieldIds) {
+    fieldIds = fieldIds || {};
     return new Promise(function (resolve, reject) {
       if (typeof Omise === "undefined") {
         reject(new Error("ระบบ Omise ยังไม่พร้อม โปรดรีเฟรชหน้า"));
         return;
       }
-      var month = parseInt(document.getElementById("omiseExpMonth").value, 10);
-      var year = parseInt(document.getElementById("omiseExpYear").value, 10);
+      var nameId = fieldIds.name || "omiseCardName";
+      var numberId = fieldIds.number || "omiseCardNumber";
+      var monthId = fieldIds.month || "omiseExpMonth";
+      var yearId = fieldIds.year || "omiseExpYear";
+      var secId = fieldIds.security || "omiseSecurityCode";
+      var monthEl = document.getElementById(monthId);
+      var yearEl = document.getElementById(yearId);
+      if (!monthEl || !yearEl) {
+        reject(new Error("ไม่พบช่องกรอกข้อมูลบัตร"));
+        return;
+      }
+      var month = parseInt(monthEl.value, 10);
+      var year = parseInt(yearEl.value, 10);
       Omise.createToken({
         card: {
-          name: document.getElementById("omiseCardName").value.trim(),
-          number: document.getElementById("omiseCardNumber").value.replace(/\s/g, ""),
+          name: document.getElementById(nameId).value.trim(),
+          number: document.getElementById(numberId).value.replace(/\s/g, ""),
           expiration_month: month,
           expiration_year: year,
-          security_code: document.getElementById("omiseSecurityCode").value.trim()
+          security_code: document.getElementById(secId).value.trim()
         }
       }, function (statusCode, response) {
         if (statusCode !== 200) {
@@ -197,6 +223,10 @@
         var cardOpt = document.getElementById("registerPayCardOption");
         if (cardOpt) {
           cardOpt.style.display = registrationPayOpts.card_enabled ? "" : "none";
+        }
+        var premiumCardOpt = document.getElementById("premiumPayCardOption");
+        if (premiumCardOpt) {
+          premiumCardOpt.style.display = registrationPayOpts.card_enabled ? "" : "none";
         }
         if (registrationPayOpts.omise_public_key && typeof Omise !== "undefined") {
           Omise.setPublicKey(registrationPayOpts.omise_public_key);
@@ -233,6 +263,8 @@
     getRegisterPaymentMethod: getRegisterPaymentMethod,
     syncRegisterPayMethodUI: syncRegisterPayMethodUI,
     createOmiseToken: createOmiseToken,
+    createOmiseTokenWithFields: createOmiseTokenWithFields,
+    renderBankPreviewElement: renderBankPreviewElement,
 
     /**
      * @param {Event} event

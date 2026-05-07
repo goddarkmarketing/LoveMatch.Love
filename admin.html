@@ -79,13 +79,20 @@
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.14);
-      font-size: 22px;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: transparent;
+      line-height: 0;
+    }
+
+    .brand-logo-img {
+      display: block;
+      height: 58px;
+      width: 64px;
+      object-fit: cover;
+      object-position: 4% 20%;
+      max-width: none;
     }
 
     .brand-copy {
@@ -537,7 +544,7 @@
   <div class="admin-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-logo"><svg class="action-icon"><use href="#i-heart"></use></svg></div>
+        <div class="brand-logo"><img class="brand-logo-img" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async"></div>
         <div class="brand-copy">
           <div class="brand-title">LoveMatch Admin</div>
           <div class="brand-subtitle">หลังบ้านจัดการระบบ</div>
@@ -618,6 +625,12 @@
           </article>
 
           <article class="panel">
+            <h3>อัปเกรดแพ็กเกจรออนุมัติ</h3>
+            <div class="panel-subtitle">อนุมัติหลังตรวจสลิปหรือยอดบัตรแล้ว</div>
+            <div class="list" id="pendingUpgradesList"></div>
+          </article>
+
+          <article class="panel">
             <h3>การชำระเงินล่าสุด</h3>
             <div class="panel-subtitle">ดูรายการสมัครแพ็กเกจและยอดชำระล่าสุด</div>
             <div class="list" id="paymentsList"></div>
@@ -647,6 +660,12 @@
         </section>
 
         <section class="section" id="section-payments">
+          <article class="panel">
+            <h3>อัปเกรดแพ็กเกจรออนุมัติ</h3>
+            <div class="panel-subtitle">สมาชิกที่ชำระ/ขออัปเกรดแล้ว รอเปิดแพ็กเกจใหม่</div>
+            <div class="list" id="pendingUpgradesListLarge"></div>
+          </article>
+
           <article class="panel">
             <h3>การชำระเงิน</h3>
             <div class="panel-subtitle">รายการธุรกรรมล่าสุดของระบบ</div>
@@ -681,10 +700,12 @@
     const statsGrid = document.getElementById("statsGrid");
     const usersList = document.getElementById("usersList");
     const reportsList = document.getElementById("reportsList");
+    const pendingUpgradesList = document.getElementById("pendingUpgradesList");
     const paymentsList = document.getElementById("paymentsList");
     const giftsList = document.getElementById("giftsList");
     const usersListLarge = document.getElementById("usersListLarge");
     const reportsListLarge = document.getElementById("reportsListLarge");
+    const pendingUpgradesListLarge = document.getElementById("pendingUpgradesListLarge");
     const paymentsListLarge = document.getElementById("paymentsListLarge");
     const giftsListLarge = document.getElementById("giftsListLarge");
     const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
@@ -740,6 +761,7 @@
         ["รายงานเปิดอยู่", stats.reports_open || 0],
         ["ชำระเงินสำเร็จ", stats.payments_paid || 0],
         ["สมาชิกพรีเมียม", stats.subscriptions_active || 0],
+        ["อัปเกรดรออนุมัติ", stats.subscriptions_pending_upgrade || 0],
         ["ของขวัญที่ส่งแล้ว", stats.gifts_sent || 0]
       ];
 
@@ -857,6 +879,35 @@
       }).join("");
     }
 
+    function renderPendingUpgrades(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.display_name, item.email, item.plan_name, item.payment_method].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่มีคำขออัปเกรดรออนุมัติ");
+      }
+
+      return filtered.map(function (row) {
+        return '<div class="item">' +
+          '<div class="item-top">' +
+            '<div>' +
+              '<div class="item-title">' + row.display_name + " · " + row.plan_name + '</div>' +
+              '<div class="item-meta">' + row.email + '<br>' + row.payment_method + " · ฿" + Number(row.amount_thb).toLocaleString("th-TH") + '<br>' + formatDate(row.created_at) + '</div>' +
+            '</div>' +
+            '<span class="' + chipClass(row.payment_status || "pending") + '">' + (row.payment_status || "pending") + '</span>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="mini-btn is-blue" type="button" data-approve-subscription="' + row.subscription_id + '">อนุมัติอัปเกรด</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
     function renderAll() {
       renderStats();
 
@@ -865,11 +916,14 @@
       const reports = adminDashboard ? adminDashboard.open_reports : [];
       const payments = adminDashboard ? adminDashboard.recent_payments : [];
       const gifts = adminDashboard ? adminDashboard.recent_gifts : [];
+      const pendingUps = adminDashboard ? adminDashboard.pending_subscription_upgrades : [];
 
       usersList.innerHTML = renderUsers(users, query);
       usersListLarge.innerHTML = renderUsers(users, query);
       reportsList.innerHTML = renderReports(reports, query);
       reportsListLarge.innerHTML = renderReports(reports, query);
+      pendingUpgradesList.innerHTML = renderPendingUpgrades(pendingUps, query);
+      pendingUpgradesListLarge.innerHTML = renderPendingUpgrades(pendingUps, query);
       paymentsList.innerHTML = renderPayments(payments, query);
       paymentsListLarge.innerHTML = renderPayments(payments, query);
       giftsList.innerHTML = renderGifts(gifts, query);
@@ -932,7 +986,8 @@
           recent_users: [],
           open_reports: [],
           recent_payments: [],
-          recent_gifts: []
+          recent_gifts: [],
+          pending_subscription_upgrades: []
         };
         renderAll();
         showNotice(error.message, "error");
@@ -969,6 +1024,20 @@
       }
     }
 
+    async function approvePendingSubscription(subscriptionId) {
+      clearNotice();
+      try {
+        const response = await apiFetch("/admin/subscriptions/" + subscriptionId + "/approve", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showNotice(response.message, "success");
+        await loadDashboard();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
+    }
+
     async function logout() {
       try {
         await apiFetch("/auth/logout", { method: "POST", body: JSON.stringify({}) });
@@ -988,6 +1057,12 @@
       const reportButton = event.target.closest("[data-report-id]");
       if (reportButton) {
         updateReportStatus(Number(reportButton.dataset.reportId), reportButton.dataset.reportStatus);
+        return;
+      }
+
+      const approveSub = event.target.closest("[data-approve-subscription]");
+      if (approveSub) {
+        approvePendingSubscription(Number(approveSub.getAttribute("data-approve-subscription")));
       }
     });
 

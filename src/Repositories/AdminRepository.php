@@ -20,13 +20,59 @@ class AdminRepository
                 'reports_open' => $this->count('reports', 'status IN ("open", "reviewing")'),
                 'payments_paid' => $this->count('payments', 'status = "paid"'),
                 'subscriptions_active' => $this->count('subscriptions', 'status = "active"'),
+                'subscriptions_pending_upgrade' => $this->countPendingPaidUpgradesForActiveUsers(),
                 'gifts_sent' => $this->count('gift_transactions'),
             ],
             'recent_users' => $this->recentUsers(),
             'recent_payments' => $this->recentPayments(),
             'open_reports' => $this->openReports(),
             'recent_gifts' => $this->recentGifts(),
+            'pending_subscription_upgrades' => $this->pendingSubscriptionUpgrades(),
         ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function pendingSubscriptionUpgrades(): array
+    {
+        $statement = $this->db->query(
+            'SELECT
+                s.id AS subscription_id,
+                s.user_id,
+                s.created_at,
+                u.display_name,
+                u.email,
+                sp.name_th AS plan_name,
+                sp.tier AS plan_tier,
+                p.payment_method,
+                p.status AS payment_status,
+                p.amount_thb
+             FROM subscriptions s
+             INNER JOIN users u ON u.id = s.user_id
+             INNER JOIN subscription_plans sp ON sp.id = s.plan_id
+             LEFT JOIN payments p ON p.subscription_id = s.id AND p.payment_target = "subscription"
+             WHERE s.status = "pending"
+               AND sp.price_thb > 0
+               AND u.status = "active"
+             ORDER BY s.id DESC
+             LIMIT 24'
+        );
+
+        return array_map(static function (array $row): array {
+            return [
+                'subscription_id' => (int) $row['subscription_id'],
+                'user_id' => (int) $row['user_id'],
+                'display_name' => $row['display_name'],
+                'email' => $row['email'],
+                'plan_name' => $row['plan_name'],
+                'plan_tier' => $row['plan_tier'],
+                'payment_method' => $row['payment_method'],
+                'payment_status' => $row['payment_status'],
+                'amount_thb' => (float) $row['amount_thb'],
+                'created_at' => $row['created_at'],
+            ];
+        }, $statement->fetchAll());
     }
 
     public function updateUserStatus(int $userId, string $status): array
@@ -132,6 +178,19 @@ class AdminRepository
         if ($where) {
             $sql .= ' WHERE ' . $where;
         }
+
+        return (int) $this->db->query($sql)->fetchColumn();
+    }
+
+    private function countPendingPaidUpgradesForActiveUsers(): int
+    {
+        $sql = 'SELECT COUNT(*)
+             FROM subscriptions s
+             INNER JOIN users u ON u.id = s.user_id
+             INNER JOIN subscription_plans sp ON sp.id = s.plan_id
+             WHERE s.status = "pending"
+               AND sp.price_thb > 0
+               AND u.status = "active"';
 
         return (int) $this->db->query($sql)->fetchColumn();
     }

@@ -1,6 +1,5 @@
 /**
- * Header wordmark — script style (Great Vibes), pink → gold gradient like brand art.
- * Script fonts need extra vertical room so flourishes are not clipped in the topbar.
+ * Header brand — heart crop from banner asset + LoveMatch.Love wordmark (Great Vibes gradient).
  */
 
 .topbar {
@@ -11,7 +10,8 @@
   overflow: visible;
   align-items: center;
   min-width: min(220px, 42vw);
-  /* Heart SVG uses fill: currentColor — must not inherit body text color */
+  gap: 10px;
+  text-decoration: none;
   color: #eb5b89;
 }
 
@@ -31,6 +31,17 @@
   outline: 2px solid rgba(213, 83, 124, 0.65);
   outline-offset: 3px;
   border-radius: 12px;
+}
+
+/* Wide banner: show left cluster (heart only), hide baked-in image text */
+.topbar .brand .brand-mark {
+  flex-shrink: 0;
+  height: clamp(46px, 10.5vw, 58px);
+  width: clamp(52px, 13vw, 68px);
+  object-fit: cover;
+  object-position: 4% 20%;
+  border-radius: 12px;
+  display: block;
 }
 
 .topbar .brand .brand-name {

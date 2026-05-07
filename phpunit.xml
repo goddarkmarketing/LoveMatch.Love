@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="frontend">
+            <directory>tests/Frontend</directory>
+        </testsuite>
+        <testsuite name="smoke">
+            <directory>tests/Smoke</directory>
+        </testsuite>
+        <testsuite name="api">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <!-- Override: set LOVEMATCH_TEST_BASE_URL=http://localhost/rwmlouey/api -->
+        <env name="LOVEMATCH_TEST_BASE_URL" value="http://127.0.0.1:8888/api"/>
+        <env name="LOVEMATCH_TEST_MEMBER_EMAIL" value="test1@example.com"/>
+        <env name="LOVEMATCH_TEST_MEMBER_PASSWORD" value="123456"/>
+        <env name="LOVEMATCH_TEST_ADMIN_EMAIL" value="admin@lovematch.love"/>
+        <env name="LOVEMATCH_TEST_ADMIN_PASSWORD" value="123456"/>
+    </php>
+</phpunit>

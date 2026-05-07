@@ -3,14 +3,17 @@
 namespace App\Controllers;
 
 use App\Repositories\AdminRepository;
+use App\Repositories\SubscriptionRepository;
 use App\Support\Request;
 use App\Support\Response;
 use RuntimeException;
 
 class AdminController
 {
-    public function __construct(private AdminRepository $admin)
-    {
+    public function __construct(
+        private AdminRepository $admin,
+        private SubscriptionRepository $subscriptions
+    ) {
     }
 
     public function dashboard(): void
@@ -60,6 +63,26 @@ class AdminController
             'success' => true,
             'message' => 'อัปเดตรายงานเรียบร้อย',
             'data' => ['report' => $report],
+        ]);
+    }
+
+    public function approvePendingSubscription(int $subscriptionId): void
+    {
+        try {
+            $result = $this->subscriptions->approvePendingSubscription($subscriptionId);
+        } catch (RuntimeException $exception) {
+            Response::json([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ], 422);
+
+            return;
+        }
+
+        Response::json([
+            'success' => true,
+            'message' => 'อนุมัติการอัปเกรดแพ็กเกจเรียบร้อย',
+            'data' => $result,
         ]);
     }
 }

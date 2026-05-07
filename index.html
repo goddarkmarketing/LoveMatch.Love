@@ -100,23 +100,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #eb5b89;
-      min-width: 240px;
+      min-width: 0;
       cursor: pointer;
-    }
-
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      fill: currentColor;
-    }
-
-    .brand-name {
-      font-family: "Bai Jamjuree", sans-serif;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      line-height: 1;
     }
 
     .nav,
@@ -2496,8 +2481,8 @@
 
   <div class="page-shell">
     <header class="topbar">
-      <button class="brand" id="brandLogoLink" type="button" aria-label="LoveMatch.Love — แอนิเมชันไอคอน">
-        <svg class="brand-icon" aria-hidden="true"><use href="#i-heart"></use></svg>
+      <button class="brand" id="brandLogoLink" type="button" aria-label="LoveMatch.Love — หน้าแรก">
+        <img class="brand-mark" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
         <span class="brand-name">LoveMatch.Love</span>
       </button>
       <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
@@ -2726,6 +2711,11 @@
           </section>
 
           <section class="admin-panel">
+            <h4>อัปเกรดแพ็กเกจรออนุมัติ</h4>
+            <div class="admin-list" id="adminPendingUpgradesList"></div>
+          </section>
+
+          <section class="admin-panel">
             <h4>การชำระเงินล่าสุด</h4>
             <div class="admin-list" id="adminPaymentsList"></div>
           </section>
@@ -2910,30 +2900,41 @@
       </div>
 
       <div class="premium-section-label">เลือกวิธีชำระเงิน:</div>
-      <div class="payment-list" id="paymentList">
-        <button class="payment-option is-selected" type="button" data-payment-method="credit_card">
-          <svg class="payment-icon" style="fill:#2f6cf6;"><use href="#i-card"></use></svg>
-          <div class="payment-copy">
-            <div class="payment-title">บัตรเครดิต/เดบิต</div>
-            <div class="payment-meta">Visa, Mastercard, JCB</div>
-          </div>
-        </button>
-
-        <button class="payment-option" type="button" data-payment-method="promptpay_qr">
-          <svg class="payment-icon" style="fill:#06a870;"><use href="#i-qr"></use></svg>
-          <div class="payment-copy">
-            <div class="payment-title">PromptPay QR Code</div>
-            <div class="payment-meta">สแกน QR จ่ายผ่านแอปธนาคาร</div>
-          </div>
-        </button>
-
-        <button class="payment-option" type="button" data-payment-method="bank_transfer">
-          <svg class="payment-icon" style="fill:#8756ff;"><use href="#i-bank"></use></svg>
-          <div class="payment-copy">
-            <div class="payment-title">โอนเงินธนาคาร</div>
-            <div class="payment-meta">กรุงศรี 777-1-69996-6</div>
-          </div>
-        </button>
+      <p class="register-fee-hint" id="premiumPayHint" style="margin:0 0 10px;font-size:14px;color:var(--muted);">โอนได้ทุกธนาคารและพร้อมเพย์ตามบัญชีด้านล่าง หรือชำระด้วยบัตร</p>
+      <div class="register-pay-methods" id="premiumPayMethods">
+        <label class="register-pay-option">
+          <input type="radio" name="premiumPaymentMethod" value="bank_transfer" checked>
+          <span>โอนเงินผ่านธนาคาร / พร้อมเพย์</span>
+        </label>
+        <label class="register-pay-option" id="premiumPayCardOption">
+          <input type="radio" name="premiumPaymentMethod" value="credit_card">
+          <span>บัตรเครดิต / เดบิต (Omise)</span>
+        </label>
+      </div>
+      <div class="register-bank-preview" id="premiumBankPreview"></div>
+      <div class="register-card-fields" id="premiumCardFields" hidden>
+        <label class="auth-field">
+          <span class="auth-label">ชื่อบนบัตร</span>
+          <input class="auth-input" id="premiumOmiseCardName" type="text" placeholder="NAME ON CARD" autocomplete="cc-name">
+        </label>
+        <label class="auth-field">
+          <span class="auth-label">หมายเลขบัตร</span>
+          <input class="auth-input" id="premiumOmiseCardNumber" type="text" placeholder="4242424242424242" autocomplete="cc-number" inputmode="numeric">
+        </label>
+        <div class="register-grid">
+          <label class="auth-field">
+            <span class="auth-label">เดือนหมดอายุ</span>
+            <input class="auth-input" id="premiumOmiseExpMonth" type="text" placeholder="MM" maxlength="2" autocomplete="cc-exp-month" inputmode="numeric">
+          </label>
+          <label class="auth-field">
+            <span class="auth-label">ปีหมดอายุ (ค.ศ.)</span>
+            <input class="auth-input" id="premiumOmiseExpYear" type="text" placeholder="2029" maxlength="4" autocomplete="cc-exp-year" inputmode="numeric">
+          </label>
+        </div>
+        <label class="auth-field">
+          <span class="auth-label">รหัสหลังบัตร (CVV)</span>
+          <input class="auth-input" id="premiumOmiseSecurityCode" type="password" placeholder="123" autocomplete="cc-csc" maxlength="4" inputmode="numeric">
+        </label>
       </div>
       <div class="form-notice" id="premiumNotice"></div>
       <button class="auth-submit" id="premiumCheckoutButton" type="button">
@@ -3155,6 +3156,7 @@
     const adminStatsGrid = document.getElementById("adminStatsGrid");
     const adminUsersList = document.getElementById("adminUsersList");
     const adminReportsList = document.getElementById("adminReportsList");
+    const adminPendingUpgradesList = document.getElementById("adminPendingUpgradesList");
     const adminPaymentsList = document.getElementById("adminPaymentsList");
     const adminGiftsList = document.getElementById("adminGiftsList");
     const languageMenuButton = document.getElementById("languageMenuButton");
@@ -3223,6 +3225,7 @@
     let activeChatType = "public";
     let activePrivateMatch = null;
     let currentPlan = null;
+    let pendingUpgrade = null;
     let adminDashboard = null;
     let pendingMatchProfile = null;
     let discoverPassToastTimer = null;
@@ -3462,9 +3465,25 @@
       updateCoinPill();
     }
 
-    function getSelectedPaymentMethod() {
-      const option = document.querySelector(".payment-option.is-selected");
-      return option ? option.dataset.paymentMethod : "credit_card";
+    function getPremiumPaymentMethod() {
+      const el = document.querySelector('input[name="premiumPaymentMethod"]:checked');
+      return el ? el.value : "bank_transfer";
+    }
+
+    function syncPremiumPaymentUI() {
+      const cardFields = document.getElementById("premiumCardFields");
+      const bankPrev = document.getElementById("premiumBankPreview");
+      const isCard = getPremiumPaymentMethod() === "credit_card";
+      if (cardFields) {
+        cardFields.hidden = !isCard;
+      }
+      if (bankPrev) {
+        if (isCard) {
+          bankPrev.hidden = true;
+        } else {
+          RegisterPaymentUI.renderBankPreviewElement(bankPrev, appBasePath);
+        }
+      }
     }
 
     function setSelectedPlanByTier(tier) {
@@ -3507,12 +3526,16 @@
       freePlanButton.classList.toggle("is-current", currentTier === "free");
       premiumPlanButton.classList.toggle("is-current", currentTier === "premium");
       vipPlanButton.classList.toggle("is-current", currentTier === "vip");
+      const upgradePending = Boolean(pendingUpgrade);
       freePlanButton.disabled = currentTier === "free";
-      premiumPlanButton.disabled = currentTier === "premium";
-      vipPlanButton.disabled = currentTier === "vip";
+      premiumPlanButton.disabled = currentTier === "premium" || upgradePending;
+      vipPlanButton.disabled = currentTier === "vip" || upgradePending;
+      premiumPlanButton.title = upgradePending ? "มีคำขออัปเกรดรอแอดมินอนุมัติ" : "";
+      vipPlanButton.title = upgradePending ? "มีคำขออัปเกรดรอแอดมินอนุมัติ" : "";
     }
 
     async function hydrateCurrentPlan() {
+      pendingUpgrade = null;
       if (!currentUser) {
         currentPlan = subscriptionPlans.find(function (plan) {
           return plan.tier === "free";
@@ -3527,6 +3550,7 @@
       try {
         const response = await apiFetch("/subscription/current", { method: "GET" });
         currentPlan = response.data.plan || null;
+        pendingUpgrade = response.data.pending_upgrade || null;
       } catch (error) {
         currentPlan = subscriptionPlans.find(function (plan) {
           return plan.tier === "free";
@@ -3590,6 +3614,7 @@
         renderAdminEmpty(adminStatsGrid, "ยังไม่มีข้อมูลหลังบ้าน");
         renderAdminEmpty(adminUsersList, "ยังไม่มีข้อมูลสมาชิก");
         renderAdminEmpty(adminReportsList, "ยังไม่มีรายงาน");
+        renderAdminEmpty(adminPendingUpgradesList, "ไม่มีคำขออัปเกรดรออนุมัติ");
         renderAdminEmpty(adminPaymentsList, "ยังไม่มีข้อมูลการชำระเงิน");
         renderAdminEmpty(adminGiftsList, "ยังไม่มีประวัติของขวัญ");
         return;
@@ -3602,6 +3627,7 @@
         ["รายงานเปิดอยู่", stats.reports_open || 0],
         ["ชำระเงินสำเร็จ", stats.payments_paid || 0],
         ["สมาชิกพรีเมียม", stats.subscriptions_active || 0],
+        ["อัปเกรดรออนุมัติ", stats.subscriptions_pending_upgrade || 0],
         ["ของขวัญที่ส่งแล้ว", stats.gifts_sent || 0]
       ];
 
@@ -3644,6 +3670,22 @@
           '</div>' +
         '</div>';
       }).join("") : '<div class="admin-empty">ไม่มีรายงานค้างตรวจสอบ</div>';
+
+      const pendingUps = adminDashboard.pending_subscription_upgrades || [];
+      adminPendingUpgradesList.innerHTML = pendingUps.length ? pendingUps.map(function (row) {
+        return '<div class="admin-item">' +
+          '<div class="admin-item-top">' +
+            '<div>' +
+              '<div class="admin-item-title">' + row.display_name + " · " + row.plan_name + '</div>' +
+              '<div class="admin-item-meta">' + row.email + '<br>' + row.payment_method + " · ยอด ฿" + Number(row.amount_thb).toLocaleString("th-TH") + '<br>' + formatAdminDate(row.created_at) + '</div>' +
+            '</div>' +
+            '<span class="' + getAdminChipClass(row.payment_status || "pending") + '">' + (row.payment_status || "pending") + '</span>' +
+          '</div>' +
+          '<div class="admin-actions-row">' +
+            '<button class="admin-mini-btn is-blue" type="button" data-admin-approve-subscription="' + row.subscription_id + '">อนุมัติอัปเกรด</button>' +
+          '</div>' +
+        '</div>';
+      }).join("") : '<div class="admin-empty">ไม่มีคำขออัปเกรดรออนุมัติ</div>';
 
       const payments = adminDashboard.recent_payments || [];
       adminPaymentsList.innerHTML = payments.length ? payments.map(function (payment) {
@@ -3712,6 +3754,20 @@
       }
     }
 
+    async function approveAdminPendingSubscription(subscriptionId) {
+      clearNotice(adminNotice);
+      try {
+        const response = await apiFetch("/admin/subscriptions/" + subscriptionId + "/approve", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showNotice(adminNotice, response.message, "success");
+        await loadAdminDashboard();
+      } catch (error) {
+        showNotice(adminNotice, error.message, "error");
+      }
+    }
+
     function bindGiftSelection() {
       const giftOptions = document.querySelectorAll(".gift-option");
       giftOptions.forEach(function (option) {
@@ -3734,18 +3790,6 @@
           name: activeGift.dataset.giftName || activeGift.dataset.gift || ""
         };
       }
-    }
-
-    function bindPaymentSelection() {
-      const paymentOptions = document.querySelectorAll(".payment-option");
-      paymentOptions.forEach(function (option) {
-        option.addEventListener("click", function () {
-          paymentOptions.forEach(function (item) {
-            item.classList.remove("is-selected");
-          });
-          option.classList.add("is-selected");
-        });
-      });
     }
 
     function renderGifts(gifts) {
@@ -4058,6 +4102,7 @@
         renderGifts(giftsResponse.data.gifts);
         renderPremiumSummary(plansResponse.data.plans);
         renderPublicChatRooms(roomsResponse.data.rooms);
+        await RegisterPaymentUI.loadRegistrationPaymentOptions(apiFetch, appBasePath).catch(function () {});
         await hydrateCurrentPlan();
       } catch (error) {
         console.error(error);
@@ -4227,6 +4272,11 @@
         return;
       }
 
+      if (pendingUpgrade) {
+        showNotice(premiumNotice, "คุณมีคำขออัปเกรดรอแอดมินอนุมัติอยู่แล้ว", "error");
+        return;
+      }
+
       if (!selectedPlan) {
         showNotice(premiumNotice, "ไม่พบแพ็กเกจที่เลือก", "error");
         return;
@@ -4237,21 +4287,62 @@
         return;
       }
 
+      const method = getPremiumPaymentMethod();
+      const payOpts = RegisterPaymentUI.getOpts();
+      let omiseToken = "";
+
+      if (Number(selectedPlan.price_thb) > 0 && method === "credit_card") {
+        if (!payOpts || !payOpts.card_enabled) {
+          showNotice(premiumNotice, "ไม่สามารถชำระด้วยบัตรได้ในขณะนี้ กรุณาเลือกโอนธนาคาร", "error");
+          return;
+        }
+      }
+
       premiumCheckoutButton.disabled = true;
 
+      if (Number(selectedPlan.price_thb) > 0 && method === "credit_card") {
+        try {
+          omiseToken = await RegisterPaymentUI.createOmiseTokenWithFields({
+            name: "premiumOmiseCardName",
+            number: "premiumOmiseCardNumber",
+            month: "premiumOmiseExpMonth",
+            year: "premiumOmiseExpYear",
+            security: "premiumOmiseSecurityCode"
+          });
+        } catch (error) {
+          showNotice(premiumNotice, error.message, "error");
+          premiumCheckoutButton.disabled = false;
+          return;
+        }
+      }
+
       try {
+        const payload = {
+          plan_id: selectedPlan.id,
+          payment_method: method === "credit_card" ? "credit_card" : "bank_transfer"
+        };
+        if (omiseToken) {
+          payload.omise_token = omiseToken;
+        }
+
         const response = await apiFetch("/subscription/checkout", {
           method: "POST",
-          body: JSON.stringify({
-            plan_id: selectedPlan.id,
-            payment_method: getSelectedPaymentMethod()
-          })
+          body: JSON.stringify(payload)
         });
 
-        currentPlan = response.data.checkout.current_plan || currentPlan;
+        if (response.data && response.data.upgrade_payment) {
+          const bankRadio = document.querySelector('input[name="premiumPaymentMethod"][value="bank_transfer"]');
+          if (bankRadio) {
+            bankRadio.checked = true;
+          }
+          syncPremiumPaymentUI();
+        }
+
+        await hydrateCurrentPlan();
         updatePricingUI();
 
-        showNotice(premiumNotice, response.message + " ยอดชำระ ฿" + Number(response.data.checkout.amount_thb).toLocaleString("th-TH"), "success");
+        const amt = response.data && response.data.checkout ? Number(response.data.checkout.amount_thb).toLocaleString("th-TH") : "";
+        showNotice(premiumNotice, response.message + (amt ? " ยอด ฿" + amt : ""), "success");
       } catch (error) {
         showNotice(premiumNotice, error.message, "error");
       } finally {
@@ -4385,7 +4476,17 @@
       closeModal(chatModal);
     }
 
-    function openPremiumModal() {
+    async function openPremiumModal() {
+      try {
+        await RegisterPaymentUI.loadRegistrationPaymentOptions(apiFetch, appBasePath);
+      } catch (error) {
+        console.error(error);
+      }
+      const bankRadio = document.querySelector('input[name="premiumPaymentMethod"][value="bank_transfer"]');
+      if (bankRadio) {
+        bankRadio.checked = true;
+      }
+      syncPremiumPaymentUI();
       openModal(premiumModal);
     }
 
@@ -4485,12 +4586,17 @@
         return;
       }
 
+      if (pendingUpgrade) {
+        showToast("คุณมีคำขออัปเกรดรอแอดมินอนุมัติอยู่แล้ว", "is-info");
+        return;
+      }
+
       if (currentPlan && currentPlan.tier === tier) {
         showToast("คุณกำลังใช้งานแพ็กเกจนี้อยู่แล้ว", "is-info");
         return;
       }
 
-      openModal(premiumModal);
+      openPremiumModal();
     }
 
     function handleFeatureAction(action) {
@@ -4523,7 +4629,10 @@
     }
 
     bindGiftSelection();
-    bindPaymentSelection();
+    const premiumPayMethodsEl = document.getElementById("premiumPayMethods");
+    if (premiumPayMethodsEl) {
+      premiumPayMethodsEl.addEventListener("change", syncPremiumPaymentUI);
+    }
     adminRefreshButton.addEventListener("click", loadAdminDashboard);
     adminUsersList.addEventListener("click", function (event) {
       const button = event.target.closest("[data-admin-user]");
@@ -4538,6 +4647,16 @@
         return;
       }
       updateAdminReportStatus(Number(button.dataset.reportId), button.dataset.reportStatus);
+    });
+    adminPendingUpgradesList.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-admin-approve-subscription]");
+      if (!button) {
+        return;
+      }
+      const sid = Number(button.getAttribute("data-admin-approve-subscription"));
+      if (sid) {
+        approveAdminPendingSubscription(sid);
+      }
     });
     featureCards.forEach(function (card) {
       card.addEventListener("click", function () {
