@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * Copy this file to config/migrate.local.php and set a long random secret.
+ * The secret is required when running tools/migrate.php via browser:
+ *   https://your-host/tools/migrate.php?key=YOUR_SECRET
+ *
+ * CLI runs (php tools/migrate.php) do NOT need this file.
+ */
+
+return [
+    'key' => 'replace-with-a-long-random-string',
+];
