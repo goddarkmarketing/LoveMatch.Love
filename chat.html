@@ -888,6 +888,7 @@
     }
 
     .composer-shell {
+      position: relative;
       display: grid;
       gap: 10px;
       min-height: 0;
@@ -1018,9 +1019,97 @@
 
     .bubble-outgoing .bubble-footer { color: rgba(255,255,255,0.92); justify-content: flex-end; }
 
+    .bubble-sticker {
+      display: block;
+      width: min(168px, 42vw);
+      height: auto;
+      object-fit: contain;
+    }
+
+    .bubble:has(.bubble-sticker) {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .bubble-outgoing:has(.bubble-sticker) .bubble-footer {
+      padding: 0 4px;
+    }
+
+    .sticker-picker {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% + 10px);
+      z-index: 12;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--line-soft);
+      box-shadow: 0 18px 40px rgba(30, 20, 40, 0.14);
+    }
+
+    .sticker-picker[hidden] {
+      display: none;
+    }
+
+    .sticker-picker-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: var(--font-label);
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .sticker-picker-close {
+      border: 0;
+      background: #f1f5f9;
+      color: #475569;
+      border-radius: 999px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .sticker-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 10px;
+      max-height: 240px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .sticker-picker-item {
+      border: 1px solid #e8edf5;
+      border-radius: 16px;
+      background: #fff;
+      padding: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .sticker-picker-item:hover {
+      transform: translateY(-2px);
+      border-color: #f472b6;
+    }
+
+    .sticker-picker-item img {
+      display: block;
+      width: 100%;
+      height: 64px;
+      object-fit: contain;
+    }
+
     .composer {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
       gap: 12px;
       align-items: center;
       padding: 18px;
@@ -1259,8 +1348,8 @@
     }
 
     @media (max-width: 680px) {
-      .composer { grid-template-columns: minmax(0, 1fr) auto; }
-      .composer .circle-btn:last-child { grid-column: 1 / -1; width: 100%; border-radius: 18px; }
+      .composer { grid-template-columns: minmax(0, 1fr) auto auto; }
+      .composer #composerGiftButton { grid-column: 1 / -1; width: 100%; border-radius: 18px; }
       .register-grid { grid-template-columns: 1fr; }
     }
 
@@ -1283,6 +1372,7 @@
     <symbol id="i-login" viewBox="0 0 24 24"><path d="M10 17v-3H3v-4h7V7l5 5-5 5Zm6-14h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+    <symbol id="i-sticker" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2Zm-6 8c0-2.76 2.24-5 5-5h2c2.76 0 5 2.24 5 5v1H6v-1Zm1 3h10a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3Z"/></symbol>
     <symbol id="i-group" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.57 2.99-3.5S17.66 4 16 4s-3 1.57-3 3.5S14.34 11 16 11Zm-8 0c1.66 0 2.99-1.57 2.99-3.5S9.66 4 8 4 5 5.57 5 7.5 6.34 11 8 11Zm0 2C5.67 13 1 14.17 1 16.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.94 1.97 3.45V20h6v-3.5C23 14.17 18.33 13 16 13Z"/></symbol>
     <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 3h2v18H6V3Zm3 2h10l-2 4 2 4H9V5Z"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5.25 3.4 10.74 8 12 4.6-1.26 8-6.75 8-12V5l-8-3Z"/></symbol>
@@ -1291,9 +1381,8 @@
 
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="./">
-        <img class="brand-mark" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async">
-        <span class="brand-name">LoveMatch.Love</span>
+      <a class="brand" href="./" aria-label="LoveMatch.Love — หน้าแรก">
+        <img class="brand-mark" src="assets/logo.png" alt="LoveMatch.Love" decoding="async">
       </a>
       <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
         <span></span>
@@ -1361,8 +1450,16 @@
             </div>
 
             <div class="composer-shell">
+              <div class="sticker-picker" id="stickerPicker" hidden>
+                <div class="sticker-picker-head">
+                  <span>สติกเกอร์</span>
+                  <button class="sticker-picker-close" id="stickerPickerClose" type="button" aria-label="ปิดสติกเกอร์">×</button>
+                </div>
+                <div class="sticker-picker-grid" id="stickerPickerGrid"></div>
+              </div>
               <div class="composer">
                 <input class="chat-input" id="chatMessageInput" type="text" placeholder="พิมพ์ข้อความ...">
+                <button class="circle-btn" id="stickerPickerToggle" style="background:var(--cyan);" type="button" aria-label="เลือกสติกเกอร์"><svg><use href="#i-sticker"></use></svg></button>
                 <button class="circle-btn" id="chatSendButton" style="background:var(--pink);" type="button"><svg><use href="#i-send"></use></svg></button>
                 <button class="circle-btn" id="composerGiftButton" style="background:var(--gold);" type="button"><svg><use href="#i-gift"></use></svg></button>
               </div>
@@ -1541,6 +1638,10 @@
     const chatMessageInput = document.getElementById("chatMessageInput");
     const chatSendButton = document.getElementById("chatSendButton");
     const composerGiftButton = document.getElementById("composerGiftButton");
+    const stickerPicker = document.getElementById("stickerPicker");
+    const stickerPickerGrid = document.getElementById("stickerPickerGrid");
+    const stickerPickerToggle = document.getElementById("stickerPickerToggle");
+    const stickerPickerClose = document.getElementById("stickerPickerClose");
     const giftActionButton = document.getElementById("giftActionButton");
     const translateButton = document.getElementById("translateButton");
     const reportActionButton = document.getElementById("reportActionButton");
@@ -1587,6 +1688,8 @@
     let currentPlan = null;
     let currentWallet = null;
     let giftCatalogCount = 0;
+    let chatStickers = [];
+    let chatStickersLoaded = false;
 
     function openModal(modal) {
       modal.classList.add("is-open");
@@ -1790,6 +1893,97 @@
         .replace(/'/g, "&#39;");
     }
 
+    function assetUrl(relativePath) {
+      const base = (appBasePath || "").replace(/\/$/, "");
+      const path = String(relativePath || "").replace(/^\//, "");
+      return (base ? base + "/" : "/") + path;
+    }
+
+    function renderMessageBody(message) {
+      const messageType = String(message.message_type || "text");
+      if (messageType === "image" && message.body) {
+        const stickerSrc = escapeHtml(assetUrl(message.body));
+        const stickerAlt = escapeHtml(message.body.split("/").pop() || "sticker");
+        return '<img class="bubble-sticker" src="' + stickerSrc + '" alt="' + stickerAlt + '" loading="lazy">';
+      }
+      return escapeHtml(message.body || "");
+    }
+
+    async function loadChatStickers() {
+      if (chatStickersLoaded) {
+        return chatStickers;
+      }
+      try {
+        const response = await fetch(assetUrl("assets/stickers/chat/manifest.json"), { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("manifest");
+        }
+        const manifest = await response.json();
+        chatStickers = Array.isArray(manifest.stickers) ? manifest.stickers : [];
+      } catch (error) {
+        chatStickers = [];
+      }
+      chatStickersLoaded = true;
+      renderStickerPicker();
+      return chatStickers;
+    }
+
+    function renderStickerPicker() {
+      if (!stickerPickerGrid) {
+        return;
+      }
+      if (!chatStickers.length) {
+        stickerPickerGrid.innerHTML = '<div class="empty-state" style="margin:0;">ยังไม่มีสติกเกอร์</div>';
+        return;
+      }
+      stickerPickerGrid.innerHTML = chatStickers.map(function (sticker) {
+        return '<button class="sticker-picker-item" type="button" data-sticker-file="' + escapeHtml(sticker.file) + '" title="' + escapeHtml(sticker.label || "สติกเกอร์") + '">' +
+          '<img src="' + escapeHtml(assetUrl(sticker.file)) + '" alt="' + escapeHtml(sticker.label || "สติกเกอร์") + '" loading="lazy">' +
+        '</button>';
+      }).join("");
+    }
+
+    function setStickerPickerOpen(isOpen) {
+      if (!stickerPicker) {
+        return;
+      }
+      stickerPicker.hidden = !isOpen;
+    }
+
+    async function sendStickerMessage(stickerFile) {
+      clearNotice(chatNotice);
+      if (!currentUser) {
+        openModal(loginModal);
+        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนส่งสติกเกอร์", "error");
+        return;
+      }
+      if (!currentRoomId || !stickerFile) {
+        return;
+      }
+
+      chatSendButton.disabled = true;
+      try {
+        await apiFetch("/chat/rooms/" + currentRoomId + "/messages", {
+          method: "POST",
+          body: JSON.stringify({
+            message_type: "image",
+            body: stickerFile
+          })
+        });
+        setStickerPickerOpen(false);
+        if (activeChatType === "private" && activePrivateMatch) {
+          await loadPrivateMessages({ id: currentRoomId, room_type: "private" }, activePrivateMatch);
+        } else {
+          await loadRoomMessages(currentRoomId);
+        }
+        await hydrateMatches();
+      } catch (error) {
+        showNotice(chatNotice, error.message, "error");
+      } finally {
+        chatSendButton.disabled = false;
+      }
+    }
+
     function renderUnreadBadge(count) {
       if (!count) {
         return "";
@@ -1949,7 +2143,7 @@
         const isOwn = currentUser && Number(message.sender_user_id) === Number(currentUser.id);
         const time = message.sent_at ? message.sent_at.slice(11, 16) : "";
         const displayName = escapeHtml(message.display_name || "สมาชิก");
-        const body = escapeHtml(message.body || "");
+        const body = renderMessageBody(message);
         if (isOwn) {
           return '<div class="bubble-row is-own">' +
             '<div class="bubble-stack is-own">' +
@@ -3027,6 +3221,30 @@
         handleChatSend();
       }
     });
+    if (stickerPickerToggle) {
+      stickerPickerToggle.addEventListener("click", async function () {
+        await loadChatStickers();
+        if (!chatStickers.length) {
+          showToast("ยังไม่มีสติกเกอร์ให้ใช้งาน", "is-info");
+          return;
+        }
+        setStickerPickerOpen(stickerPicker.hidden);
+      });
+    }
+    if (stickerPickerClose) {
+      stickerPickerClose.addEventListener("click", function () {
+        setStickerPickerOpen(false);
+      });
+    }
+    if (stickerPickerGrid) {
+      stickerPickerGrid.addEventListener("click", function (event) {
+        const button = event.target.closest(".sticker-picker-item");
+        if (!button) {
+          return;
+        }
+        sendStickerMessage(button.dataset.stickerFile || "");
+      });
+    }
     loginModal.addEventListener("click", function (event) {
       if (event.target === loginModal) {
         closeLoginGate();
@@ -3045,8 +3263,13 @@
         if (registerModal.classList.contains("is-open")) {
           closeModal(registerModal);
         }
+        if (stickerPicker && !stickerPicker.hidden) {
+          setStickerPickerOpen(false);
+        }
       }
     });
+
+    loadChatStickers();
 
     hydrateCurrentUser().then(function () {
       if (currentUser) {

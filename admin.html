@@ -75,41 +75,12 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .brand-logo {
-      flex: 0 0 auto;
-      border-radius: 12px;
-      overflow: hidden;
-      background: transparent;
-      line-height: 0;
-    }
-
-    .brand-logo-img {
-      display: block;
-      height: 58px;
-      width: 64px;
-      object-fit: cover;
-      object-position: 4% 20%;
-      max-width: none;
-    }
-
-    .brand-copy {
-      min-width: 0;
     }
 
     .brand-title {
       font-size: 24px;
       font-weight: 700;
       line-height: var(--leading-tight);
-    }
-
-    .brand-subtitle {
-      margin-top: 4px;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: var(--font-label);
-      line-height: 1.55;
     }
 
     .profile-box {
@@ -544,11 +515,7 @@
   <div class="admin-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-logo"><img class="brand-logo-img" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async"></div>
-        <div class="brand-copy">
-          <div class="brand-title">LoveMatch Admin</div>
-          <div class="brand-subtitle">หลังบ้านจัดการระบบ</div>
-        </div>
+        <div class="brand-title">LoveMatch Admin</div>
       </div>
 
       <div class="profile-box">
@@ -631,6 +598,12 @@
           </article>
 
           <article class="panel">
+            <h3>เติม Point รออนุมัติ</h3>
+            <div class="panel-subtitle">ตรวจสอบยอดเงินจริงก่อนกดอนุมัติ ระบบจะเติม Point ให้สมาชิกทันที</div>
+            <div class="list" id="pendingTopupsList"></div>
+          </article>
+
+          <article class="panel">
             <h3>การชำระเงินล่าสุด</h3>
             <div class="panel-subtitle">ดูรายการสมัครแพ็กเกจและยอดชำระล่าสุด</div>
             <div class="list" id="paymentsList"></div>
@@ -664,6 +637,12 @@
             <h3>อัปเกรดแพ็กเกจรออนุมัติ</h3>
             <div class="panel-subtitle">สมาชิกที่ชำระ/ขออัปเกรดแล้ว รอเปิดแพ็กเกจใหม่</div>
             <div class="list" id="pendingUpgradesListLarge"></div>
+          </article>
+
+          <article class="panel">
+            <h3>เติม Point รออนุมัติ</h3>
+            <div class="panel-subtitle">คำขอเติม Point จากสมาชิกที่รอแอดมินตรวจยอดเงิน</div>
+            <div class="list" id="pendingTopupsListLarge"></div>
           </article>
 
           <article class="panel">
@@ -701,11 +680,13 @@
     const usersList = document.getElementById("usersList");
     const reportsList = document.getElementById("reportsList");
     const pendingUpgradesList = document.getElementById("pendingUpgradesList");
+    const pendingTopupsList = document.getElementById("pendingTopupsList");
     const paymentsList = document.getElementById("paymentsList");
     const giftsList = document.getElementById("giftsList");
     const usersListLarge = document.getElementById("usersListLarge");
     const reportsListLarge = document.getElementById("reportsListLarge");
     const pendingUpgradesListLarge = document.getElementById("pendingUpgradesListLarge");
+    const pendingTopupsListLarge = document.getElementById("pendingTopupsListLarge");
     const paymentsListLarge = document.getElementById("paymentsListLarge");
     const giftsListLarge = document.getElementById("giftsListLarge");
     const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
@@ -762,6 +743,7 @@
         ["ชำระเงินสำเร็จ", stats.payments_paid || 0],
         ["สมาชิกพรีเมียม", stats.subscriptions_active || 0],
         ["อัปเกรดรออนุมัติ", stats.subscriptions_pending_upgrade || 0],
+        ["เติม Point รออนุมัติ", stats.coin_topups_pending || 0],
         ["ของขวัญที่ส่งแล้ว", stats.gifts_sent || 0]
       ];
 
@@ -908,6 +890,38 @@
       }).join("");
     }
 
+    function renderPendingTopups(items, query) {
+      const filtered = (items || []).filter(function (item) {
+        if (!query) {
+          return true;
+        }
+        const haystack = [item.display_name, item.email, item.package_name, item.status, item.transfer_reference].join(" ").toLowerCase();
+        return haystack.includes(query);
+      });
+
+      if (!filtered.length) {
+        return emptyHtml("ไม่มีคำขอเติม Point รออนุมัติ");
+      }
+
+      return filtered.map(function (row) {
+        const slip = row.slip_url ? '<br>สลิป/หลักฐาน: <a href="' + row.slip_url + '" target="_blank" rel="noopener">เปิดดูหลักฐาน</a>' : "";
+        const ref = row.transfer_reference ? '<br>อ้างอิง: ' + row.transfer_reference : "";
+        return '<div class="item">' +
+          '<div class="item-top">' +
+            '<div>' +
+              '<div class="item-title">' + row.display_name + " · " + Number(row.total_coin_amount).toLocaleString("th-TH") + ' Point</div>' +
+              '<div class="item-meta">' + row.email + '<br>' + row.package_name + " · ฿" + Number(row.amount_thb).toLocaleString("th-TH") + slip + ref + '<br>' + formatDate(row.requested_at) + '</div>' +
+            '</div>' +
+            '<span class="' + chipClass(row.status || "pending") + '">' + (row.status || "pending") + '</span>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="mini-btn is-green" type="button" data-approve-topup="' + row.id + '">อนุมัติ Point</button>' +
+            '<button class="mini-btn is-gray" type="button" data-reject-topup="' + row.id + '">ปฏิเสธ</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
     function renderAll() {
       renderStats();
 
@@ -917,6 +931,7 @@
       const payments = adminDashboard ? adminDashboard.recent_payments : [];
       const gifts = adminDashboard ? adminDashboard.recent_gifts : [];
       const pendingUps = adminDashboard ? adminDashboard.pending_subscription_upgrades : [];
+      const pendingTopups = adminDashboard ? adminDashboard.pending_coin_topups : [];
 
       usersList.innerHTML = renderUsers(users, query);
       usersListLarge.innerHTML = renderUsers(users, query);
@@ -924,6 +939,8 @@
       reportsListLarge.innerHTML = renderReports(reports, query);
       pendingUpgradesList.innerHTML = renderPendingUpgrades(pendingUps, query);
       pendingUpgradesListLarge.innerHTML = renderPendingUpgrades(pendingUps, query);
+      pendingTopupsList.innerHTML = renderPendingTopups(pendingTopups, query);
+      pendingTopupsListLarge.innerHTML = renderPendingTopups(pendingTopups, query);
       paymentsList.innerHTML = renderPayments(payments, query);
       paymentsListLarge.innerHTML = renderPayments(payments, query);
       giftsList.innerHTML = renderGifts(gifts, query);
@@ -987,7 +1004,8 @@
           open_reports: [],
           recent_payments: [],
           recent_gifts: [],
-          pending_subscription_upgrades: []
+          pending_subscription_upgrades: [],
+          pending_coin_topups: []
         };
         renderAll();
         showNotice(error.message, "error");
@@ -1038,6 +1056,38 @@
       }
     }
 
+    async function approveCoinTopup(topupId) {
+      clearNotice();
+      try {
+        const response = await apiFetch("/admin/coin-topups/" + topupId + "/approve", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showNotice(response.message, "success");
+        await loadDashboard();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
+    }
+
+    async function rejectCoinTopup(topupId) {
+      clearNotice();
+      const reason = window.prompt("เหตุผลที่ปฏิเสธ (ไม่บังคับ)", "");
+      if (reason === null) {
+        return;
+      }
+      try {
+        const response = await apiFetch("/admin/coin-topups/" + topupId + "/reject", {
+          method: "POST",
+          body: JSON.stringify({ reason: reason })
+        });
+        showNotice(response.message, "success");
+        await loadDashboard();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
+    }
+
     async function logout() {
       try {
         await apiFetch("/auth/logout", { method: "POST", body: JSON.stringify({}) });
@@ -1063,6 +1113,18 @@
       const approveSub = event.target.closest("[data-approve-subscription]");
       if (approveSub) {
         approvePendingSubscription(Number(approveSub.getAttribute("data-approve-subscription")));
+        return;
+      }
+
+      const approveTopup = event.target.closest("[data-approve-topup]");
+      if (approveTopup) {
+        approveCoinTopup(Number(approveTopup.getAttribute("data-approve-topup")));
+        return;
+      }
+
+      const rejectTopup = event.target.closest("[data-reject-topup]");
+      if (rejectTopup) {
+        rejectCoinTopup(Number(rejectTopup.getAttribute("data-reject-topup")));
       }
     });
 

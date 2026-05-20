@@ -207,6 +207,34 @@ class ChatRepository
         return $message->fetch() ?: [];
     }
 
+    public function privatePeerId(int $roomId, int $userId): ?int
+    {
+        $statement = $this->db->prepare(
+            'SELECT other_member.user_id
+             FROM chat_rooms cr
+             INNER JOIN chat_room_members own_member
+                ON own_member.room_id = cr.id
+               AND own_member.user_id = :user_id
+               AND own_member.join_status = "joined"
+             INNER JOIN chat_room_members other_member
+                ON other_member.room_id = cr.id
+               AND other_member.user_id <> :user_id
+               AND other_member.join_status = "joined"
+             WHERE cr.id = :room_id
+               AND cr.room_type = "private"
+               AND cr.is_active = 1
+             LIMIT 1'
+        );
+        $statement->execute([
+            'room_id' => $roomId,
+            'user_id' => $userId,
+        ]);
+
+        $peerId = (int) ($statement->fetchColumn() ?: 0);
+
+        return $peerId > 0 ? $peerId : null;
+    }
+
     public function markRoomRead(int $roomId, int $userId, ?int $lastMessageId = null): void
     {
         if ($lastMessageId === null) {

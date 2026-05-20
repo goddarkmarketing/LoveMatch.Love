@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Repositories\ChatRepository;
 use App\Repositories\MatchRepository;
+use App\Repositories\MatchSignalRepository;
+use App\Repositories\PaidFeatureRepository;
 use App\Support\Request;
 use App\Support\Response;
 use RuntimeException;
@@ -12,7 +14,9 @@ class ChatController
 {
     public function __construct(
         private ChatRepository $chat,
-        private MatchRepository $matches
+        private MatchRepository $matches,
+        private MatchSignalRepository $signals,
+        private PaidFeatureRepository $paidFeatures
     )
     {
     }
@@ -135,8 +139,20 @@ class ChatController
     {
         $payload = $request->json();
         $body = trim((string) ($payload['body'] ?? ''));
+        $messageType = trim((string) ($payload['message_type'] ?? 'text'));
 
-        if ($body === '') {
+        if (!in_array($messageType, ['text', 'image'], true)) {
+            $messageType = 'text';
+        }
+
+        if ($messageType === 'image') {
+            if (!$this->isAllowedStickerPath($body)) {
+                Response::json([
+                    'success' => false,
+                    'message' => 'สติกเกอร์ไม่ถูกต้อง',
+                ], 422);
+            }
+        } elseif ($body === '') {
             Response::json([
                 'success' => false,
                 'message' => 'ข้อความต้องไม่ว่าง',
@@ -144,7 +160,16 @@ class ChatController
         }
 
         try {
-            $message = $this->chat->createMessage($roomId, $userId, $body);
+            $message = $this->chat->createMessage($roomId, $userId, $body, $messageType);
+            $peerId = $this->chat->privatePeerId($roomId, $userId);
+            $announcement = [];
+            if ($peerId) {
+                try {
+                    $announcement = $this->signals->recordPrivateMessage($userId, $peerId, (int) ($message['id'] ?? 0));
+                } catch (\Throwable) {
+                    // Match stats must not block chat delivery.
+                }
+            }
         } catch (RuntimeException $exception) {
             Response::json([
                 'success' => false,
@@ -155,8 +180,26 @@ class ChatController
         Response::json([
             'success' => true,
             'message' => 'ส่งข้อความสำเร็จ',
-            'data' => ['message' => $message],
+            'data' => [
+                'message' => $message,
+                'announcement' => $announcement ?: null,
+            ],
         ], 201);
+    }
+
+    private function isAllowedStickerPath(string $body): bool
+    {
+        if ($body === '' || str_contains($body, '..')) {
+            return false;
+        }
+
+        if (!preg_match('#^assets/stickers/chat/[a-z0-9\-]+\.png$#', $body)) {
+            return false;
+        }
+
+        $fullPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $body);
+
+        return is_file($fullPath);
     }
 
     public function startPrivate(Request $request, int $userId): void
@@ -171,10 +214,10 @@ class ChatController
             ], 422);
         }
 
-        if (!$this->matches->isMatched($userId, $targetUserId)) {
+        if (!$this->matches->isMatched($userId, $targetUserId) && !$this->paidFeatures->hasActiveChatUnlock($userId, $targetUserId)) {
             Response::json([
                 'success' => false,
-                'message' => 'ต้อง match กันก่อนจึงจะเริ่ม private chat ได้',
+                'message' => 'ต้อง match กันก่อน หรือปลดล็อกแชทก่อนแมทช์',
             ], 403);
         }
 

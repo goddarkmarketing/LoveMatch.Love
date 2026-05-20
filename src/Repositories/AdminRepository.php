@@ -21,6 +21,7 @@ class AdminRepository
                 'payments_paid' => $this->count('payments', 'status = "paid"'),
                 'subscriptions_active' => $this->count('subscriptions', 'status = "active"'),
                 'subscriptions_pending_upgrade' => $this->countPendingPaidUpgradesForActiveUsers(),
+                'coin_topups_pending' => $this->count('coin_topup_requests', 'status = "pending"'),
                 'gifts_sent' => $this->count('gift_transactions'),
             ],
             'recent_users' => $this->recentUsers(),
@@ -28,7 +29,63 @@ class AdminRepository
             'open_reports' => $this->openReports(),
             'recent_gifts' => $this->recentGifts(),
             'pending_subscription_upgrades' => $this->pendingSubscriptionUpgrades(),
+            'pending_coin_topups' => $this->pendingCoinTopups(),
+            'recent_coin_topups' => $this->recentCoinTopups(),
         ];
+    }
+
+    private function pendingCoinTopups(): array
+    {
+        return $this->coinTopups('ctr.status = "pending"', 24);
+    }
+
+    private function recentCoinTopups(): array
+    {
+        return $this->coinTopups(null, 12);
+    }
+
+    private function coinTopups(?string $where, int $limit): array
+    {
+        $sql = 'SELECT
+                ctr.id,
+                ctr.user_id,
+                ctr.total_coin_amount,
+                ctr.amount_thb,
+                ctr.payment_method,
+                ctr.slip_url,
+                ctr.transfer_reference,
+                ctr.status,
+                ctr.requested_at,
+                ctp.name_th AS package_name,
+                u.display_name,
+                u.email
+             FROM coin_topup_requests ctr
+             INNER JOIN coin_topup_packages ctp ON ctp.id = ctr.package_id
+             INNER JOIN users u ON u.id = ctr.user_id';
+
+        if ($where) {
+            $sql .= ' WHERE ' . $where;
+        }
+
+        $sql .= ' ORDER BY ctr.id DESC LIMIT ' . (int) $limit;
+        $statement = $this->db->query($sql);
+
+        return array_map(static function (array $row): array {
+            return [
+                'id' => (int) $row['id'],
+                'user_id' => (int) $row['user_id'],
+                'display_name' => $row['display_name'],
+                'email' => $row['email'],
+                'package_name' => $row['package_name'],
+                'total_coin_amount' => (int) $row['total_coin_amount'],
+                'amount_thb' => (float) $row['amount_thb'],
+                'payment_method' => $row['payment_method'],
+                'slip_url' => $row['slip_url'] ?: null,
+                'transfer_reference' => $row['transfer_reference'] ?: null,
+                'status' => $row['status'],
+                'requested_at' => $row['requested_at'],
+            ];
+        }, $statement->fetchAll());
     }
 
     /**

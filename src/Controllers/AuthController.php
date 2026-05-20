@@ -321,6 +321,138 @@ class AuthController
         ]);
     }
 
+    public function createQrLoginSession(): void
+    {
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash('sha256', $token);
+        $expiresAt = date('Y-m-d H:i:s', time() + 300);
+
+        $this->expireOldQrLoginSessions();
+
+        $statement = $this->pdo->prepare(
+            'INSERT INTO qr_login_sessions (
+                token_hash, status, requester_ip, requester_user_agent, expires_at, created_at, updated_at
+             ) VALUES (
+                :token_hash, "pending", :requester_ip, :requester_user_agent, :expires_at, NOW(), NOW()
+             )'
+        );
+        $statement->execute([
+            'token_hash' => $tokenHash,
+            'requester_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'requester_user_agent' => substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255),
+            'expires_at' => $expiresAt,
+        ]);
+
+        Response::json([
+            'success' => true,
+            'message' => 'สร้าง QR เข้าสู่ระบบแล้ว',
+            'data' => [
+                'token' => $token,
+                'expires_at' => $expiresAt,
+            ],
+        ], 201);
+    }
+
+    public function qrLoginStatus(string $token): void
+    {
+        $session = $this->findQrLoginSession($token);
+        if (!$session) {
+            Response::json([
+                'success' => false,
+                'message' => 'QR เข้าสู่ระบบไม่ถูกต้อง',
+            ], 404);
+        }
+
+        if ($this->isQrLoginExpired($session)) {
+            $this->markQrLoginSession((int) $session['id'], 'expired');
+            Response::json([
+                'success' => true,
+                'data' => ['status' => 'expired'],
+            ]);
+        }
+
+        if ($session['status'] === 'approved' && !empty($session['approved_user_id'])) {
+            $userId = (int) $session['approved_user_id'];
+            $_SESSION['user_id'] = $userId;
+            $this->users->touchLastSeen($userId);
+
+            $update = $this->pdo->prepare(
+                'UPDATE qr_login_sessions
+                 SET status = "consumed", consumed_at = NOW(), updated_at = NOW()
+                 WHERE id = :id AND status = "approved"'
+            );
+            $update->execute(['id' => (int) $session['id']]);
+
+            Response::json([
+                'success' => true,
+                'message' => 'เข้าสู่ระบบด้วย QR สำเร็จ',
+                'data' => [
+                    'status' => 'consumed',
+                    'user' => $this->users->findById($userId),
+                ],
+            ]);
+        }
+
+        Response::json([
+            'success' => true,
+            'data' => [
+                'status' => $session['status'],
+            ],
+        ]);
+    }
+
+    public function approveQrLoginSession(string $token): void
+    {
+        $userId = (int) ($_SESSION['user_id'] ?? 0);
+        if ($userId <= 0) {
+            Response::json([
+                'success' => false,
+                'message' => 'กรุณาเข้าสู่ระบบบนมือถือก่อนอนุมัติ QR',
+            ], 401);
+        }
+
+        $session = $this->findQrLoginSession($token);
+        if (!$session || $session['status'] !== 'pending') {
+            Response::json([
+                'success' => false,
+                'message' => 'QR นี้ไม่พร้อมใช้งานแล้ว',
+            ], 422);
+        }
+
+        if ($this->isQrLoginExpired($session)) {
+            $this->markQrLoginSession((int) $session['id'], 'expired');
+            Response::json([
+                'success' => false,
+                'message' => 'QR หมดอายุแล้ว โปรดสร้างใหม่',
+            ], 410);
+        }
+
+        $update = $this->pdo->prepare(
+            'UPDATE qr_login_sessions
+             SET status = "approved",
+                 approved_user_id = :approved_user_id,
+                 approved_ip = :approved_ip,
+                 approved_user_agent = :approved_user_agent,
+                 approved_at = NOW(),
+                 updated_at = NOW()
+             WHERE id = :id AND status = "pending"'
+        );
+        $update->execute([
+            'approved_user_id' => $userId,
+            'approved_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'approved_user_agent' => substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255),
+            'id' => (int) $session['id'],
+        ]);
+
+        Response::json([
+            'success' => true,
+            'message' => 'อนุมัติ QR เข้าสู่ระบบแล้ว',
+            'data' => [
+                'status' => 'approved',
+            ],
+        ]);
+    }
+
     public function logout(): void
     {
         $_SESSION = [];
@@ -365,5 +497,50 @@ class AuthController
             'success' => true,
             'data' => ['user' => $user],
         ]);
+    }
+
+    private function findQrLoginSession(string $token): ?array
+    {
+        if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+            return null;
+        }
+
+        $statement = $this->pdo->prepare(
+            'SELECT *
+             FROM qr_login_sessions
+             WHERE token_hash = :token_hash
+             LIMIT 1'
+        );
+        $statement->execute(['token_hash' => hash('sha256', $token)]);
+        $row = $statement->fetch();
+
+        return $row ?: null;
+    }
+
+    private function isQrLoginExpired(array $session): bool
+    {
+        return strtotime((string) $session['expires_at']) <= time();
+    }
+
+    private function markQrLoginSession(int $sessionId, string $status): void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE qr_login_sessions
+             SET status = :status, updated_at = NOW()
+             WHERE id = :id'
+        );
+        $statement->execute([
+            'status' => $status,
+            'id' => $sessionId,
+        ]);
+    }
+
+    private function expireOldQrLoginSessions(): void
+    {
+        $this->pdo->exec(
+            'UPDATE qr_login_sessions
+             SET status = "expired", updated_at = NOW()
+             WHERE status IN ("pending", "approved") AND expires_at < NOW()'
+        );
     }
 }

@@ -816,6 +816,233 @@
       line-height: 1;
     }
 
+    .auth-submit svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .topup-package-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .topup-package {
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      border: 1px solid rgba(224, 199, 212, 0.9);
+      border-radius: 18px;
+      background: rgba(255, 247, 250, 0.86);
+      color: #3b2634;
+      cursor: pointer;
+    }
+
+    .topup-package input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .topup-package:has(input:checked) {
+      border-color: #ef6b9d;
+      background: #fff1f7;
+      box-shadow: inset 0 0 0 2px rgba(239, 107, 157, 0.16);
+    }
+
+    .topup-package strong {
+      font-size: 16px;
+    }
+
+    .topup-package span {
+      color: #7d6172;
+      font-size: 13px;
+    }
+
+    .topup-bank-preview {
+      padding: 8px 14px 12px;
+      border: 1px solid rgba(232, 202, 216, 0.86);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 250, 252, 0.96), rgba(255, 244, 249, 0.86));
+      color: #5f4657;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .topup-bank-holder {
+      padding: 6px 0 8px;
+      color: #2e2230;
+      font-weight: 800;
+    }
+
+    .topup-bank-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(232, 211, 222, 0.78);
+    }
+
+    .topup-bank-row:first-child {
+      border-top: 0;
+    }
+
+    .topup-bank-holder + .topup-bank-row {
+      border-top: 0;
+    }
+
+    .topup-bank-row strong {
+      color: #2e2230;
+    }
+
+    .topup-bank-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 800;
+    }
+
+    .topup-bank-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: #fff;
+      object-fit: contain;
+      padding: 5px;
+      box-shadow: 0 8px 18px rgba(107, 67, 88, 0.1);
+      flex: 0 0 auto;
+    }
+
+    .topup-bank-account {
+      color: #7d6172;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .topup-file-hint {
+      color: #786072;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .topup-slip-zone {
+      position: relative;
+      min-height: 82px;
+      border: 1.5px dashed rgba(236, 113, 161, 0.72);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 151, 189, 0.16), transparent 30%),
+        linear-gradient(180deg, rgba(255, 250, 252, 0.98), rgba(255, 244, 249, 0.9));
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .topup-slip-zone:hover,
+    .topup-slip-zone:focus-within {
+      border-color: #ef5d90;
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(214, 72, 128, 0.14);
+    }
+
+    .topup-slip-zone input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .topup-slip-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff6fa8, #dd4779);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(219, 72, 124, 0.22);
+      font-weight: 900;
+    }
+
+    .topup-slip-copy {
+      display: grid;
+      gap: 3px;
+      color: #372534;
+      font-weight: 800;
+      min-width: 0;
+    }
+
+    .topup-slip-copy span {
+      color: #826779;
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .topup-slip-cta {
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #d84c7d;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: inset 0 0 0 1px rgba(232, 168, 196, 0.68);
+      white-space: nowrap;
+    }
+
+    .topup-submit {
+      position: relative;
+      overflow: hidden;
+      min-height: 62px;
+      background: linear-gradient(90deg, #ff5fa0 0%, #df4477 55%, #c93c70 100%);
+      box-shadow: 0 18px 38px rgba(220, 73, 121, 0.26);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .topup-submit svg,
+    .topup-submit span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .topup-submit::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.24) 42%, transparent 58%);
+      transform: translateX(-120%);
+      transition: transform 0.42s ease;
+    }
+
+    .topup-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 24px 48px rgba(220, 73, 121, 0.32);
+    }
+
+    .topup-submit:hover::after {
+      transform: translateX(120%);
+    }
+
+    .topup-submit:disabled {
+      cursor: wait;
+      opacity: 0.72;
+      transform: none;
+      box-shadow: 0 12px 24px rgba(220, 73, 121, 0.18);
+    }
+
     .register-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -952,6 +1179,7 @@
 
     @media (max-width: 720px) {
       .gift-grid,
+      .topup-package-grid,
       .register-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1031,8 +1259,34 @@
       }
 
       .gift-grid,
+      .topup-package-grid,
       .register-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
+      }
+
+      .topup-slip-zone {
+        grid-template-columns: 44px minmax(0, 1fr);
+      }
+
+      .topup-bank-row {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .topup-bank-account {
+        width: 100%;
+        padding-left: 44px;
+        text-align: left;
+      }
+
+      .topup-slip-cta {
+        grid-column: 2;
+        text-align: left;
+      }
+
+      .topup-slip-cta {
+        width: max-content;
       }
 
       .panel-title {
@@ -1101,9 +1355,8 @@
 
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="./">
-        <img class="brand-mark" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async">
-        <span class="brand-name">LoveMatch.Love</span>
+      <a class="brand" href="./" aria-label="LoveMatch.Love — หน้าแรก">
+        <img class="brand-mark" src="assets/logo.png" alt="LoveMatch.Love" decoding="async">
       </a>
       <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
         <span></span>
@@ -1201,6 +1454,49 @@
   </div>
 
   <div class="page-toast" id="pageToast"></div>
+
+  <div class="modal-backdrop" id="topupModal" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="topupModalTitle">
+      <div class="auth-header">
+        <div class="auth-title" id="topupModalTitle">
+          <svg><use href="#i-gift"></use></svg>
+          <span>เติม Point</span>
+        </div>
+        <button class="modal-close" id="topupModalClose" type="button" aria-label="Close topup popup">×</button>
+      </div>
+
+      <form class="auth-form" id="topupForm">
+        <div>
+          <span class="auth-label">เลือกแพ็กเกจ</span>
+          <div class="topup-package-grid" id="topupPackageGrid"></div>
+        </div>
+
+        <div class="topup-bank-preview" id="topupBankPreview">กำลังโหลดข้อมูลบัญชีรับโอน...</div>
+
+        <label class="auth-field">
+          <span class="auth-label">เลขอ้างอิง / เวลาโอน / หมายเหตุ</span>
+          <input class="auth-input" id="topupReferenceInput" type="text" placeholder="เช่น 12/05 16:20 โอนจากกสิกร">
+        </label>
+
+        <div class="auth-field">
+          <span class="auth-label">อัปโหลดสลิปหรือหลักฐานการโอน</span>
+          <label class="topup-slip-zone" for="topupSlipInput">
+            <span class="topup-slip-icon">↑</span>
+            <span class="topup-slip-copy">
+              แนบสลิปการโอน
+              <span id="topupSlipFileName">ยังไม่ได้เลือกไฟล์</span>
+            </span>
+            <span class="topup-slip-cta">เลือกไฟล์</span>
+            <input id="topupSlipInput" type="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+          </label>
+          <span class="topup-file-hint">รองรับ JPG, PNG, WEBP หรือ PDF ขนาดไม่เกิน 5MB</span>
+        </div>
+
+        <div class="form-notice" id="topupNotice"></div>
+        <button class="auth-submit topup-submit" id="topupSubmitButton" type="submit"><svg><use href="#i-send"></use></svg><span>ส่งคำขอเติม Point</span></button>
+      </form>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="loginModal" aria-hidden="true">
     <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
@@ -1366,6 +1662,16 @@
     const languageMenuButton = document.getElementById("languageMenuButton");
     const scrollToCatalogButton = document.getElementById("scrollToCatalogButton");
     const pageToast = document.getElementById("pageToast");
+    const topupModal = document.getElementById("topupModal");
+    const topupModalClose = document.getElementById("topupModalClose");
+    const topupForm = document.getElementById("topupForm");
+    const topupPackageGrid = document.getElementById("topupPackageGrid");
+    const topupBankPreview = document.getElementById("topupBankPreview");
+    const topupReferenceInput = document.getElementById("topupReferenceInput");
+    const topupSlipInput = document.getElementById("topupSlipInput");
+    const topupSlipFileName = document.getElementById("topupSlipFileName");
+    const topupNotice = document.getElementById("topupNotice");
+    const topupSubmitButton = document.getElementById("topupSubmitButton");
     const loginModal = document.getElementById("loginModal");
     const registerModal = document.getElementById("registerModal");
     const loginModalClose = document.getElementById("loginModalClose");
@@ -1388,6 +1694,8 @@
     let currentWallet = null;
     let selectedGift = null;
     let availableMatches = [];
+    let topupPackages = [];
+    let topupPaymentOptions = null;
 
     function openModal(modal) {
       modal.classList.add("is-open");
@@ -1398,7 +1706,7 @@
     function closeModal(modal) {
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
-      if (!loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open")) {
+      if (!loginModal.classList.contains("is-open") && !registerModal.classList.contains("is-open") && !topupModal.classList.contains("is-open")) {
         document.body.classList.remove("modal-open");
       }
     }
@@ -1483,7 +1791,7 @@
 
       walletBalance.innerHTML = '<span class="wallet-coin-gl" aria-hidden="true"></span>' + Number(currentWallet.coin_balance || 0).toLocaleString("th-TH") + '<span>เหรียญ</span>';
       walletHint.textContent = "ยอดเหรียญปัจจุบันของคุณพร้อมใช้งานสำหรับการส่งของขวัญ";
-      walletActionButton.textContent = "กลับหน้าแพ็กเกจ";
+      walletActionButton.textContent = "เติม Point";
       walletActionButton.className = "pill pill-gold";
       giftSubmitButton.title = "เหรียญคงเหลือ " + currentWallet.coin_balance;
       updateCoinPill();
@@ -1644,6 +1952,190 @@
       }
 
       updateWalletCard();
+    }
+
+    function renderTopupPackages() {
+      if (!topupPackageGrid) {
+        return;
+      }
+
+      if (!topupPackages.length) {
+        topupPackageGrid.innerHTML = '<div class="topup-file-hint">ยังไม่มีแพ็กเกจเติม Point</div>';
+        return;
+      }
+
+      topupPackageGrid.innerHTML = topupPackages.map(function (item, index) {
+        const total = Number(item.total_coin_amount || item.coin_amount || 0).toLocaleString("th-TH");
+        const price = Number(item.price_thb || 0).toLocaleString("th-TH");
+        const bonus = Number(item.bonus_coin || 0);
+        return '<label class="topup-package">' +
+          '<input type="radio" name="topupPackageCode" value="' + item.code + '" ' + (index === 0 ? "checked" : "") + '>' +
+          '<strong>' + item.name + '</strong>' +
+          '<span>' + total + ' Point · ฿' + price + (bonus > 0 ? ' · โบนัส ' + bonus.toLocaleString("th-TH") : '') + '</span>' +
+        '</label>';
+      }).join("");
+    }
+
+    function renderTopupBankPreview() {
+      if (!topupBankPreview) {
+        return;
+      }
+
+      const opts = topupPaymentOptions || {};
+      const accounts = opts.bank_accounts || [];
+      const bank = opts.bank || {};
+      const holder = bank.account_name || bank.bank_account_name || "";
+      const note = bank.transfer_reference_note || "หลังโอนแล้วส่งคำขอพร้อมแนบสลิปเพื่อให้แอดมินตรวจสอบ";
+
+      if (!accounts.length) {
+        topupBankPreview.textContent = "โอนเข้าบัญชี " + (bank.bank_name || "") + " เลข " + (bank.bank_account_number || "") + (holder ? " ชื่อบัญชี " + holder : "") + " · " + note;
+        return;
+      }
+
+      topupBankPreview.innerHTML = (holder ? '<div class="topup-bank-holder">ชื่อบัญชี: ' + escapeHtml(holder) + '</div>' : '') +
+        accounts.map(function (acc) {
+          const label = acc.type === "promptpay" ? "พร้อมเพย์ " + acc.account_number : "เลขที่ " + acc.account_number;
+          const logo = topupAssetUrl(acc.logo);
+          return '<div class="topup-bank-row">' +
+            '<div class="topup-bank-name">' +
+              (logo ? '<img class="topup-bank-logo" src="' + escapeHtml(logo) + '" alt="' + escapeHtml(acc.name_th || "ธนาคาร") + '">' : '') +
+              '<strong>' + escapeHtml(acc.name_th || "บัญชีรับโอน") + '</strong>' +
+            '</div>' +
+            '<span class="topup-bank-account">' + escapeHtml(label) + '</span>' +
+          '</div>';
+        }).join("") +
+        '<div class="topup-file-hint">' + escapeHtml(note) + '</div>';
+    }
+
+    async function loadTopupModalData() {
+      const [packagesResponse, paymentResponse] = await Promise.all([
+        apiFetch("/wallet/topup-options", { method: "GET" }),
+        apiFetch("/payments/registration-options", { method: "GET" })
+      ]);
+
+      topupPackages = packagesResponse.data.packages || [];
+      topupPaymentOptions = paymentResponse.data || {};
+      renderTopupPackages();
+      renderTopupBankPreview();
+    }
+
+    function selectedTopupPackage() {
+      const checked = document.querySelector('input[name="topupPackageCode"]:checked');
+      const code = checked ? checked.value : "";
+      return topupPackages.find(function (item) {
+        return item.code === code;
+      }) || topupPackages[0] || null;
+    }
+
+    function topupAssetUrl(logo) {
+      if (!logo) {
+        return "";
+      }
+      const clean = String(logo).replace(/^\//, "");
+      return (appBasePath || "") + "/" + clean;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, function (char) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[char];
+      });
+    }
+
+    function updateTopupSlipFileName() {
+      if (!topupSlipFileName) {
+        return;
+      }
+      const file = topupSlipInput && topupSlipInput.files ? topupSlipInput.files[0] : null;
+      topupSlipFileName.textContent = file ? file.name : "ยังไม่ได้เลือกไฟล์";
+    }
+
+    async function uploadTopupSlipIfNeeded() {
+      const file = topupSlipInput && topupSlipInput.files ? topupSlipInput.files[0] : null;
+      if (!file) {
+        return "";
+      }
+
+      const formData = new FormData();
+      formData.append("slip", file);
+
+      const response = await fetch(API_BASE + "/wallet/topup-slip", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData
+      });
+      const data = await response.json();
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || "อัปโหลดสลิปไม่สำเร็จ");
+      }
+
+      return data.data.slip_url || "";
+    }
+
+    async function openTopupModal() {
+      if (!currentUser) {
+        openModal(loginModal);
+        return;
+      }
+
+      try {
+        clearNotice(topupNotice);
+        topupSubmitButton.disabled = true;
+        await loadTopupModalData();
+        openModal(topupModal);
+      } catch (error) {
+        showToast(error.message, "is-error");
+      } finally {
+        topupSubmitButton.disabled = false;
+      }
+    }
+
+    async function handlePointTopupRequest(event) {
+      event.preventDefault();
+      clearNotice(topupNotice);
+
+      const selected = selectedTopupPackage();
+      if (!selected) {
+        showNotice(topupNotice, "กรุณาเลือกแพ็กเกจเติม Point", "error");
+        return;
+      }
+
+      const reference = topupReferenceInput.value.trim();
+      const hasSlip = topupSlipInput && topupSlipInput.files && topupSlipInput.files.length > 0;
+      if (!reference && !hasSlip) {
+        showNotice(topupNotice, "กรุณาใส่เลขอ้างอิงหรือแนบสลิปอย่างน้อย 1 อย่าง", "error");
+        return;
+      }
+
+      topupSubmitButton.disabled = true;
+      try {
+        const slipUrl = await uploadTopupSlipIfNeeded();
+        const topupResponse = await apiFetch("/wallet/topup-requests", {
+          method: "POST",
+          body: JSON.stringify({
+            package_code: selected.code,
+            slip_url: slipUrl || null,
+            transfer_reference: reference
+          })
+        });
+
+        topupForm.reset();
+        updateTopupSlipFileName();
+        showNotice(topupNotice, topupResponse.message + " ยอด ฿" + Number(selected.price_thb).toLocaleString("th-TH"), "success");
+        window.setTimeout(function () {
+          closeModal(topupModal);
+          clearNotice(topupNotice);
+        }, 1100);
+      } catch (error) {
+        showNotice(topupNotice, error.message, "error");
+      } finally {
+        topupSubmitButton.disabled = false;
+      }
     }
 
     async function hydrateMatches() {
@@ -1844,8 +2336,25 @@
         openModal(loginModal);
         return;
       }
-      window.location.href = PREMIUM_PAGE_URL;
+      openTopupModal();
     });
+    if (topupModalClose && topupModal) {
+      topupModalClose.addEventListener("click", function (event) {
+        event.preventDefault();
+        closeModal(topupModal);
+      });
+      topupModal.addEventListener("click", function (event) {
+        if (event.target === topupModal) {
+          closeModal(topupModal);
+        }
+      });
+    }
+    if (topupForm) {
+      topupForm.addEventListener("submit", handlePointTopupRequest);
+    }
+    if (topupSlipInput) {
+      topupSlipInput.addEventListener("change", updateTopupSlipFileName);
+    }
     scrollToCatalogButton.addEventListener("click", function () {
       document.getElementById("giftCatalogSection").scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -1905,6 +2414,9 @@
         }
         if (registerModal.classList.contains("is-open")) {
           closeModal(registerModal);
+        }
+        if (topupModal.classList.contains("is-open")) {
+          closeModal(topupModal);
         }
       }
     });

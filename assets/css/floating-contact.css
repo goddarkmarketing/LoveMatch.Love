@@ -151,19 +151,25 @@
 }
 
 .floating-contact-fab {
-  width: 58px;
-  height: 58px;
+  min-width: 190px;
+  height: 70px;
+  padding: 8px 18px 8px 8px;
   border: none;
-  border-radius: 50%;
+  border-radius: 999px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #ff68a0 0%, #d94a78 100%);
+  background: linear-gradient(135deg, #f7c6d8 0%, #e5578b 58%, #c83f72 100%);
   box-shadow:
     0 14px 32px rgba(217, 74, 120, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
@@ -177,10 +183,20 @@
   outline-offset: 3px;
 }
 
-.floating-contact-fab svg {
-  width: 28px;
-  height: 28px;
-  fill: currentColor;
+.floating-contact-fab-img {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 18px rgba(80, 24, 48, 0.2);
+}
+
+.floating-contact-fab-text {
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(90, 20, 48, 0.25);
 }
 
 .floating-contact.is-open .floating-contact-fab {
@@ -202,5 +218,19 @@
 
   .floating-contact.is-open .floating-contact-panel {
     transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-contact-fab {
+    min-width: 0;
+    height: 64px;
+    padding: 7px 14px 7px 7px;
+    font-size: 14px;
+  }
+
+  .floating-contact-fab-img {
+    width: 50px;
+    height: 50px;
   }
 }

@@ -1,0 +1,343 @@
+{
+  "version": 1,
+  "generated_at": "2026-05-18T03:16:26.432Z",
+  "count": 42,
+  "stickers": [
+    {
+      "id": "line-oa-chat-260518-092736-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092736-photoroom-01.png",
+      "label": "สติกเกอร์ 1",
+      "width": 408,
+      "height": 408,
+      "source": "line_oa_chat_260518_092736-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-0-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-0-photoroom-01.png",
+      "label": "สติกเกอร์ 2",
+      "width": 607,
+      "height": 391,
+      "source": "line_oa_chat_260518_092740_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-0-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-0-photoroom-02.png",
+      "label": "สติกเกอร์ 3",
+      "width": 270,
+      "height": 391,
+      "source": "line_oa_chat_260518_092740_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-0-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-0-photoroom-04.png",
+      "label": "สติกเกอร์ 4",
+      "width": 607,
+      "height": 391,
+      "source": "line_oa_chat_260518_092740_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-0-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-0-photoroom-05.png",
+      "label": "สติกเกอร์ 5",
+      "width": 270,
+      "height": 391,
+      "source": "line_oa_chat_260518_092740_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-1-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-1-photoroom-01.png",
+      "label": "สติกเกอร์ 6",
+      "width": 426,
+      "height": 426,
+      "source": "line_oa_chat_260518_092740_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-1-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-1-photoroom-02.png",
+      "label": "สติกเกอร์ 7",
+      "width": 434,
+      "height": 426,
+      "source": "line_oa_chat_260518_092740_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-1-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-1-photoroom-04.png",
+      "label": "สติกเกอร์ 8",
+      "width": 426,
+      "height": 434,
+      "source": "line_oa_chat_260518_092740_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092740-group-1-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092740-group-1-photoroom-05.png",
+      "label": "สติกเกอร์ 9",
+      "width": 434,
+      "height": 434,
+      "source": "line_oa_chat_260518_092740_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-0-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-0-photoroom-01.png",
+      "label": "สติกเกอร์ 10",
+      "width": 578,
+      "height": 562,
+      "source": "line_oa_chat_260518_092743_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-1-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-1-photoroom-01.png",
+      "label": "สติกเกอร์ 11",
+      "width": 549,
+      "height": 583,
+      "source": "line_oa_chat_260518_092743_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-2-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-2-photoroom-01.png",
+      "label": "สติกเกอร์ 12",
+      "width": 426,
+      "height": 426,
+      "source": "line_oa_chat_260518_092743_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-2-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-2-photoroom-02.png",
+      "label": "สติกเกอร์ 13",
+      "width": 434,
+      "height": 426,
+      "source": "line_oa_chat_260518_092743_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-2-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-2-photoroom-04.png",
+      "label": "สติกเกอร์ 14",
+      "width": 426,
+      "height": 434,
+      "source": "line_oa_chat_260518_092743_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092743-group-2-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092743-group-2-photoroom-05.png",
+      "label": "สติกเกอร์ 15",
+      "width": 434,
+      "height": 434,
+      "source": "line_oa_chat_260518_092743_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092746-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092746-photoroom-01.png",
+      "label": "สติกเกอร์ 16",
+      "width": 426,
+      "height": 426,
+      "source": "line_oa_chat_260518_092746-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092746-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092746-photoroom-02.png",
+      "label": "สติกเกอร์ 17",
+      "width": 434,
+      "height": 426,
+      "source": "line_oa_chat_260518_092746-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092746-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092746-photoroom-04.png",
+      "label": "สติกเกอร์ 18",
+      "width": 426,
+      "height": 434,
+      "source": "line_oa_chat_260518_092746-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092746-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092746-photoroom-05.png",
+      "label": "สติกเกอร์ 19",
+      "width": 434,
+      "height": 434,
+      "source": "line_oa_chat_260518_092746-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-01.png",
+      "label": "สติกเกอร์ 20",
+      "width": 380,
+      "height": 303,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-02.png",
+      "label": "สติกเกอร์ 21",
+      "width": 374,
+      "height": 303,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-04.png",
+      "label": "สติกเกอร์ 22",
+      "width": 380,
+      "height": 305,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-05.png",
+      "label": "สติกเกอร์ 23",
+      "width": 374,
+      "height": 305,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-07",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-07.png",
+      "label": "สติกเกอร์ 24",
+      "width": 380,
+      "height": 300,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-0-photoroom-08",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-0-photoroom-08.png",
+      "label": "สติกเกอร์ 25",
+      "width": 374,
+      "height": 300,
+      "source": "line_oa_chat_260518_092749_group_0-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-1-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-1-photoroom-01.png",
+      "label": "สติกเกอร์ 26",
+      "width": 290,
+      "height": 406,
+      "source": "line_oa_chat_260518_092749_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-1-photoroom-03",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-1-photoroom-03.png",
+      "label": "สติกเกอร์ 27",
+      "width": 290,
+      "height": 403,
+      "source": "line_oa_chat_260518_092749_group_1-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-2-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-2-photoroom-01.png",
+      "label": "สติกเกอร์ 28",
+      "width": 426,
+      "height": 426,
+      "source": "line_oa_chat_260518_092749_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-2-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-2-photoroom-02.png",
+      "label": "สติกเกอร์ 29",
+      "width": 434,
+      "height": 426,
+      "source": "line_oa_chat_260518_092749_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-2-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-2-photoroom-04.png",
+      "label": "สติกเกอร์ 30",
+      "width": 426,
+      "height": 434,
+      "source": "line_oa_chat_260518_092749_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-2-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-2-photoroom-05.png",
+      "label": "สติกเกอร์ 31",
+      "width": 434,
+      "height": 434,
+      "source": "line_oa_chat_260518_092749_group_2-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-3-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-3-photoroom-01.png",
+      "label": "สติกเกอร์ 32",
+      "width": 426,
+      "height": 426,
+      "source": "line_oa_chat_260518_092749_group_3-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-3-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-3-photoroom-02.png",
+      "label": "สติกเกอร์ 33",
+      "width": 434,
+      "height": 426,
+      "source": "line_oa_chat_260518_092749_group_3-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-3-photoroom-04",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-3-photoroom-04.png",
+      "label": "สติกเกอร์ 34",
+      "width": 426,
+      "height": 434,
+      "source": "line_oa_chat_260518_092749_group_3-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-3-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-3-photoroom-05.png",
+      "label": "สติกเกอร์ 35",
+      "width": 434,
+      "height": 434,
+      "source": "line_oa_chat_260518_092749_group_3-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-01.png",
+      "label": "สติกเกอร์ 36",
+      "width": 285,
+      "height": 402,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-02",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-02.png",
+      "label": "สติกเกอร์ 37",
+      "width": 342,
+      "height": 402,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-03",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-03.png",
+      "label": "สติกเกอร์ 38",
+      "width": 300,
+      "height": 402,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-05",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-05.png",
+      "label": "สติกเกอร์ 39",
+      "width": 285,
+      "height": 410,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-06",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-06.png",
+      "label": "สติกเกอร์ 40",
+      "width": 342,
+      "height": 410,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092749-group-4-photoroom-07",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092749-group-4-photoroom-07.png",
+      "label": "สติกเกอร์ 41",
+      "width": 300,
+      "height": 410,
+      "source": "line_oa_chat_260518_092749_group_4-Photoroom.png"
+    },
+    {
+      "id": "line-oa-chat-260518-092754-photoroom-01",
+      "file": "assets/stickers/chat/line-oa-chat-260518-092754-photoroom-01.png",
+      "label": "สติกเกอร์ 42",
+      "width": 578,
+      "height": 562,
+      "source": "line_oa_chat_260518_092754-Photoroom.png"
+    }
+  ]
+}

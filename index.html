@@ -308,6 +308,150 @@
       max-width: 270px;
     }
 
+    .match-wall {
+      margin-top: 42px;
+      padding: 34px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.72), transparent 34%),
+        rgba(255, 238, 246, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      box-shadow: 0 22px 44px rgba(193, 72, 119, 0.14);
+    }
+
+    .match-wall-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .match-wall-title {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      color: #a20d4d;
+      font-weight: 700;
+    }
+
+    .match-wall-copy {
+      margin: 8px 0 0;
+      color: #6c4b5d;
+      font-size: 16px;
+      line-height: var(--leading-copy);
+    }
+
+    .match-wall-badge {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      color: #d42373;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .match-wall-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .match-feed,
+    .match-top-pairs {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-feed-item,
+    .match-top-card {
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .match-feed-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .match-pair-avatars {
+      display: flex;
+      align-items: center;
+      min-width: 74px;
+    }
+
+    .match-pair-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: linear-gradient(135deg, #ff89b3, #ffd18b);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 18px rgba(199, 74, 118, 0.18);
+    }
+
+    .match-pair-avatar + .match-pair-avatar {
+      margin-left: -12px;
+    }
+
+    .match-feed-title {
+      margin: 0;
+      font-size: 18px;
+      color: #33202d;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .match-feed-body,
+    .match-feed-meta,
+    .match-top-meta {
+      margin: 4px 0 0;
+      color: #755668;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .match-score-chip {
+      justify-self: end;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e91e8c, #ff9d42);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .match-top-card {
+      padding: 15px;
+    }
+
+    .match-top-heading {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #a20d4d;
+      font-weight: 800;
+    }
+
+    .match-empty {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #755668;
+      line-height: 1.6;
+      text-align: center;
+    }
+
     .discover {
       padding: 130px 0 110px;
       text-align: center;
@@ -527,6 +671,58 @@
     .action-red { background: linear-gradient(135deg, #ff6778 0%, #ff4055 100%); }
     .action-gold { background: linear-gradient(135deg, #ffd84f 0%, #ffb800 100%); }
     .action-green { background: linear-gradient(135deg, #2ce4a0 0%, #10c97f 100%); }
+
+    .paid-feature-panel {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 244, 249, 0.92) 0%, rgba(255, 255, 255, 0.92) 100%);
+      border: 1px solid rgba(232, 202, 216, 0.76);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+    }
+
+    .paid-feature-title {
+      margin: 0 0 10px;
+      color: #a20d4d;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .paid-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .paid-feature-btn {
+      min-height: 48px;
+      border: 0;
+      border-radius: 16px;
+      padding: 9px 12px;
+      background: linear-gradient(135deg, #fff 0%, #ffe7f0 100%);
+      color: #6c294c;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.25;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(196, 80, 124, 0.12);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .paid-feature-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px rgba(196, 80, 124, 0.18);
+    }
+
+    .paid-feature-btn small {
+      display: block;
+      margin-top: 3px;
+      color: #c24176;
+      font-size: 11px;
+      font-weight: 700;
+    }
 
     .subcopy {
       margin: 38px 0 14px;
@@ -1938,6 +2134,39 @@
       fill: currentColor;
     }
 
+    .qr-auth-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 244, 249, 0.9);
+      border: 1px solid rgba(232, 202, 216, 0.76);
+      text-align: center;
+    }
+
+    .qr-auth-box img {
+      width: 132px;
+      height: 132px;
+      display: block;
+      margin: 8px auto;
+      border-radius: 14px;
+      background: #fff;
+      padding: 8px;
+    }
+
+    .qr-auth-copy {
+      margin: 0;
+      color: #6c4b5d;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .qr-auth-status {
+      margin-top: 8px;
+      color: #8b5f73;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .form-notice {
       display: none;
       margin-top: -6px;
@@ -2178,6 +2407,28 @@
       .pill {
         width: 100%;
         min-width: 0;
+      }
+
+      .match-wall {
+        padding: 24px;
+      }
+
+      .match-wall-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .match-wall-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .match-feed-item {
+        grid-template-columns: auto 1fr;
+      }
+
+      .match-score-chip {
+        grid-column: 2;
+        justify-self: start;
       }
     }
 
@@ -2482,8 +2733,7 @@
   <div class="page-shell">
     <header class="topbar">
       <button class="brand" id="brandLogoLink" type="button" aria-label="LoveMatch.Love — หน้าแรก">
-        <img class="brand-mark" src="assets/brand-mark.png" width="160" height="90" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
-        <span class="brand-name">LoveMatch.Love</span>
+        <img class="brand-mark" src="assets/logo.png" alt="LoveMatch.Love" decoding="async" fetchpriority="high">
       </button>
       <button class="menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
         <span></span>
@@ -2539,6 +2789,27 @@
           </article>
         </section>
 
+        <section class="match-wall" aria-labelledby="matchWallTitle">
+          <div class="match-wall-head">
+            <div>
+              <h2 class="match-wall-title" id="matchWallTitle">วอลแมทล่าสุด</h2>
+              <p class="match-wall-copy">ประกาศสัญญาณคู่ที่ดูกัน ส่งของขวัญ และคุยกันบ่อย เพื่อให้ความสัมพันธ์ชัดเจนขึ้น</p>
+            </div>
+            <div class="match-wall-badge">Live Match Stats</div>
+          </div>
+          <div class="match-wall-grid">
+            <div class="match-feed" id="matchWallFeed">
+              <div class="match-empty">กำลังโหลดสถิติแมท...</div>
+            </div>
+            <aside class="match-top-card">
+              <h3 class="match-top-heading">คู่ที่จิ้มกันบ่อยสุด</h3>
+              <div class="match-top-pairs" id="matchTopPairs">
+                <div class="match-empty">ยังไม่มีสถิติ</div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
         <section class="discover">
           <h2 class="section-title">ค้นหาคู่ใหม่</h2>
           <div class="profile-card">
@@ -2559,6 +2830,17 @@
                 <button class="action action-red" id="discoverPassButton" type="button" aria-label="Pass"><svg><use href="#i-close"></use></svg><span>ข้าม</span></button>
                 <button class="action action-gold" id="discoverGiftButton" type="button" aria-label="Gift"><svg><use href="#i-gift"></use></svg><span>ส่งของขวัญ</span></button>
                 <button class="action action-green" id="discoverLikeButton" type="button" aria-label="Like"><svg><use href="#i-heart"></use></svg><span>ถูกใจ</span></button>
+              </div>
+              <div class="paid-feature-panel" aria-label="ฟีเจอร์เพิ่มโอกาส">
+                <p class="paid-feature-title">ปลดล็อกโอกาสพิเศษ</p>
+                <div class="paid-feature-grid">
+                  <button class="paid-feature-btn" type="button" data-paid-feature="unlock_line">Line<small id="paidPriceUnlockLine">300 เหรียญ</small></button>
+                  <button class="paid-feature-btn" type="button" data-paid-feature="unlock_facebook">Facebook<small id="paidPriceUnlockFacebook">300 เหรียญ</small></button>
+                  <button class="paid-feature-btn" type="button" data-paid-feature="unlock_phone">โทร<small id="paidPriceUnlockPhone">500 เหรียญ</small></button>
+                  <button class="paid-feature-btn" type="button" data-paid-feature="crush_message">ส่ง Crush<small id="paidPriceCrush">100 เหรียญ</small></button>
+                  <button class="paid-feature-btn" type="button" data-paid-feature="unlock_chat_no_match">แชทก่อนแมทช์<small id="paidPriceChatUnlock">250 เหรียญ</small></button>
+                  <button class="paid-feature-btn" type="button" data-paid-feature="profile_boost_1h">บูสต์โปรไฟล์<small id="paidPriceBoost">200 เหรียญ</small></button>
+                </div>
               </div>
             </div>
           </div>
@@ -2971,6 +3253,11 @@
           <svg><use href="#i-login"></use></svg>
           เข้าสู่ระบบ
         </button>
+        <div class="qr-auth-box">
+          <p class="qr-auth-copy">QR เข้าสู่ระบบ: สแกนด้วยมือถือที่ล็อกอินอยู่ แล้วกดยืนยันเพื่อเข้าเครื่องนี้</p>
+          <img id="loginQrImage" alt="QR สำหรับเข้าสู่ระบบ">
+          <div class="qr-auth-status" id="loginQrStatus">เปิดหน้าล็อกอินเพื่อสร้าง QR</div>
+        </div>
       </form>
     </div>
   </div>
@@ -3080,6 +3367,10 @@
           <svg><use href="#i-user"></use></svg>
           สมัครสมาชิก
         </button>
+        <div class="qr-auth-box">
+          <p class="qr-auth-copy">QR สมัครสมาชิก: สแกนเพื่อเปิดหน้าสมัครสมาชิกบนมือถือ</p>
+          <img id="registerQrImage" alt="QR สำหรับสมัครสมาชิก">
+        </div>
       </form>
     </div>
   </div>
@@ -3197,6 +3488,9 @@
     const discoverLikeButton = document.getElementById("discoverLikeButton");
     const discoverSuperLikeButton = document.getElementById("discoverSuperLikeButton");
     const discoverRewindButton = document.getElementById("discoverRewindButton");
+    const matchWallFeed = document.getElementById("matchWallFeed");
+    const matchTopPairs = document.getElementById("matchTopPairs");
+    const paidFeatureButtons = Array.from(document.querySelectorAll("[data-paid-feature]"));
     const privateChatItem = document.getElementById("privateChatItem");
     const privateChatName = document.getElementById("privateChatName");
     const privateChatStatus = document.getElementById("privateChatStatus");
@@ -3206,6 +3500,9 @@
     const registerNotice = document.getElementById("registerNotice");
     const loginSubmitButton = document.getElementById("loginSubmitButton");
     const registerSubmitButton = document.getElementById("registerSubmitButton");
+    const loginQrImage = document.getElementById("loginQrImage");
+    const loginQrStatus = document.getElementById("loginQrStatus");
+    const registerQrImage = document.getElementById("registerQrImage");
 
     const defaultLoginButtonHTML = loginMenuButton ? loginMenuButton.innerHTML : "";
     const defaultRegisterButtonHTML = registerMenuButton ? registerMenuButton.innerHTML : "";
@@ -3226,10 +3523,15 @@
     let activePrivateMatch = null;
     let currentPlan = null;
     let pendingUpgrade = null;
+    let paidFeatureProducts = {};
     let adminDashboard = null;
     let pendingMatchProfile = null;
+    let activeQrLoginToken = "";
+    let activeQrLoginTimer = null;
+    let pendingScannedQrLoginToken = "";
     let discoverPassToastTimer = null;
     let discoverLikeToastTimer = null;
+    const recordedProfileViews = new Set();
     const demoDiscoverProfiles = [
       { id: 9001, display_name: "Emma", age: 29, location: "Bangkok, Thailand", bio: "Creative producer, ชอบคาเฟ่และทริปทะเลสุดสัปดาห์", avatar_url: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=80" },
       { id: 9002, display_name: "Noah", age: 31, location: "Chiang Mai, Thailand", bio: "Developer สายท่องเที่ยวธรรมชาติและดริปกาแฟ", avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80" },
@@ -3270,11 +3572,11 @@
       loginModalClose.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        closeModal(loginModal);
+        closeLoginModal();
       });
       loginModal.addEventListener("click", function (event) {
         if (event.target === loginModal) {
-          closeModal(loginModal);
+          closeLoginModal();
         }
       });
     }
@@ -3579,6 +3881,239 @@
       });
     }
 
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatMatchWallDate(value) {
+      if (!value) {
+        return "เมื่อสักครู่";
+      }
+      const date = new Date(String(value).replace(" ", "T"));
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      return date.toLocaleString("th-TH", {
+        dateStyle: "short",
+        timeStyle: "short"
+      });
+    }
+
+    function avatarHtml(user) {
+      const name = user && user.display_name ? user.display_name : "สมาชิก";
+      const src = user && user.avatar_url ? user.avatar_url : "";
+      if (!src) {
+        return '<span class="match-pair-avatar" title="' + escapeHtml(name) + '"></span>';
+      }
+      return '<img class="match-pair-avatar" src="' + escapeHtml(src) + '" alt="' + escapeHtml(name) + '">';
+    }
+
+    function renderMatchWall(data) {
+      const announcements = data && Array.isArray(data.announcements) ? data.announcements : [];
+      const topPairs = data && Array.isArray(data.top_pairs) ? data.top_pairs : [];
+
+      if (matchWallFeed) {
+        matchWallFeed.innerHTML = announcements.length ? announcements.map(function (item) {
+          const actorName = item.actor && item.actor.display_name ? item.actor.display_name : "สมาชิก";
+          const targetName = item.target && item.target.display_name ? item.target.display_name : "สมาชิก";
+          const stats = "ดูโปรไฟล์ " + Number(item.profile_views_count || 0).toLocaleString("th-TH") +
+            " · ของขวัญ " + Number(item.gifts_count || 0).toLocaleString("th-TH") +
+            " · แชท " + Number(item.messages_count || 0).toLocaleString("th-TH");
+
+          return '<article class="match-feed-item">' +
+            '<div class="match-pair-avatars">' + avatarHtml(item.actor) + avatarHtml(item.target) + '</div>' +
+            '<div>' +
+              '<h3 class="match-feed-title">' + escapeHtml(item.title) + ': ' + escapeHtml(actorName) + ' × ' + escapeHtml(targetName) + '</h3>' +
+              '<p class="match-feed-body">' + escapeHtml(item.body) + '</p>' +
+              '<p class="match-feed-meta">' + stats + ' · ' + escapeHtml(formatMatchWallDate(item.created_at)) + '</p>' +
+            '</div>' +
+            '<div class="match-score-chip">' + Number(item.score || 0).toLocaleString("th-TH") + ' คะแนน</div>' +
+          '</article>';
+        }).join("") : '<div class="match-empty">ยังไม่มีประกาศแมทล่าสุด ระบบจะเริ่มโชว์เมื่อสมาชิกดูกัน ส่งของขวัญ หรือคุยกันบ่อย</div>';
+      }
+
+      if (matchTopPairs) {
+        matchTopPairs.innerHTML = topPairs.length ? topPairs.map(function (pair, index) {
+          const first = pair.user_one && pair.user_one.display_name ? pair.user_one.display_name : "สมาชิก";
+          const second = pair.user_two && pair.user_two.display_name ? pair.user_two.display_name : "สมาชิก";
+          return '<div class="match-top-card">' +
+            '<div class="match-feed-title">#' + (index + 1) + ' ' + escapeHtml(first) + ' × ' + escapeHtml(second) + '</div>' +
+            '<div class="match-top-meta">' +
+              Number(pair.score || 0).toLocaleString("th-TH") + ' คะแนน · ดู ' + Number(pair.profile_views_count || 0).toLocaleString("th-TH") +
+              ' · ของขวัญ ' + Number(pair.gifts_count || 0).toLocaleString("th-TH") +
+              ' · แชท ' + Number(pair.messages_count || 0).toLocaleString("th-TH") +
+            '</div>' +
+          '</div>';
+        }).join("") : '<div class="match-empty">ยังไม่มีคู่ที่มีสถิติสูง</div>';
+      }
+    }
+
+    async function hydrateMatchWall() {
+      if (!matchWallFeed && !matchTopPairs) {
+        return;
+      }
+
+      try {
+        const response = await apiFetch("/match-wall", { method: "GET" });
+        renderMatchWall(response.data || {});
+      } catch (error) {
+        renderMatchWall({ announcements: [], top_pairs: [] });
+      }
+    }
+
+    async function recordProfileViewSignal(profile) {
+      if (!currentUser || !profile || !profile.id || Number(profile.id) >= 9000) {
+        return;
+      }
+
+      const key = String(profile.id);
+      if (recordedProfileViews.has(key)) {
+        return;
+      }
+      recordedProfileViews.add(key);
+
+      try {
+        const response = await apiFetch("/match-events/profile-view", {
+          method: "POST",
+          body: JSON.stringify({
+            target_user_id: Number(profile.id)
+          })
+        });
+        if (response.data && response.data.announcement) {
+          await hydrateMatchWall();
+        }
+      } catch (error) {
+        // Profile view stats should never block browsing.
+      }
+    }
+
+    function formatPaidFeaturePrice(product) {
+      if (!product) {
+        return "";
+      }
+      const coins = Number(product.coin_cost || 0).toLocaleString("th-TH") + " เหรียญ";
+      const thb = product.price_thb_estimate ? " · ~฿" + Number(product.price_thb_estimate).toLocaleString("th-TH") : "";
+      return coins + thb;
+    }
+
+    function renderPaidFeatureProducts(products) {
+      paidFeatureProducts = {};
+      (products || []).forEach(function (product) {
+        paidFeatureProducts[product.code] = product;
+      });
+
+      paidFeatureButtons.forEach(function (button) {
+        const product = paidFeatureProducts[button.dataset.paidFeature];
+        const small = button.querySelector("small");
+        if (small && product) {
+          small.textContent = formatPaidFeaturePrice(product);
+        }
+        button.disabled = !product;
+      });
+    }
+
+    function currentDiscoverProfileForPaidFeature() {
+      const profile = discoverProfiles[currentDiscoverIndex];
+      if (!profile) {
+        showNotice(discoverNotice, "ยังไม่มีโปรไฟล์ให้ใช้งานฟีเจอร์นี้", "error");
+        return null;
+      }
+      if (Number(profile.id) >= 9000) {
+        showNotice(discoverNotice, "โปรไฟล์ demo หน้าแรกยังใช้ฟีเจอร์เสียเหรียญไม่ได้ กรุณาเข้าสู่ระบบและใช้ข้อมูลจริง", "error");
+        return null;
+      }
+      return profile;
+    }
+
+    async function handlePaidFeatureAction(code) {
+      if (!currentUser) {
+        openModal(loginModal);
+        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนใช้ฟีเจอร์เสียเหรียญ", "error");
+        return;
+      }
+
+      const product = paidFeatureProducts[code];
+      if (!product) {
+        showNotice(discoverNotice, "ไม่พบแพ็กเกจที่เลือก", "error");
+        return;
+      }
+
+      if (code === "profile_boost_1h") {
+        try {
+          const response = await apiFetch("/paid-features/profile-boost", {
+            method: "POST",
+            body: JSON.stringify({ product_code: code })
+          });
+          showToast(response.message + " เหลือ " + response.data.wallet.coin_balance + " เหรียญ", "is-success");
+          await hydrateWallet();
+          await loadDiscoverProfiles();
+        } catch (error) {
+          showNotice(discoverNotice, error.message, "error");
+        }
+        return;
+      }
+
+      const profile = currentDiscoverProfileForPaidFeature();
+      if (!profile) {
+        return;
+      }
+
+      try {
+        if (["unlock_line", "unlock_facebook", "unlock_phone"].includes(code)) {
+          const response = await apiFetch("/paid-features/contact-unlock", {
+            method: "POST",
+            body: JSON.stringify({
+              target_user_id: Number(profile.id),
+              product_code: code
+            })
+          });
+          const contact = response.data.contact || {};
+          showNotice(discoverNotice, response.message + ": " + (contact.value || "-"), "success");
+          await hydrateWallet();
+          return;
+        }
+
+        if (code === "crush_message") {
+          const message = window.prompt("เขียนข้อความ Crush ถึง " + profile.display_name, "อยากทำความรู้จักกับคุณครับ/ค่ะ");
+          if (message === null) {
+            return;
+          }
+          const response = await apiFetch("/paid-features/crush", {
+            method: "POST",
+            body: JSON.stringify({
+              target_user_id: Number(profile.id),
+              message_text: message
+            })
+          });
+          showNotice(discoverNotice, response.message + " เหลือ " + response.data.wallet.coin_balance + " เหรียญ", "success");
+          await hydrateWallet();
+          return;
+        }
+
+        if (code === "unlock_chat_no_match") {
+          const response = await apiFetch("/paid-features/chat-unlock", {
+            method: "POST",
+            body: JSON.stringify({
+              target_user_id: Number(profile.id)
+            })
+          });
+          showNotice(discoverNotice, response.message + " เหลือ " + response.data.wallet.coin_balance + " เหรียญ", "success");
+          await hydrateWallet();
+          openChatPage({
+            targetUserId: Number(profile.id),
+            targetName: profile.display_name
+          });
+        }
+      } catch (error) {
+        showNotice(discoverNotice, error.message, "error");
+      }
+    }
+
     function closeMobileMenu() {
       if (!topbar || !mobileMenuToggle) {
         return;
@@ -3875,6 +4410,7 @@
       discoverProfileName.innerHTML = profile.display_name + ageText + ' <span class="check">✓</span>';
       discoverProfileMeta.textContent = profile.location || "Thailand";
       discoverProfileBio.textContent = profile.bio || "สมาชิกใหม่ของ LoveMatch.Love";
+      recordProfileViewSignal(profile);
     }
 
     function setDiscoverLoadingState(isLoading, message) {
@@ -3951,6 +4487,9 @@
           });
 
           await hydrateMatches();
+          if (response.data && response.data.announcement) {
+            await hydrateMatchWall();
+          }
           showNotice(discoverNotice, response.message, "success");
         } catch (error) {
           showNotice(discoverNotice, error.message, "error");
@@ -4093,15 +4632,23 @@
 
     async function bootstrapAppData() {
       try {
-        const [giftsResponse, plansResponse, roomsResponse] = await Promise.all([
+        const [giftsResponse, plansResponse, roomsResponse, matchWallResponse, paidProductsResponse] = await Promise.all([
           apiFetch("/gifts", { method: "GET" }),
           apiFetch("/subscription/plans", { method: "GET" }),
-          apiFetch("/chat/rooms", { method: "GET" })
+          apiFetch("/chat/rooms", { method: "GET" }),
+          apiFetch("/match-wall", { method: "GET" }).catch(function () {
+            return { data: { announcements: [], top_pairs: [] } };
+          }),
+          apiFetch("/paid-features/products", { method: "GET" }).catch(function () {
+            return { data: { products: [] } };
+          })
         ]);
 
         renderGifts(giftsResponse.data.gifts);
         renderPremiumSummary(plansResponse.data.plans);
         renderPublicChatRooms(roomsResponse.data.rooms);
+        renderMatchWall(matchWallResponse.data);
+        renderPaidFeatureProducts(paidProductsResponse.data.products);
         await RegisterPaymentUI.loadRegistrationPaymentOptions(apiFetch, appBasePath).catch(function () {});
         await hydrateCurrentPlan();
       } catch (error) {
@@ -4190,10 +4737,14 @@
         await hydrateMatches();
         await hydrateCurrentPlan();
         await loadDiscoverProfiles();
+        await hydrateMatchWall();
+        if (pendingScannedQrLoginToken) {
+          await approveScannedQrLogin(true);
+        }
         showNotice(loginNotice, response.message || "เข้าสู่ระบบสำเร็จ", "success");
         loginForm.reset();
         setTimeout(function () {
-          closeModal(loginModal);
+          closeLoginModal();
           clearNotice(loginNotice);
         }, 700);
       } catch (error) {
@@ -4220,6 +4771,7 @@
           await hydrateMatches();
           await hydrateCurrentPlan();
           await loadDiscoverProfiles();
+          await hydrateMatchWall();
         }
       });
     }
@@ -4257,6 +4809,9 @@
         showNotice(giftNotice, response.message + " เหลือ " + response.data.wallet.coin_balance + " เหรียญ", "success");
         giftMessageInput.value = "";
         await hydrateWallet();
+        if (response.data && response.data.announcement) {
+          await hydrateMatchWall();
+        }
       } catch (error) {
         showNotice(giftNotice, error.message, "error");
       } finally {
@@ -4364,7 +4919,7 @@
       chatSendButton.disabled = true;
 
       try {
-        await apiFetch("/chat/rooms/" + currentRoomId + "/messages", {
+        const response = await apiFetch("/chat/rooms/" + currentRoomId + "/messages", {
           method: "POST",
           body: JSON.stringify({
             body: chatMessageInput.value
@@ -4380,6 +4935,9 @@
           });
         } else {
           await loadRoomMessages(currentRoomId);
+        }
+        if (response.data && response.data.announcement) {
+          await hydrateMatchWall();
         }
       } catch (error) {
         console.error(error);
@@ -4404,6 +4962,7 @@
           renderPrivateChatMatch();
           updatePricingUI();
           loadDiscoverProfiles();
+          hydrateMatchWall();
         } catch (error) {
           console.error(error);
         }
@@ -4499,14 +5058,156 @@
         return;
       }
       openModal(loginModal);
+      startQrLoginSession();
     }
 
     function closeLoginModal() {
+      stopQrLoginPolling();
       closeModal(loginModal);
     }
 
     function closeRegisterModal() {
       closeModal(registerModal);
+    }
+
+    function qrCodeUrl(targetUrl) {
+      return "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(targetUrl);
+    }
+
+    function setLoginQrStatus(message) {
+      if (loginQrStatus) {
+        loginQrStatus.textContent = message;
+      }
+    }
+
+    function stopQrLoginPolling() {
+      if (activeQrLoginTimer) {
+        window.clearInterval(activeQrLoginTimer);
+        activeQrLoginTimer = null;
+      }
+      activeQrLoginToken = "";
+    }
+
+    async function startQrLoginSession() {
+      if (!loginQrImage || currentUser) {
+        return;
+      }
+
+      stopQrLoginPolling();
+      setLoginQrStatus("กำลังสร้าง QR เข้าสู่ระบบ...");
+
+      try {
+        const response = await apiFetch("/auth/qr-login", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        activeQrLoginToken = response.data.token;
+        const targetUrl = window.location.origin + (appBasePath || "") + "/?qr_login=" + encodeURIComponent(activeQrLoginToken);
+        loginQrImage.src = qrCodeUrl(targetUrl);
+        setLoginQrStatus("สแกน QR นี้ด้วยมือถือที่ล็อกอินอยู่ ภายใน 5 นาที");
+
+        activeQrLoginTimer = window.setInterval(pollQrLoginSession, 2200);
+      } catch (error) {
+        setLoginQrStatus(error.message || "สร้าง QR ไม่สำเร็จ");
+      }
+    }
+
+    async function pollQrLoginSession() {
+      if (!activeQrLoginToken) {
+        return;
+      }
+
+      try {
+        const response = await apiFetch("/auth/qr-login/" + activeQrLoginToken, { method: "GET" });
+        const status = response.data && response.data.status;
+        if (status === "pending") {
+          setLoginQrStatus("รอการยืนยันจากมือถือ...");
+          return;
+        }
+        if (status === "expired") {
+          stopQrLoginPolling();
+          setLoginQrStatus("QR หมดอายุแล้ว เปิดหน้าล็อกอินใหม่เพื่อสร้าง QR ใหม่");
+          return;
+        }
+        if (response.data && response.data.user) {
+          stopQrLoginPolling();
+          currentUser = response.data.user;
+          if (currentUser && ["admin", "moderator"].includes(currentUser.role_code)) {
+            redirectToAdminDashboard();
+            return;
+          }
+          updateAuthUI();
+          await hydrateWallet();
+          await hydrateMatches();
+          await hydrateCurrentPlan();
+          await loadDiscoverProfiles();
+          await hydrateMatchWall();
+          showNotice(loginNotice, response.message || "เข้าสู่ระบบด้วย QR สำเร็จ", "success");
+          window.setTimeout(function () {
+            closeLoginModal();
+            clearNotice(loginNotice);
+          }, 700);
+        }
+      } catch (error) {
+        stopQrLoginPolling();
+        setLoginQrStatus(error.message || "ตรวจสอบ QR ไม่สำเร็จ");
+      }
+    }
+
+    async function approveScannedQrLogin(askConfirm) {
+      if (!pendingScannedQrLoginToken || !currentUser) {
+        return;
+      }
+
+      if (askConfirm !== false) {
+        const ok = window.confirm("อนุมัติให้เครื่องที่แสดง QR เข้าสู่ระบบด้วยบัญชี " + (currentUser.display_name || currentUser.email || "ของคุณ") + " หรือไม่?");
+        if (!ok) {
+          return;
+        }
+      }
+
+      try {
+        const response = await apiFetch("/auth/qr-login/" + pendingScannedQrLoginToken + "/approve", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showToast(response.message || "อนุมัติ QR เข้าสู่ระบบแล้ว", "is-success");
+        pendingScannedQrLoginToken = "";
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } catch (error) {
+        showToast(error.message || "อนุมัติ QR ไม่สำเร็จ", "is-error");
+      }
+    }
+
+    function initAuthQrLinks() {
+      const baseUrl = window.location.origin + (appBasePath || "") + "/";
+      if (registerQrImage) {
+        registerQrImage.src = qrCodeUrl(baseUrl + "?auth=register");
+      }
+    }
+
+    function openAuthFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const qrLoginToken = params.get("qr_login") || "";
+      if (/^[a-f0-9]{64}$/.test(qrLoginToken)) {
+        pendingScannedQrLoginToken = qrLoginToken;
+        if (currentUser) {
+          approveScannedQrLogin(true);
+        } else {
+          openLoginModal();
+          showNotice(loginNotice, "เข้าสู่ระบบบนมือถือก่อน เพื่อยืนยัน QR เข้าสู่ระบบให้เครื่องที่สแกน", "success");
+        }
+        return;
+      }
+
+      const authMode = params.get("auth");
+      if (authMode === "login") {
+        openLoginModal();
+      }
+      if (authMode === "register") {
+        openRegisterModal();
+      }
     }
 
     function handleHeroCta() {
@@ -4661,6 +5362,11 @@
     featureCards.forEach(function (card) {
       card.addEventListener("click", function () {
         handleFeatureAction(card.dataset.featureAction);
+      });
+    });
+    paidFeatureButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        handlePaidFeatureAction(button.dataset.paidFeature);
       });
     });
     loginForm.addEventListener("submit", handleLoginSubmit);
@@ -4857,8 +5563,9 @@
       }
     });
 
+    initAuthQrLinks();
     bootstrapAppData();
-    hydrateCurrentUser();
+    hydrateCurrentUser().then(openAuthFromQuery);
     loadDiscoverProfiles();
     showIntroToasts();
   </script>

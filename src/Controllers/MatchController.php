@@ -3,13 +3,16 @@
 namespace App\Controllers;
 
 use App\Repositories\MatchRepository;
+use App\Repositories\MatchSignalRepository;
 use App\Support\Request;
 use App\Support\Response;
 
 class MatchController
 {
-    public function __construct(private MatchRepository $matches)
-    {
+    public function __construct(
+        private MatchRepository $matches,
+        private MatchSignalRepository $signals
+    ) {
     }
 
     public function swipe(Request $request, int $userId): void
@@ -33,11 +36,17 @@ class MatchController
         }
 
         $result = $this->matches->recordSwipe($userId, $targetUserId, $action);
+        $announcement = [];
+        try {
+            $announcement = $this->signals->recordSwipe($userId, $targetUserId, $action, (bool) $result['matched']);
+        } catch (\Throwable) {
+            // Match stats must not block the core swipe flow.
+        }
 
         Response::json([
             'success' => true,
             'message' => $result['matched'] ? 'จับคู่สำเร็จ' : 'บันทึกการปัดแล้ว',
-            'data' => $result,
+            'data' => $result + ['announcement' => $announcement ?: null],
         ], 201);
     }
 

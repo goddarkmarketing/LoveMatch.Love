@@ -6,17 +6,23 @@ use App\Controllers\AuthController;
 use App\Controllers\AppDataController;
 use App\Controllers\AdminController;
 use App\Controllers\ChatController;
+use App\Controllers\CoinTopupController;
 use App\Controllers\DiscoverController;
 use App\Controllers\GiftController;
 use App\Controllers\MatchController;
+use App\Controllers\MatchSignalController;
+use App\Controllers\PaidFeatureController;
 use App\Controllers\SubscriptionController;
 use App\Controllers\WalletController;
 use App\Repositories\AppDataRepository;
 use App\Repositories\AdminRepository;
 use App\Repositories\ChatRepository;
+use App\Repositories\CoinTopupRepository;
 use App\Repositories\DiscoverRepository;
 use App\Repositories\GiftRepository;
 use App\Repositories\MatchRepository;
+use App\Repositories\MatchSignalRepository;
+use App\Repositories\PaidFeatureRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\UserRepository;
@@ -34,18 +40,24 @@ require_once dirname(__DIR__) . '/src/Support/OmiseClient.php';
 require_once dirname(__DIR__) . '/src/Repositories/AppDataRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/AdminRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/ChatRepository.php';
+require_once dirname(__DIR__) . '/src/Repositories/CoinTopupRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/DiscoverRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/GiftRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/MatchRepository.php';
+require_once dirname(__DIR__) . '/src/Repositories/MatchSignalRepository.php';
+require_once dirname(__DIR__) . '/src/Repositories/PaidFeatureRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/WalletRepository.php';
 require_once dirname(__DIR__) . '/src/Repositories/SubscriptionRepository.php';
 require_once dirname(__DIR__) . '/src/Controllers/AuthController.php';
 require_once dirname(__DIR__) . '/src/Controllers/AppDataController.php';
 require_once dirname(__DIR__) . '/src/Controllers/AdminController.php';
 require_once dirname(__DIR__) . '/src/Controllers/ChatController.php';
+require_once dirname(__DIR__) . '/src/Controllers/CoinTopupController.php';
 require_once dirname(__DIR__) . '/src/Controllers/DiscoverController.php';
 require_once dirname(__DIR__) . '/src/Controllers/GiftController.php';
 require_once dirname(__DIR__) . '/src/Controllers/MatchController.php';
+require_once dirname(__DIR__) . '/src/Controllers/MatchSignalController.php';
+require_once dirname(__DIR__) . '/src/Controllers/PaidFeatureController.php';
 require_once dirname(__DIR__) . '/src/Controllers/WalletController.php';
 require_once dirname(__DIR__) . '/src/Controllers/SubscriptionController.php';
 
@@ -96,12 +108,19 @@ try {
     $appDataController = new AppDataController(new AppDataRepository($db), $paymentConfig);
     $subscriptionRepository = new SubscriptionRepository($db);
     $paymentRepository = new PaymentRepository($db);
+    $matchSignalRepository = new MatchSignalRepository($db);
+    $walletRepository = new WalletRepository($db);
+    $coinTopupRepository = new CoinTopupRepository($db, $walletRepository);
+    $paidFeatureRepository = new PaidFeatureRepository($db, $walletRepository);
     $adminController = new AdminController(new AdminRepository($db), $subscriptionRepository);
-    $chatController = new ChatController(new ChatRepository($db), new MatchRepository($db));
+    $chatController = new ChatController(new ChatRepository($db), new MatchRepository($db), $matchSignalRepository, $paidFeatureRepository);
     $discoverController = new DiscoverController(new DiscoverRepository($db));
-    $matchController = new MatchController(new MatchRepository($db));
-    $walletController = new WalletController(new WalletRepository($db), new GiftRepository($db));
-    $giftController = new GiftController(new GiftRepository($db), new WalletRepository($db));
+    $matchController = new MatchController(new MatchRepository($db), $matchSignalRepository);
+    $matchSignalController = new MatchSignalController($matchSignalRepository);
+    $coinTopupController = new CoinTopupController($coinTopupRepository);
+    $paidFeatureController = new PaidFeatureController($paidFeatureRepository);
+    $walletController = new WalletController($walletRepository, new GiftRepository($db));
+    $giftController = new GiftController(new GiftRepository($db), $walletRepository, $matchSignalRepository);
     $subscriptionController = new SubscriptionController($subscriptionRepository, $paymentRepository, $paymentConfig, $db);
 } catch (Throwable $exception) {
     Response::json([
@@ -140,11 +159,17 @@ $routes = [
         $userId = requireAuthUserId();
         return $matchController->index($userId);
     }],
+    ['GET', '#^/match-wall$#', static fn (Request $request): mixed => $matchSignalController->wall()],
+    ['GET', '#^/paid-features/products$#', static fn (Request $request): mixed => $paidFeatureController->products()],
     ['GET', '#^/wallet$#', static function (Request $request) use ($walletController): mixed {
         $userId = requireAuthUserId();
         return $walletController->show($userId);
     }],
+    ['GET', '#^/wallet/topup-options$#', static fn (Request $request): mixed => $coinTopupController->packages()],
     ['GET', '#^/payments/registration-options$#', static fn (Request $request): mixed => $appDataController->registrationPaymentOptions()],
+    ['POST', '#^/auth/qr-login$#', static fn (Request $request): mixed => $authController->createQrLoginSession()],
+    ['GET', '#^/auth/qr-login/([a-f0-9]{64})$#', static fn (Request $request, string $token): mixed => $authController->qrLoginStatus($token)],
+    ['POST', '#^/auth/qr-login/([a-f0-9]{64})/approve$#', static fn (Request $request, string $token): mixed => $authController->approveQrLoginSession($token)],
     ['POST', '#^/auth/register$#', static fn (Request $request): mixed => $authController->register($request)],
     ['POST', '#^/auth/login$#', static fn (Request $request): mixed => $authController->login($request)],
     ['POST', '#^/auth/logout$#', static fn (Request $request): mixed => $authController->logout()],
@@ -176,6 +201,14 @@ $routes = [
         $userId = requireAuthUserId();
         return $subscriptionController->checkout($request, $userId);
     }],
+    ['POST', '#^/wallet/topup-requests$#', static function (Request $request) use ($coinTopupController): mixed {
+        $userId = requireAuthUserId();
+        return $coinTopupController->create($request, $userId);
+    }],
+    ['POST', '#^/wallet/topup-slip$#', static function (Request $request) use ($coinTopupController): mixed {
+        $userId = requireAuthUserId();
+        return $coinTopupController->uploadSlip($userId);
+    }],
     ['POST', '#^/admin/users/(\d+)/status$#', static function (Request $request, string $targetUserId) use ($adminController, $authController): mixed {
         requireAdminUser($authController);
         return $adminController->updateUserStatus($request, (int) $targetUserId);
@@ -188,9 +221,37 @@ $routes = [
         requireAdminUser($authController);
         return $adminController->approvePendingSubscription((int) $subscriptionId);
     }],
+    ['POST', '#^/admin/coin-topups/(\d+)/approve$#', static function (Request $request, string $topupId) use ($coinTopupController, $authController): mixed {
+        $adminUser = requireAdminUser($authController);
+        return $coinTopupController->approve((int) $topupId, (int) $adminUser['id']);
+    }],
+    ['POST', '#^/admin/coin-topups/(\d+)/reject$#', static function (Request $request, string $topupId) use ($coinTopupController, $authController): mixed {
+        $adminUser = requireAdminUser($authController);
+        return $coinTopupController->reject($request, (int) $topupId, (int) $adminUser['id']);
+    }],
     ['POST', '#^/swipes$#', static function (Request $request) use ($matchController): mixed {
         $userId = requireAuthUserId();
         return $matchController->swipe($request, $userId);
+    }],
+    ['POST', '#^/match-events/profile-view$#', static function (Request $request) use ($matchSignalController): mixed {
+        $userId = requireAuthUserId();
+        return $matchSignalController->profileView($request, $userId);
+    }],
+    ['POST', '#^/paid-features/contact-unlock$#', static function (Request $request) use ($paidFeatureController): mixed {
+        $userId = requireAuthUserId();
+        return $paidFeatureController->unlockContact($request, $userId);
+    }],
+    ['POST', '#^/paid-features/crush$#', static function (Request $request) use ($paidFeatureController): mixed {
+        $userId = requireAuthUserId();
+        return $paidFeatureController->sendCrush($request, $userId);
+    }],
+    ['POST', '#^/paid-features/chat-unlock$#', static function (Request $request) use ($paidFeatureController): mixed {
+        $userId = requireAuthUserId();
+        return $paidFeatureController->unlockChat($request, $userId);
+    }],
+    ['POST', '#^/paid-features/profile-boost$#', static function (Request $request) use ($paidFeatureController): mixed {
+        $userId = requireAuthUserId();
+        return $paidFeatureController->boostProfile($request, $userId);
     }],
 ];
 

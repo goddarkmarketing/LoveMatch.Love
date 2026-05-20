@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Repositories\GiftRepository;
+use App\Repositories\MatchSignalRepository;
 use App\Repositories\WalletRepository;
 use App\Support\Request;
 use App\Support\Response;
@@ -12,7 +13,8 @@ class GiftController
 {
     public function __construct(
         private GiftRepository $gifts,
-        private WalletRepository $wallets
+        private WalletRepository $wallets,
+        private MatchSignalRepository $signals
     ) {
     }
 
@@ -54,6 +56,18 @@ class GiftController
                 $walletTransaction['transaction_id'],
                 $message
             );
+            $announcement = [];
+            try {
+                $announcement = $this->signals->recordGiftSent(
+                    $userId,
+                    $receiverUserId,
+                    (int) $giftTransaction['gift_transaction_id'],
+                    (string) $giftTransaction['gift_name'],
+                    (int) $giftTransaction['coin_cost']
+                );
+            } catch (\Throwable) {
+                // Match stats must not block gift delivery.
+            }
         } catch (RuntimeException $exception) {
             Response::json([
                 'success' => false,
@@ -66,6 +80,7 @@ class GiftController
             'message' => 'ส่งของขวัญสำเร็จ',
             'data' => [
                 'gift_transaction' => $giftTransaction,
+                'announcement' => $announcement ?: null,
                 'wallet' => [
                     'coin_balance' => $walletTransaction['balance_after'],
                 ],

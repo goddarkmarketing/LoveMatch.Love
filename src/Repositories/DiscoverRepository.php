@@ -23,7 +23,14 @@ class DiscoverRepository
                 u.province,
                 u.bio,
                 u.avatar_url,
-                u.status
+                u.status,
+                EXISTS (
+                    SELECT 1
+                    FROM profile_boosts pb
+                    WHERE pb.user_id = u.id
+                      AND pb.status = "active"
+                      AND pb.ends_at > NOW()
+                ) AS is_boosted
             FROM users u
             WHERE u.status = "active"
         ';
@@ -43,7 +50,7 @@ class DiscoverRepository
             $params['viewer_user_id'] = $viewerUserId;
         }
 
-        $sql .= ' ORDER BY u.id DESC LIMIT ' . (int) $limit;
+        $sql .= ' ORDER BY is_boosted DESC, u.id DESC LIMIT ' . (int) $limit;
 
         $statement = $this->db->prepare($sql);
         $statement->execute($params);
@@ -63,6 +70,7 @@ class DiscoverRepository
                 'location' => trim(implode(', ', array_filter([$row['city'], $row['province']]))),
                 'bio' => $row['bio'] ?: 'สมาชิกใหม่ของ LoveMatch.Love',
                 'avatar_url' => $row['avatar_url'],
+                'is_boosted' => (bool) ($row['is_boosted'] ?? false),
             ];
         }, $statement->fetchAll());
     }

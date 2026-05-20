@@ -5,3 +5,5 @@ composer.phar
 .phpunit.cache/
 config/database.local.php
 config/payments.local.php
+uploads/topup-slips/
+scripts/node_modules/
