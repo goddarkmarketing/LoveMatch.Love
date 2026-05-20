@@ -32,6 +32,7 @@ use App\Support\Request;
 use App\Support\Response;
 
 require_once dirname(__DIR__) . '/src/Support/Database.php';
+require_once dirname(__DIR__) . '/src/Support/MigrationAutoRunner.php';
 require_once dirname(__DIR__) . '/src/Support/Request.php';
 require_once dirname(__DIR__) . '/src/Support/Response.php';
 require_once dirname(__DIR__) . '/src/Repositories/UserRepository.php';
@@ -97,6 +98,7 @@ if ($request->method() === 'GET' && $request->path() === '/health') {
 
 try {
     $db = Database::connection();
+    \App\Support\MigrationAutoRunner::runIfNeeded($db);
     $paymentConfig = require dirname(__DIR__) . '/config/payments.php';
     $authController = new AuthController(
         new UserRepository($db),
