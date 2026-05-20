@@ -325,7 +325,7 @@ class AuthController
     {
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);
-        $expiresAt = date('Y-m-d H:i:s', time() + 300);
+        $expiresAt = date('Y-m-d H:i:s', time() + 600);
 
         $this->expireOldQrLoginSessions();
 

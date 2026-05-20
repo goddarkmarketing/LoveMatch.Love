@@ -1173,14 +1173,13 @@
           </form>
 
           <section class="editor-section span-2 qr-login-section" id="qrLoginScannerSection" style="margin-top:22px;">
-            <h2 class="section-title">เข้าสู่ระบบบนคอมพิวเตอร์ด้วย QR Code</h2>
-            <p class="section-copy">ถ้าคุณล็อกอินอยู่บนมือถือเครื่องนี้ สามารถเปิดกล้องเพื่อสแกน QR ที่หน้าจอคอมพิวเตอร์ — ระบบจะอนุมัติให้คอมเข้าสู่ระบบด้วยบัญชีของคุณอัตโนมัติ ไม่ต้องพิมพ์รหัสผ่านอีก</p>
+            <h2 class="section-title">เข้าสู่ระบบบนคอมด้วย QR</h2>
+            <p class="section-copy">เปิดกล้อง สแกน QR บนหน้าจอคอม คอมจะเข้าสู่ระบบทันที</p>
             <div class="qr-login-actions">
               <button class="qr-login-trigger" id="openQrScannerBtn" type="button">
                 <svg><use href="#i-camera"></use></svg>
-                สแกน QR เพื่อเข้าสู่ระบบบนคอม
+                สแกน QR เข้าสู่ระบบ
               </button>
-              <p class="qr-login-hint">ใช้งานได้บนเบราว์เซอร์ที่รองรับกล้อง (Chrome, Safari, Edge) และต้องเปิดผ่าน HTTPS</p>
             </div>
           </section>
         </section>
@@ -1196,7 +1195,7 @@
         <h3 class="qr-scan-title" id="qrScanModalTitle">สแกน QR เข้าสู่ระบบ</h3>
         <button class="qr-scan-close" id="qrScanCloseBtn" type="button" aria-label="ปิด">×</button>
       </div>
-      <p class="qr-scan-help" id="qrScanHelp">วางกล้องให้ตรง QR ที่หน้าจอคอมพิวเตอร์ ระบบจะอ่านอัตโนมัติ</p>
+      <p class="qr-scan-help" id="qrScanHelp">เล็งกล้องไปที่ QR — ระบบจะอ่านอัตโนมัติ</p>
       <div class="qr-scan-stage">
         <video id="qrScanVideo" playsinline muted></video>
         <div class="qr-scan-reticle" aria-hidden="true"></div>
@@ -1822,17 +1821,17 @@
           method: "POST",
           body: JSON.stringify({})
         });
-        setQrScanStatus(response.message || "อนุมัติแล้ว — กลับไปดูคอมพิวเตอร์ได้เลย", "success");
+        setQrScanStatus(response.message || "อนุมัติแล้ว", "success");
         showToast(response.message || "อนุมัติเข้าสู่ระบบบนคอมแล้ว", "is-success");
-        setTimeout(closeQrScanModal, 1200);
+        setTimeout(closeQrScanModal, 900);
       } catch (error) {
         const message = (error && error.message) || "อนุมัติไม่สำเร็จ";
-        setQrScanStatus(message, "error");
+        setQrScanStatus(message + " — กรุณารีเฟรช QR บนคอมแล้วสแกนใหม่", "error");
         showToast(message, "is-error");
         setTimeout(function () {
           qrScanLastToken = "";
-          setQrScanStatus("ลองสแกนอีกครั้ง");
-        }, 1800);
+          setQrScanStatus("เล็งกล้องไปที่ QR ใหม่ได้เลย");
+        }, 1400);
       }
     }
 
@@ -1850,14 +1849,18 @@
             qrScanCanvas = document.createElement("canvas");
             qrScanCtx = qrScanCanvas.getContext("2d", { willReadFrequently: true });
           }
-          const w = qrScanVideo.videoWidth;
-          const h = qrScanVideo.videoHeight;
-          if (w && h) {
-            qrScanCanvas.width = w;
-            qrScanCanvas.height = h;
-            qrScanCtx.drawImage(qrScanVideo, 0, 0, w, h);
-            const imageData = qrScanCtx.getImageData(0, 0, w, h);
-            const code = window.jsQR(imageData.data, w, h, { inversionAttempts: "dontInvert" });
+          const vw = qrScanVideo.videoWidth;
+          const vh = qrScanVideo.videoHeight;
+          if (vw && vh) {
+            const maxSide = 640;
+            const scale = Math.min(1, maxSide / Math.max(vw, vh));
+            const cw = Math.max(1, Math.round(vw * scale));
+            const ch = Math.max(1, Math.round(vh * scale));
+            qrScanCanvas.width = cw;
+            qrScanCanvas.height = ch;
+            qrScanCtx.drawImage(qrScanVideo, 0, 0, cw, ch);
+            const imageData = qrScanCtx.getImageData(0, 0, cw, ch);
+            const code = window.jsQR(imageData.data, cw, ch, { inversionAttempts: "attemptBoth" });
             if (code && code.data) {
               handleScannedText(code.data);
             }
@@ -1893,7 +1896,11 @@
 
       try {
         qrScanStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" } },
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 1280 }
+          },
           audio: false
         });
       } catch (error) {
@@ -1930,7 +1937,7 @@
 
       qrScanActive = true;
       qrScanLastToken = "";
-      setQrScanStatus("วางกล้องให้ตรง QR บนหน้าจอคอม");
+      setQrScanStatus("เล็งกล้องไปที่ QR บนหน้าจอคอม");
       scanLoop();
     }
 

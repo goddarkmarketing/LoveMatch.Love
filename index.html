@@ -2144,10 +2144,10 @@
     }
 
     .qr-auth-box img {
-      width: 132px;
-      height: 132px;
+      width: 220px;
+      height: 220px;
       display: block;
-      margin: 8px auto;
+      margin: 10px auto;
       border-radius: 14px;
       background: #fff;
       padding: 8px;
@@ -3343,13 +3343,7 @@
           เข้าสู่ระบบ
         </button>
         <div class="qr-auth-box">
-          <p class="qr-auth-copy">QR เข้าสู่ระบบ — ให้มือถือที่<strong>ล็อกอิน LoveMatch อยู่แล้ว</strong>สแกน แล้วกดอนุมัติ</p>
-          <p class="qr-auth-warn">อย่าใช้สแกนเนอร์ในแอปไลน์ (ไลน์มักไม่เปิดลิงก์เว็บ) ให้ใช้ <strong>กล้อง</strong> หรือ <strong>Chrome / Safari</strong> แทน</p>
-          <ol class="qr-auth-steps">
-            <li>เปิดกล้องหรือ Chrome บนมือถือ แล้วสแกน QR</li>
-            <li>เว็บจะเปิด → กดปุ่ม <strong>อนุมัติ</strong> ที่ด้านล่างหน้าจอ</li>
-            <li>คอมพิวเตอร์จะเข้าสู่ระบบอัตโนมัติ</li>
-          </ol>
+          <p class="qr-auth-copy">เปิดมือถือที่ล็อกอินแล้ว → ไปที่ <strong>โปรไฟล์</strong> → กด <strong>สแกน QR เข้าสู่ระบบ</strong></p>
           <img id="loginQrImage" alt="QR สำหรับเข้าสู่ระบบ">
           <div class="qr-auth-status" id="loginQrStatus">เปิดหน้าล็อกอินเพื่อสร้าง QR</div>
         </div>
@@ -5171,7 +5165,7 @@
     }
 
     function qrCodeUrl(targetUrl) {
-      return "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(targetUrl);
+      return "https://api.qrserver.com/v1/create-qr-code/?size=260x260&ecc=H&margin=10&data=" + encodeURIComponent(targetUrl);
     }
 
     function setLoginQrStatus(message) {
@@ -5204,7 +5198,7 @@
         activeQrLoginToken = response.data.token;
         const targetUrl = window.location.origin + (appBasePath || "") + "/?qr_login=" + encodeURIComponent(activeQrLoginToken);
         loginQrImage.src = qrCodeUrl(targetUrl);
-        setLoginQrStatus("รอสแกนด้วยกล้อง/Chrome บนมือถือ (ไม่ใช่สแกนเนอร์ไลน์) ภายใน 5 นาที");
+        setLoginQrStatus("รอการสแกนจากมือถือ...");
 
         activeQrLoginTimer = window.setInterval(pollQrLoginSession, 2200);
       } catch (error) {
@@ -5226,7 +5220,8 @@
         }
         if (status === "expired") {
           stopQrLoginPolling();
-          setLoginQrStatus("QR หมดอายุแล้ว เปิดหน้าล็อกอินใหม่เพื่อสร้าง QR ใหม่");
+          setLoginQrStatus("QR หมดอายุ กำลังสร้างใหม่...");
+          window.setTimeout(startQrLoginSession, 600);
           return;
         }
         if (response.data && response.data.user) {
