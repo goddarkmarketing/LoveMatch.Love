@@ -396,6 +396,168 @@
       grid-column: 1 / -1;
     }
 
+    .qr-login-section {
+      background: linear-gradient(135deg, rgba(255, 243, 248, 0.96) 0%, rgba(255, 235, 242, 0.96) 100%);
+      border-color: rgba(232, 180, 200, 0.7);
+    }
+
+    .qr-login-actions {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .qr-login-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 16px;
+      background: linear-gradient(90deg, #ff68a0 0%, #d94a78 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(217, 74, 120, 0.32);
+    }
+
+    .qr-login-trigger:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .qr-login-trigger svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .qr-login-hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .qr-scan-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 14000;
+      background: rgba(20, 12, 22, 0.78);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .qr-scan-modal[hidden] {
+      display: none;
+    }
+
+    .qr-scan-panel {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.3);
+      display: grid;
+      gap: 14px;
+    }
+
+    .qr-scan-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .qr-scan-title {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+      color: #2d2230;
+    }
+
+    .qr-scan-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 0;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .qr-scan-help {
+      margin: 0;
+      color: #6c4b5d;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .qr-scan-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .qr-scan-stage video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .qr-scan-reticle {
+      position: absolute;
+      inset: 12%;
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.28);
+      pointer-events: none;
+    }
+
+    .qr-scan-status {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #c2185b;
+      min-height: 22px;
+    }
+
+    .qr-scan-status.is-error {
+      color: #b71c1c;
+    }
+
+    .qr-scan-status.is-success {
+      color: #1e8e3e;
+    }
+
+    .qr-scan-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .qr-scan-cancel {
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
     .section-title {
       margin: 0;
       font-size: 28px;
@@ -755,6 +917,8 @@
     <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v3h16v-3c0-2.76-3.58-5-8-5Z"/></symbol>
     <symbol id="i-camera" viewBox="0 0 24 24"><path d="M9 4 7.5 6H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-2.5L15 4H9Zm3 4.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5Z"/></symbol>
     <symbol id="i-save" viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4ZM12 19a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm3-10H5V5h10v4Z"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><path d="M3 3h8v8H3V3Zm2 2v4h4V5H5Zm8-2h8v8h-8V3Zm2 2v4h4V5h-4ZM3 13h8v8H3v-8Zm2 2v4h4v-4H5Zm8 0h2v2h-2v-2Zm4 0h4v2h-2v2h-2v-4Zm-4 4h2v2h-2v-2Zm4 0h2v2h-2v-2Zm2 0v-2h2v4h-2v-2Z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M9 3 7 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3l-2-2H9Zm3 6a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 2.93 6.26 6.9.99-5 4.86 1.18 6.89L12 17.77 5.99 21l1.18-6.89-5-4.86 6.9-.99L12 2Z"/></symbol>
   </svg>
 
@@ -1007,12 +1171,42 @@
               </div>
             </div>
           </form>
+
+          <section class="editor-section span-2 qr-login-section" id="qrLoginScannerSection" style="margin-top:22px;">
+            <h2 class="section-title">เข้าสู่ระบบบนคอมพิวเตอร์ด้วย QR Code</h2>
+            <p class="section-copy">ถ้าคุณล็อกอินอยู่บนมือถือเครื่องนี้ สามารถเปิดกล้องเพื่อสแกน QR ที่หน้าจอคอมพิวเตอร์ — ระบบจะอนุมัติให้คอมเข้าสู่ระบบด้วยบัญชีของคุณอัตโนมัติ ไม่ต้องพิมพ์รหัสผ่านอีก</p>
+            <div class="qr-login-actions">
+              <button class="qr-login-trigger" id="openQrScannerBtn" type="button">
+                <svg><use href="#i-camera"></use></svg>
+                สแกน QR เพื่อเข้าสู่ระบบบนคอม
+              </button>
+              <p class="qr-login-hint">ใช้งานได้บนเบราว์เซอร์ที่รองรับกล้อง (Chrome, Safari, Edge) และต้องเปิดผ่าน HTTPS</p>
+            </div>
+          </section>
         </section>
       </div>
     </main>
   </div>
 
   <div class="page-toast" id="pageToast"></div>
+
+  <div class="qr-scan-modal" id="qrScanModal" hidden role="dialog" aria-modal="true" aria-labelledby="qrScanModalTitle">
+    <div class="qr-scan-panel">
+      <div class="qr-scan-head">
+        <h3 class="qr-scan-title" id="qrScanModalTitle">สแกน QR เข้าสู่ระบบ</h3>
+        <button class="qr-scan-close" id="qrScanCloseBtn" type="button" aria-label="ปิด">×</button>
+      </div>
+      <p class="qr-scan-help" id="qrScanHelp">วางกล้องให้ตรง QR ที่หน้าจอคอมพิวเตอร์ ระบบจะอ่านอัตโนมัติ</p>
+      <div class="qr-scan-stage">
+        <video id="qrScanVideo" playsinline muted></video>
+        <div class="qr-scan-reticle" aria-hidden="true"></div>
+      </div>
+      <div class="qr-scan-status" id="qrScanStatus">กำลังเปิดกล้อง...</div>
+      <div class="qr-scan-actions">
+        <button class="qr-scan-cancel" id="qrScanCancelBtn" type="button">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
 
   <script src="assets/js/api-config.js"></script>
   <script src="assets/js/language-picker.js"></script>
@@ -1545,6 +1739,220 @@
     profileForm.addEventListener("submit", handleProfileSave);
     saveProfileTopButton.addEventListener("click", handleProfileSave);
     saveProfileButton.addEventListener("click", handleProfileSave);
+
+    const qrScanModal = document.getElementById("qrScanModal");
+    const qrScanVideo = document.getElementById("qrScanVideo");
+    const qrScanStatus = document.getElementById("qrScanStatus");
+    const qrScanCloseBtn = document.getElementById("qrScanCloseBtn");
+    const qrScanCancelBtn = document.getElementById("qrScanCancelBtn");
+    const openQrScannerBtn = document.getElementById("openQrScannerBtn");
+
+    let qrScanStream = null;
+    let qrScanRafId = null;
+    let qrScanCanvas = null;
+    let qrScanCtx = null;
+    let qrScanDetector = null;
+    let qrScanJsLoading = null;
+    let qrScanActive = false;
+    let qrScanLastToken = "";
+
+    function setQrScanStatus(message, kind) {
+      if (!qrScanStatus) return;
+      qrScanStatus.textContent = message || "";
+      qrScanStatus.classList.remove("is-error", "is-success");
+      if (kind === "error") qrScanStatus.classList.add("is-error");
+      if (kind === "success") qrScanStatus.classList.add("is-success");
+    }
+
+    function stopQrScan() {
+      qrScanActive = false;
+      if (qrScanRafId) {
+        cancelAnimationFrame(qrScanRafId);
+        qrScanRafId = null;
+      }
+      if (qrScanStream) {
+        qrScanStream.getTracks().forEach(function (track) { track.stop(); });
+        qrScanStream = null;
+      }
+      if (qrScanVideo) {
+        qrScanVideo.srcObject = null;
+      }
+    }
+
+    function closeQrScanModal() {
+      stopQrScan();
+      if (qrScanModal) qrScanModal.hidden = true;
+      qrScanLastToken = "";
+    }
+
+    function ensureJsQrLoaded() {
+      if (window.jsQR) return Promise.resolve(window.jsQR);
+      if (qrScanJsLoading) return qrScanJsLoading;
+      qrScanJsLoading = new Promise(function (resolve, reject) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+        script.async = true;
+        script.onload = function () { resolve(window.jsQR); };
+        script.onerror = function () { reject(new Error("โหลดไลบรารีสแกน QR ไม่สำเร็จ")); };
+        document.head.appendChild(script);
+      });
+      return qrScanJsLoading;
+    }
+
+    function extractTokenFromText(value) {
+      if (!value) return "";
+      try {
+        const url = new URL(value, window.location.origin);
+        const fromQuery = url.searchParams.get("qr_login");
+        if (fromQuery && /^[a-f0-9]{64}$/i.test(fromQuery)) {
+          return fromQuery.toLowerCase();
+        }
+      } catch (error) {
+        // not a URL — fall through
+      }
+      const match = String(value).match(/qr_login=([a-f0-9]{64})/i);
+      if (match) return match[1].toLowerCase();
+      if (/^[a-f0-9]{64}$/i.test(value.trim())) return value.trim().toLowerCase();
+      return "";
+    }
+
+    async function approveQrToken(token) {
+      try {
+        const response = await apiFetch("/auth/qr-login/" + token + "/approve", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        setQrScanStatus(response.message || "อนุมัติแล้ว — กลับไปดูคอมพิวเตอร์ได้เลย", "success");
+        showToast(response.message || "อนุมัติเข้าสู่ระบบบนคอมแล้ว", "is-success");
+        setTimeout(closeQrScanModal, 1200);
+      } catch (error) {
+        const message = (error && error.message) || "อนุมัติไม่สำเร็จ";
+        setQrScanStatus(message, "error");
+        showToast(message, "is-error");
+        setTimeout(function () {
+          qrScanLastToken = "";
+          setQrScanStatus("ลองสแกนอีกครั้ง");
+        }, 1800);
+      }
+    }
+
+    async function scanLoop() {
+      if (!qrScanActive || !qrScanVideo) return;
+
+      try {
+        if (qrScanDetector) {
+          const codes = await qrScanDetector.detect(qrScanVideo);
+          if (codes && codes.length) {
+            handleScannedText(codes[0].rawValue || "");
+          }
+        } else if (window.jsQR && qrScanVideo.readyState === qrScanVideo.HAVE_ENOUGH_DATA) {
+          if (!qrScanCanvas) {
+            qrScanCanvas = document.createElement("canvas");
+            qrScanCtx = qrScanCanvas.getContext("2d", { willReadFrequently: true });
+          }
+          const w = qrScanVideo.videoWidth;
+          const h = qrScanVideo.videoHeight;
+          if (w && h) {
+            qrScanCanvas.width = w;
+            qrScanCanvas.height = h;
+            qrScanCtx.drawImage(qrScanVideo, 0, 0, w, h);
+            const imageData = qrScanCtx.getImageData(0, 0, w, h);
+            const code = window.jsQR(imageData.data, w, h, { inversionAttempts: "dontInvert" });
+            if (code && code.data) {
+              handleScannedText(code.data);
+            }
+          }
+        }
+      } catch (error) {
+        // ignore one-frame errors
+      }
+
+      if (qrScanActive) {
+        qrScanRafId = requestAnimationFrame(scanLoop);
+      }
+    }
+
+    function handleScannedText(text) {
+      const token = extractTokenFromText(text);
+      if (!token || token === qrScanLastToken) return;
+      qrScanLastToken = token;
+      setQrScanStatus("กำลังยืนยันเข้าสู่ระบบ...");
+      approveQrToken(token);
+    }
+
+    async function openQrScanModal() {
+      if (!qrScanModal) return;
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast("เบราว์เซอร์ไม่รองรับการเปิดกล้อง", "is-error");
+        return;
+      }
+
+      qrScanModal.hidden = false;
+      setQrScanStatus("กำลังเปิดกล้อง...");
+
+      try {
+        qrScanStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+          audio: false
+        });
+      } catch (error) {
+        const message = error && error.name === "NotAllowedError"
+          ? "ไม่ได้รับอนุญาตให้ใช้กล้อง กรุณาอนุญาตในเบราว์เซอร์"
+          : "เปิดกล้องไม่สำเร็จ: " + ((error && error.message) || "");
+        setQrScanStatus(message, "error");
+        return;
+      }
+
+      qrScanVideo.srcObject = qrScanStream;
+      try { await qrScanVideo.play(); } catch (error) { /* ignore */ }
+
+      qrScanDetector = null;
+      if ("BarcodeDetector" in window) {
+        try {
+          const supported = await window.BarcodeDetector.getSupportedFormats();
+          if (supported.includes("qr_code")) {
+            qrScanDetector = new window.BarcodeDetector({ formats: ["qr_code"] });
+          }
+        } catch (error) {
+          qrScanDetector = null;
+        }
+      }
+
+      if (!qrScanDetector) {
+        try {
+          await ensureJsQrLoaded();
+        } catch (error) {
+          setQrScanStatus(error.message || "โหลดไลบรารีสแกน QR ไม่สำเร็จ", "error");
+          return;
+        }
+      }
+
+      qrScanActive = true;
+      qrScanLastToken = "";
+      setQrScanStatus("วางกล้องให้ตรง QR บนหน้าจอคอม");
+      scanLoop();
+    }
+
+    if (openQrScannerBtn) {
+      openQrScannerBtn.addEventListener("click", openQrScanModal);
+    }
+    if (qrScanCloseBtn) {
+      qrScanCloseBtn.addEventListener("click", closeQrScanModal);
+    }
+    if (qrScanCancelBtn) {
+      qrScanCancelBtn.addEventListener("click", closeQrScanModal);
+    }
+    if (qrScanModal) {
+      qrScanModal.addEventListener("click", function (event) {
+        if (event.target === qrScanModal) closeQrScanModal();
+      });
+    }
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && qrScanModal && !qrScanModal.hidden) {
+        closeQrScanModal();
+      }
+    });
 
     hydrateCurrentUser();
   </script>
