@@ -2167,6 +2167,86 @@
       line-height: 1.45;
     }
 
+    .qr-auth-steps {
+      margin: 10px 0 0;
+      padding-left: 1.2em;
+      text-align: left;
+      color: #6c4b5d;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .qr-auth-steps strong {
+      color: #c2185b;
+    }
+
+    .qr-auth-warn {
+      margin: 10px 0 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fff8e6;
+      border: 1px solid #f0d78c;
+      color: #7a5b12;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .qr-approve-banner {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 12000;
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid rgba(232, 202, 216, 0.9);
+      box-shadow: 0 -12px 36px rgba(40, 20, 30, 0.16);
+    }
+
+    .qr-approve-banner[hidden] {
+      display: none;
+    }
+
+    .qr-approve-title {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #c2185b;
+    }
+
+    .qr-approve-copy {
+      margin: 0 0 12px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #53414a;
+    }
+
+    .qr-approve-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .qr-approve-btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .qr-approve-btn.is-primary {
+      background: linear-gradient(90deg, #ff68a0 0%, #d94a78 100%);
+      color: #fff;
+    }
+
+    .qr-approve-btn.is-muted {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
     .form-notice {
       display: none;
       margin-top: -6px;
@@ -2649,6 +2729,15 @@
   </style>
 </head>
 <body>
+  <div class="qr-approve-banner" id="qrApproveBanner" hidden>
+    <p class="qr-approve-title" id="qrApproveTitle">ยืนยันเข้าสู่ระบบ</p>
+    <p class="qr-approve-copy" id="qrApproveCopy">มีอุปกรณ์อื่นขอเข้าสู่ระบบด้วยบัญชีของคุณ</p>
+    <div class="qr-approve-actions" id="qrApproveActions">
+      <button class="qr-approve-btn is-primary" id="qrApproveConfirmBtn" type="button">อนุมัติ</button>
+      <button class="qr-approve-btn is-muted" id="qrApproveCancelBtn" type="button">ยกเลิก</button>
+    </div>
+  </div>
+
   <svg width="0" height="0" style="position:absolute">
     <symbol id="i-heart" viewBox="0 0 24 24">
       <path d="M12 21.35 10.55 20C5.4 15.24 2 12.09 2 8.25 2 5.1 4.42 2.75 7.5 2.75c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.35 5.5 5.5 0 3.84-3.4 6.99-8.55 11.76L12 21.35Z"/>
@@ -3254,7 +3343,13 @@
           เข้าสู่ระบบ
         </button>
         <div class="qr-auth-box">
-          <p class="qr-auth-copy">QR เข้าสู่ระบบ: สแกนด้วยมือถือที่ล็อกอินอยู่ แล้วกดยืนยันเพื่อเข้าเครื่องนี้</p>
+          <p class="qr-auth-copy">QR เข้าสู่ระบบ — ให้มือถือที่<strong>ล็อกอิน LoveMatch อยู่แล้ว</strong>สแกน แล้วกดอนุมัติ</p>
+          <p class="qr-auth-warn">อย่าใช้สแกนเนอร์ในแอปไลน์ (ไลน์มักไม่เปิดลิงก์เว็บ) ให้ใช้ <strong>กล้อง</strong> หรือ <strong>Chrome / Safari</strong> แทน</p>
+          <ol class="qr-auth-steps">
+            <li>เปิดกล้องหรือ Chrome บนมือถือ แล้วสแกน QR</li>
+            <li>เว็บจะเปิด → กดปุ่ม <strong>อนุมัติ</strong> ที่ด้านล่างหน้าจอ</li>
+            <li>คอมพิวเตอร์จะเข้าสู่ระบบอัตโนมัติ</li>
+          </ol>
           <img id="loginQrImage" alt="QR สำหรับเข้าสู่ระบบ">
           <div class="qr-auth-status" id="loginQrStatus">เปิดหน้าล็อกอินเพื่อสร้าง QR</div>
         </div>
@@ -3503,6 +3598,11 @@
     const loginQrImage = document.getElementById("loginQrImage");
     const loginQrStatus = document.getElementById("loginQrStatus");
     const registerQrImage = document.getElementById("registerQrImage");
+    const qrApproveBanner = document.getElementById("qrApproveBanner");
+    const qrApproveTitle = document.getElementById("qrApproveTitle");
+    const qrApproveCopy = document.getElementById("qrApproveCopy");
+    const qrApproveConfirmBtn = document.getElementById("qrApproveConfirmBtn");
+    const qrApproveCancelBtn = document.getElementById("qrApproveCancelBtn");
 
     const defaultLoginButtonHTML = loginMenuButton ? loginMenuButton.innerHTML : "";
     const defaultRegisterButtonHTML = registerMenuButton ? registerMenuButton.innerHTML : "";
@@ -4739,7 +4839,7 @@
         await loadDiscoverProfiles();
         await hydrateMatchWall();
         if (pendingScannedQrLoginToken) {
-          await approveScannedQrLogin(true);
+          renderQrApproveBanner();
         }
         showNotice(loginNotice, response.message || "เข้าสู่ระบบสำเร็จ", "success");
         loginForm.reset();
@@ -5104,7 +5204,7 @@
         activeQrLoginToken = response.data.token;
         const targetUrl = window.location.origin + (appBasePath || "") + "/?qr_login=" + encodeURIComponent(activeQrLoginToken);
         loginQrImage.src = qrCodeUrl(targetUrl);
-        setLoginQrStatus("สแกน QR นี้ด้วยมือถือที่ล็อกอินอยู่ ภายใน 5 นาที");
+        setLoginQrStatus("รอสแกนด้วยกล้อง/Chrome บนมือถือ (ไม่ใช่สแกนเนอร์ไลน์) ภายใน 5 นาที");
 
         activeQrLoginTimer = window.setInterval(pollQrLoginSession, 2200);
       } catch (error) {
@@ -5154,16 +5254,61 @@
       }
     }
 
+    function clearQrLoginQuery() {
+      pendingScannedQrLoginToken = "";
+      if (qrApproveBanner) {
+        qrApproveBanner.hidden = true;
+      }
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    function renderQrApproveBanner() {
+      if (!qrApproveBanner || !pendingScannedQrLoginToken) {
+        return;
+      }
+
+      if (currentUser) {
+        if (qrApproveTitle) {
+          qrApproveTitle.textContent = "ยืนยันเข้าสู่ระบบ";
+        }
+        if (qrApproveCopy) {
+          qrApproveCopy.textContent = "อนุมัติให้คอมพิวเตอร์/อุปกรณ์ที่แสดง QR เข้าสู่ระบบด้วยบัญชี " + (currentUser.display_name || currentUser.email || "ของคุณ") + " หรือไม่?";
+        }
+        if (qrApproveConfirmBtn) {
+          qrApproveConfirmBtn.hidden = false;
+        }
+      } else {
+        if (qrApproveTitle) {
+          qrApproveTitle.textContent = "เข้าสู่ระบบก่อนยืนยัน QR";
+        }
+        if (qrApproveCopy) {
+          qrApproveCopy.textContent = "ล็อกอินบนมือถือก่อน จากนั้นกดอนุมัติเพื่อให้เครื่องที่สแกน QR เข้าใช้งานได้";
+        }
+        if (qrApproveConfirmBtn) {
+          qrApproveConfirmBtn.hidden = true;
+        }
+        openLoginModal();
+        showNotice(loginNotice, "เข้าสู่ระบบบนมือถือก่อน แล้วกดอนุมัติที่แถบด้านล่าง", "success");
+      }
+
+      qrApproveBanner.hidden = false;
+    }
+
     async function approveScannedQrLogin(askConfirm) {
       if (!pendingScannedQrLoginToken || !currentUser) {
         return;
       }
 
-      if (askConfirm !== false) {
+      if (askConfirm !== false && !qrApproveBanner) {
         const ok = window.confirm("อนุมัติให้เครื่องที่แสดง QR เข้าสู่ระบบด้วยบัญชี " + (currentUser.display_name || currentUser.email || "ของคุณ") + " หรือไม่?");
         if (!ok) {
           return;
         }
+      }
+
+      if (qrApproveConfirmBtn) {
+        qrApproveConfirmBtn.disabled = true;
       }
 
       try {
@@ -5171,12 +5316,14 @@
           method: "POST",
           body: JSON.stringify({})
         });
-        showToast(response.message || "อนุมัติ QR เข้าสู่ระบบแล้ว", "is-success");
-        pendingScannedQrLoginToken = "";
-        const cleanUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
+        showToast(response.message || "อนุมัติแล้ว — กลับไปดูหน้าคอมพิวเตอร์ได้เลย", "is-success");
+        clearQrLoginQuery();
       } catch (error) {
         showToast(error.message || "อนุมัติ QR ไม่สำเร็จ", "is-error");
+      } finally {
+        if (qrApproveConfirmBtn) {
+          qrApproveConfirmBtn.disabled = false;
+        }
       }
     }
 
@@ -5192,12 +5339,7 @@
       const qrLoginToken = params.get("qr_login") || "";
       if (/^[a-f0-9]{64}$/.test(qrLoginToken)) {
         pendingScannedQrLoginToken = qrLoginToken;
-        if (currentUser) {
-          approveScannedQrLogin(true);
-        } else {
-          openLoginModal();
-          showNotice(loginNotice, "เข้าสู่ระบบบนมือถือก่อน เพื่อยืนยัน QR เข้าสู่ระบบให้เครื่องที่สแกน", "success");
-        }
+        renderQrApproveBanner();
         return;
       }
 
@@ -5370,6 +5512,17 @@
       });
     });
     loginForm.addEventListener("submit", handleLoginSubmit);
+    if (qrApproveConfirmBtn) {
+      qrApproveConfirmBtn.addEventListener("click", function () {
+        approveScannedQrLogin(false);
+      });
+    }
+    if (qrApproveCancelBtn) {
+      qrApproveCancelBtn.addEventListener("click", function () {
+        clearQrLoginQuery();
+        showToast("ยกเลิกการยืนยัน QR แล้ว", "is-info");
+      });
+    }
     registerForm.addEventListener("submit", handleRegisterSubmit);
     document.querySelectorAll('input[name="registerPaymentMethod"]').forEach(function (radio) {
       radio.addEventListener("change", function () {
