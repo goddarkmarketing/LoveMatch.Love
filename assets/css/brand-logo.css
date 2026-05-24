@@ -1,5 +1,5 @@
 /**
- * Header brand — uses provided assets/logo.png banner image (icon + wordmark in one).
+ * Header brand — uses assets/logo.png (stacked icon + wordmark).
  */
 
 .topbar {
@@ -35,9 +35,9 @@
 
 .topbar .brand .brand-mark {
   flex-shrink: 0;
-  height: clamp(48px, 7.2vw, 72px);
+  height: clamp(52px, 9vw, 76px);
   width: auto;
-  max-width: min(360px, 60vw);
+  max-width: min(120px, 32vw);
   object-fit: contain;
   object-position: left center;
   display: block;
@@ -54,7 +54,7 @@
   }
 
   .topbar .brand .brand-mark {
-    height: clamp(40px, 12vw, 58px);
-    max-width: 72vw;
+    height: clamp(44px, 11vw, 64px);
+    max-width: min(100px, 28vw);
   }
 }
