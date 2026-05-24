@@ -2084,6 +2084,29 @@
       gap: 8px;
     }
 
+    .auth-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 4px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 248, 251, 0.95);
+      border: 1px solid rgba(232, 202, 216, 0.8);
+      cursor: pointer;
+      line-height: 1.55;
+      font-size: 13px;
+      color: #53414a;
+    }
+
+    .auth-consent input {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      accent-color: #d94a78;
+    }
+
     .auth-label {
       font-size: 16px;
       font-weight: 700;
@@ -3449,6 +3472,11 @@
             </div>
           </div>
         </div>
+
+        <label class="auth-consent" for="registerPhotoConsent">
+          <input type="checkbox" id="registerPhotoConsent" name="photo_consent" value="1" required>
+          <span>ยอมรับและอนุญาตให้ใช้รูปภาพที่อัปโหลดในโปรไฟล์ เพื่อการจับคู่ และบริการภายในแพลตฟอร์ม</span>
+        </label>
 
         <div class="form-notice" id="registerNotice"></div>
 

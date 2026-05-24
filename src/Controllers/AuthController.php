@@ -39,6 +39,16 @@ class AuthController
         $interestedIn = (string) ($payload['interested_in'] ?? '');
         $planId = (int) ($payload['plan_id'] ?? 0);
         $paymentMethod = trim((string) ($payload['payment_method'] ?? 'bank_transfer'));
+        $photoConsent = filter_var($payload['photo_consent'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        if (!$photoConsent) {
+            Response::json([
+                'success' => false,
+                'message' => 'กรุณายอมรับการใช้รูปภาพก่อนสมัครสมาชิก',
+            ], 422);
+        }
+
+        $photoConsentAt = date('Y-m-d H:i:s');
 
         if ($firstName === '' || $lastName === '' || $email === '' || $password === '') {
             Response::json([
@@ -116,6 +126,7 @@ class AuthController
                     'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                     'gender' => $gender,
                     'interested_in' => $interestedIn,
+                    'photo_usage_consent_at' => $photoConsentAt,
                 ]);
                 $this->subscriptions->insertSubscriptionForNewUser((int) $user['id'], $planId, 'active');
             } catch (RuntimeException $exception) {
@@ -160,6 +171,7 @@ class AuthController
                 'gender' => $gender,
                 'interested_in' => $interestedIn,
                 'status' => 'pending_verification',
+                'photo_usage_consent_at' => $photoConsentAt,
             ]);
             $userId = (int) $user['id'];
             $subscriptionId = $this->subscriptions->insertSubscriptionForNewUser($userId, $planId, 'pending');

@@ -28,6 +28,7 @@ CREATE TABLE users (
   email_verified_at DATETIME NULL,
   status ENUM('pending_verification','active','suspended','banned','deleted') NOT NULL DEFAULT 'pending_verification',
   is_profile_completed TINYINT(1) NOT NULL DEFAULT 0,
+  photo_usage_consent_at DATETIME NULL,
   last_seen_at DATETIME NULL,
   created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

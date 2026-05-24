@@ -300,6 +300,16 @@
       var passId = ids.password || "registerPassword";
       var genderId = ids.gender || "registerGender";
       var interestedId = ids.interestedIn || "registerInterestedIn";
+      var photoConsentId = ids.photoConsent || "registerPhotoConsent";
+      var photoConsentEl = document.getElementById(photoConsentId);
+
+      if (!photoConsentEl || !photoConsentEl.checked) {
+        ctx.showNotice(ctx.registerNotice, "กรุณาติ๊กยอมรับการใช้รูปภาพก่อนสมัคร", "error");
+        if (photoConsentEl) {
+          photoConsentEl.focus();
+        }
+        return;
+      }
 
       var fee = Number(selPlan.price_thb) > 0;
       var method = fee ? getRegisterPaymentMethod() : "bank_transfer";
@@ -331,7 +341,8 @@
       password: document.getElementById(passId).value,
       gender: document.getElementById(genderId).value,
       interested_in: document.getElementById(interestedId).value,
-      plan_id: selPlan.id
+      plan_id: selPlan.id,
+      photo_consent: true
     };
     if (fee) {
       payload.payment_method = method;

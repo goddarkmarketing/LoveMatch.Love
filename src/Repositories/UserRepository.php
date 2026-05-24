@@ -48,10 +48,12 @@ class UserRepository
         $statement = $this->db->prepare(
             'INSERT INTO users (
                 role_id, email, password_hash, first_name, last_name, display_name,
-                gender, interested_in, status, is_profile_completed, created_at, updated_at
+                gender, interested_in, status, is_profile_completed, photo_usage_consent_at,
+                created_at, updated_at
              ) VALUES (
                 :role_id, :email, :password_hash, :first_name, :last_name, :display_name,
-                :gender, :interested_in, :status, :is_profile_completed, NOW(), NOW()
+                :gender, :interested_in, :status, :is_profile_completed, :photo_usage_consent_at,
+                NOW(), NOW()
              )'
         );
 
@@ -66,6 +68,7 @@ class UserRepository
             'interested_in' => $payload['interested_in'] ?: null,
             'status' => $payload['status'] ?? 'active',
             'is_profile_completed' => 1,
+            'photo_usage_consent_at' => $payload['photo_usage_consent_at'] ?? null,
         ]);
 
         $userId = (int) $this->db->lastInsertId();
