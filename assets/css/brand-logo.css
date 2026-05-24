@@ -1,5 +1,5 @@
 /**
- * Header brand — uses assets/logo.png (stacked icon + wordmark).
+ * Header brand — logo icon + Great Vibes wordmark.
  */
 
 .topbar {
@@ -10,7 +10,7 @@
   overflow: visible;
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: clamp(10px, 2vw, 16px);
   text-decoration: none;
   color: inherit;
 }
@@ -35,26 +35,55 @@
 
 .topbar .brand .brand-mark {
   flex-shrink: 0;
-  height: clamp(68px, 12vw, 104px);
-  width: auto;
-  max-width: min(168px, 42vw);
-  object-fit: contain;
-  object-position: left center;
+  width: clamp(52px, 8vw, 72px);
+  height: clamp(52px, 8vw, 72px);
+  object-fit: cover;
+  object-position: top center;
   display: block;
 }
 
 .topbar .brand .brand-name {
-  display: none;
+  display: inline-block;
+  font-family: "Great Vibes", "Brush Script MT", "Segoe Script", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(36px, 5.8vw, 54px);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 4px 0 8px;
+  white-space: nowrap;
+  background-image: linear-gradient(
+    92deg,
+    #ad1457 0%,
+    #e91e8c 34%,
+    #ff7043 72%,
+    #ffb74d 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (max-width: 680px) {
+  .topbar .brand .brand-name {
+    font-size: clamp(30px, 7.5vw, 42px);
+  }
 }
 
 @media (max-width: 480px) {
   .topbar .brand {
     flex: 1;
     min-width: 0;
+    gap: 8px;
   }
 
   .topbar .brand .brand-mark {
-    height: clamp(56px, 14vw, 84px);
-    max-width: min(140px, 38vw);
+    width: clamp(44px, 11vw, 56px);
+    height: clamp(44px, 11vw, 56px);
+  }
+
+  .topbar .brand .brand-name {
+    font-size: clamp(26px, 8.5vw, 36px);
+    padding-bottom: 6px;
   }
 }
