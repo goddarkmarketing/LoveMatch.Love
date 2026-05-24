@@ -963,6 +963,39 @@
       box-shadow: 0 10px 22px rgba(34, 23, 41, 0.12);
     }
 
+    .is-kissable {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .is-kissable:hover {
+      box-shadow: 0 0 0 3px rgba(255, 105, 160, 0.35);
+    }
+
+    .is-kissable.kiss-pulse {
+      animation: kissPulse 0.45s ease;
+    }
+
+    @keyframes kissPulse {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .kiss-float {
+      position: fixed;
+      z-index: 13000;
+      font-size: 28px;
+      pointer-events: none;
+      animation: kissFloat 0.9s ease forwards;
+    }
+
+    @keyframes kissFloat {
+      0% { opacity: 0; transform: translateY(8px) scale(0.7); }
+      20% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-42px) scale(1.1); }
+    }
+
     .bubble-stack {
       min-width: 0;
       max-width: min(78%, 620px);
@@ -1719,6 +1752,7 @@
     let giftCatalogCount = 0;
     let chatStickers = [];
     let chatStickersLoaded = false;
+    let kissSending = false;
 
     function openModal(modal) {
       modal.classList.add("is-open");
@@ -1979,6 +2013,100 @@
       stickerPicker.hidden = !isOpen;
     }
 
+    async function reloadCurrentChatMessages() {
+      if (!currentRoomId) {
+        return;
+      }
+      if (activeChatType === "private" && activePrivateMatch) {
+        await loadPrivateMessages({ id: currentRoomId, room_type: "private" }, activePrivateMatch);
+      } else {
+        await loadRoomMessages(currentRoomId);
+      }
+      await hydrateMatches();
+    }
+
+    function showKissFloatAt(element) {
+      if (!element) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const floater = document.createElement("div");
+      floater.className = "kiss-float";
+      floater.textContent = "💋";
+      floater.style.left = (rect.left + rect.width / 2 - 12) + "px";
+      floater.style.top = (rect.top - 8) + "px";
+      document.body.appendChild(floater);
+      window.setTimeout(function () {
+        floater.remove();
+      }, 900);
+    }
+
+    async function sendKissMessage(sourceElement) {
+      clearNotice(chatNotice);
+      if (!currentUser) {
+        openModal(loginModal);
+        showNotice(loginNotice, "กรุณาเข้าสู่ระบบก่อนส่งจูบ", "error");
+        return;
+      }
+      if (!currentRoomId) {
+        showNotice(chatNotice, "เลือกห้องแชทก่อนส่งจูบ", "error");
+        return;
+      }
+      if (kissSending) {
+        return;
+      }
+
+      kissSending = true;
+      if (sourceElement) {
+        sourceElement.classList.add("kiss-pulse");
+        showKissFloatAt(sourceElement);
+        window.setTimeout(function () {
+          sourceElement.classList.remove("kiss-pulse");
+        }, 450);
+      }
+
+      chatSendButton.disabled = true;
+      try {
+        await apiFetch("/chat/rooms/" + currentRoomId + "/messages", {
+          method: "POST",
+          body: JSON.stringify({ body: "💋" })
+        });
+        showToast("ส่งจูบแล้ว", "is-success");
+        await reloadCurrentChatMessages();
+      } catch (error) {
+        showNotice(chatNotice, error.message, "error");
+      } finally {
+        chatSendButton.disabled = false;
+        kissSending = false;
+      }
+    }
+
+    function handleKissDoubleClick(event) {
+      const target = event.target;
+      if (!target || !target.closest) {
+        return;
+      }
+
+      const incomingRow = target.closest(".bubble-row.is-incoming");
+      if (incomingRow) {
+        const avatar = target.closest(".chat-message-avatar.is-kissable");
+        const sticker = target.closest(".bubble-sticker.is-kissable");
+        if (avatar || sticker) {
+          event.preventDefault();
+          sendKissMessage(avatar || sticker);
+          return;
+        }
+      }
+
+      if (activeChatType === "private" && activePrivateMatch) {
+        const profileAvatar = target.closest(".profile-person-avatar.is-kissable, .profile-avatar.is-kissable");
+        if (profileAvatar && profileInspector && profileInspector.contains(profileAvatar)) {
+          event.preventDefault();
+          sendKissMessage(profileAvatar);
+        }
+      }
+    }
+
     async function sendStickerMessage(stickerFile) {
       clearNotice(chatNotice);
       if (!currentUser) {
@@ -2109,13 +2237,15 @@
       return '<div class="profile-avatar profile-avatar-fallback">' + escapeHtml(letter) + '</div>';
     }
 
-    function renderChatMessageAvatar(name, avatarUrl) {
+    function renderChatMessageAvatar(name, avatarUrl, kissable) {
+      const kissClass = kissable ? " is-kissable" : "";
+      const kissTitle = kissable ? ' title="ดับเบิลคลิกเพื่อส่งจูบ"' : "";
       if (avatarUrl) {
-        return '<img class="chat-message-avatar" src="' + avatarUrl + '" alt="' + escapeHtml(name) + '">';
+        return '<img class="chat-message-avatar' + kissClass + '" src="' + avatarUrl + '" alt="' + escapeHtml(name) + '"' + kissTitle + '>';
       }
 
       const letter = (String(name || "?").trim().charAt(0) || "?").toUpperCase();
-      return '<div class="chat-message-avatar">' + escapeHtml(letter) + '</div>';
+      return '<div class="chat-message-avatar' + kissClass + '"' + kissTitle + '>' + escapeHtml(letter) + '</div>';
     }
 
     function updateProfileInspector(payload) {
@@ -2172,7 +2302,10 @@
         const isOwn = currentUser && Number(message.sender_user_id) === Number(currentUser.id);
         const time = message.sent_at ? message.sent_at.slice(11, 16) : "";
         const displayName = escapeHtml(message.display_name || "สมาชิก");
-        const body = renderMessageBody(message);
+        let body = renderMessageBody(message);
+        if (!isOwn && message.message_type === "image") {
+          body = body.replace('class="bubble-sticker"', 'class="bubble-sticker is-kissable" title="ดับเบิลคลิกเพื่อส่งจูบ"');
+        }
         if (isOwn) {
           return '<div class="bubble-row is-own">' +
             '<div class="bubble-stack is-own">' +
@@ -2184,7 +2317,7 @@
           '</div>';
         }
         return '<div class="bubble-row is-incoming">' +
-          renderChatMessageAvatar(message.display_name || "สมาชิก", message.avatar_url) +
+          renderChatMessageAvatar(message.display_name || "สมาชิก", message.avatar_url, true) +
           '<div class="bubble-stack">' +
             '<div class="bubble-name">' + displayName + '</div>' +
             '<div class="bubble bubble-incoming">' +
@@ -3076,8 +3209,8 @@
         const matchSince = payload.matched_at || "จับคู่แล้วพร้อมเริ่มคุย";
         const statusText = payload.is_online ? "ออนไลน์ตอนนี้" : formatLastSeen(payload.last_seen_at);
         const avatarMarkup = payload.avatar_url
-          ? '<img class="profile-person-avatar" src="' + payload.avatar_url + '" alt="' + escapeHtml(payload.display_name || "Match") + '">'
-          : '<div class="profile-person-avatar">' + escapeHtml((String(payload.display_name || "?").trim().charAt(0) || "?").toUpperCase()) + '</div>';
+          ? '<img class="profile-person-avatar is-kissable" src="' + payload.avatar_url + '" alt="' + escapeHtml(payload.display_name || "Match") + '" title="ดับเบิลคลิกเพื่อส่งจูบ">'
+          : '<div class="profile-person-avatar is-kissable" title="ดับเบิลคลิกเพื่อส่งจูบ">' + escapeHtml((String(payload.display_name || "?").trim().charAt(0) || "?").toUpperCase()) + '</div>';
 
         profileInspector.innerHTML =
           '<div class="profile-person">' +
@@ -3299,6 +3432,13 @@
     });
 
     loadChatStickers();
+
+    if (messageBoard) {
+      messageBoard.addEventListener("dblclick", handleKissDoubleClick);
+    }
+    if (profileInspector) {
+      profileInspector.addEventListener("dblclick", handleKissDoubleClick);
+    }
 
     hydrateCurrentUser().then(function () {
       if (currentUser) {
