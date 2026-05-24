@@ -35,9 +35,9 @@
 
 .topbar .brand .brand-mark {
   flex-shrink: 0;
-  height: clamp(52px, 9vw, 76px);
+  height: clamp(68px, 12vw, 104px);
   width: auto;
-  max-width: min(120px, 32vw);
+  max-width: min(168px, 42vw);
   object-fit: contain;
   object-position: left center;
   display: block;
@@ -54,7 +54,7 @@
   }
 
   .topbar .brand .brand-mark {
-    height: clamp(44px, 11vw, 64px);
-    max-width: min(100px, 28vw);
+    height: clamp(56px, 14vw, 84px);
+    max-width: min(140px, 38vw);
   }
 }
