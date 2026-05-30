@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use PDO;
+use Throwable;
 
 class UserRepository
 {
@@ -28,7 +29,8 @@ class UserRepository
     public function findById(int $id): ?array
     {
         $statement = $this->db->prepare(
-            'SELECT u.id, u.email, u.first_name, u.last_name, u.display_name, u.gender, u.interested_in,
+            'SELECT u.id, u.email, u.first_name, u.last_name, u.display_name, u.phone, u.birth_date,
+                    u.gender, u.interested_in, u.province, u.city, u.bio,
                     u.avatar_url, u.status, u.is_profile_completed, u.last_seen_at, r.code AS role_code
              FROM users u
              INNER JOIN roles r ON r.id = u.role_id
@@ -38,7 +40,15 @@ class UserRepository
         $statement->execute(['id' => $id]);
         $user = $statement->fetch();
 
-        return $user ?: null;
+        return $user ? $this->presentUser($user) : null;
+    }
+
+    private function presentUser(array $user): array
+    {
+        $user['id'] = (int) $user['id'];
+        $user['is_profile_completed'] = (int) ($user['is_profile_completed'] ?? 0);
+
+        return $user;
     }
 
     public function create(array $payload): array
@@ -67,7 +77,7 @@ class UserRepository
             'gender' => $payload['gender'] ?: null,
             'interested_in' => $payload['interested_in'] ?: null,
             'status' => $payload['status'] ?? 'active',
-            'is_profile_completed' => 1,
+            'is_profile_completed' => (int) ($payload['is_profile_completed'] ?? 0),
             'photo_usage_consent_at' => $payload['photo_usage_consent_at'] ?? null,
         ]);
 
@@ -87,6 +97,47 @@ class UserRepository
     {
         $statement = $this->db->prepare('UPDATE users SET status = :status, updated_at = NOW() WHERE id = :id');
         $statement->execute(['status' => $status, 'id' => $userId]);
+    }
+
+    /**
+     * @param list<array{file_url: string, sort_order: int, is_primary: int}> $photos
+     */
+    public function completeOnboarding(int $userId, array $fields, array $photos, UserPhotoRepository $photoRepository): void
+    {
+        $this->db->beginTransaction();
+
+        try {
+            $statement = $this->db->prepare(
+                'UPDATE users SET
+                    display_name = :display_name,
+                    birth_date = :birth_date,
+                    province = :province,
+                    city = :city,
+                    bio = :bio,
+                    phone = :phone,
+                    avatar_url = :avatar_url,
+                    is_profile_completed = 1,
+                    updated_at = NOW()
+                 WHERE id = :id'
+            );
+            $statement->execute([
+                'display_name' => $fields['display_name'],
+                'birth_date' => $fields['birth_date'],
+                'province' => $fields['province'],
+                'city' => $fields['city'],
+                'bio' => $fields['bio'],
+                'phone' => $fields['phone'],
+                'avatar_url' => $fields['avatar_url'],
+                'id' => $userId,
+            ]);
+
+            $photoRepository->insertPhotos($userId, $photos);
+
+            $this->db->commit();
+        } catch (Throwable $exception) {
+            $this->db->rollBack();
+            throw $exception;
+        }
     }
 
     public function deleteById(int $userId): void

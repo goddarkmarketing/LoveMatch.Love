@@ -13,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/brand-logo.css">
   <link rel="stylesheet" href="assets/css/register-payment.css">
+  <link rel="stylesheet" href="assets/css/profile-onboarding.css">
   <link rel="stylesheet" href="assets/css/language-picker.css">
   <link rel="stylesheet" href="assets/css/coins-badge.css">
   <link rel="stylesheet" href="assets/css/floating-contact.css">
@@ -3509,6 +3510,56 @@
     </div>
   </div>
 
+  <div class="modal-backdrop profile-onboarding-backdrop" id="profileOnboardingModal" aria-hidden="true">
+    <div class="profile-onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="profileOnboardingTitle">
+      <div class="profile-onboarding-head">
+        <h2 id="profileOnboardingTitle">ยืนยันตัวตน</h2>
+        <p>สมัครสมาชิกเรียบร้อยแล้ว กรุณาอัปโหลดรูปและกรอกรายละเอียดเพื่อยืนยันตัวตนก่อนเริ่มใช้งาน</p>
+      </div>
+      <form class="profile-onboarding-form" id="profileOnboardingForm">
+        <label class="profile-onboarding-field">
+          <span>ชื่อที่แสดงในโปรไฟล์</span>
+          <input type="text" name="display_name" id="onboardingDisplayName" required minlength="2" maxlength="150" placeholder="ชื่อเล่นหรือชื่อที่ต้องการแสดง">
+        </label>
+        <label class="profile-onboarding-field">
+          <span>วันเกิด</span>
+          <input type="date" name="birth_date" id="onboardingBirthDate" required>
+        </label>
+        <div class="profile-onboarding-grid">
+          <label class="profile-onboarding-field">
+            <span>จังหวัด</span>
+            <input type="text" name="province" id="onboardingProvince" required maxlength="120" placeholder="เช่น กรุงเทพมหานคร">
+          </label>
+          <label class="profile-onboarding-field">
+            <span>เมือง / เขต</span>
+            <input type="text" name="city" id="onboardingCity" required maxlength="120" placeholder="เช่น บางรัก">
+          </label>
+        </div>
+        <label class="profile-onboarding-field">
+          <span>เบอร์โทร (ไม่บังคับ)</span>
+          <input type="tel" name="phone" id="onboardingPhone" maxlength="30" placeholder="08xxxxxxxx">
+        </label>
+        <label class="profile-onboarding-field">
+          <span>แนะนำตัวสั้นๆ</span>
+          <textarea name="bio" id="onboardingBio" maxlength="2000" placeholder="บอกเล่าเกี่ยวกับตัวคุณสักเล็กน้อย"></textarea>
+        </label>
+        <div class="profile-onboarding-upload">
+          <span class="profile-onboarding-field"><span>รูปโปรไฟล์ (อย่างน้อย 1 รูป)</span></span>
+          <input type="file" name="photos" id="onboardingPhotos" accept="image/jpeg,image/png,image/webp" multiple required>
+          <small>JPG, PNG หรือ WEBP ไม่เกิน 5MB ต่อรูป (สูงสุด 5 รูป)</small>
+          <div class="profile-onboarding-previews" id="onboardingPhotoPreviews"></div>
+        </div>
+        <div class="profile-onboarding-upload">
+          <span class="profile-onboarding-field"><span>รูปยืนยันตัวตน</span></span>
+          <input type="file" name="verification_photo" id="onboardingVerificationPhoto" accept="image/jpeg,image/png,image/webp" required>
+          <small>เช่น ถ่ายคู่บัตรประชาชน หรือรูปเซลฟี่ถือบัตร เพื่อให้ทีมงานตรวจสอบ</small>
+        </div>
+        <div class="profile-onboarding-notice" id="profileOnboardingNotice" role="status"></div>
+        <button type="submit" class="profile-onboarding-submit" id="profileOnboardingSubmit">ส่งข้อมูลยืนยันตัวตน</button>
+      </form>
+    </div>
+  </div>
+
   <div class="cupid-float-overlay" id="cupidFloatOverlay" aria-hidden="true">
     <div class="cupid-float-pair" id="cupidFloatPair">
       <span class="cupid-float-emoji" aria-hidden="true">👼</span>
@@ -3519,12 +3570,29 @@
   <script src="assets/js/api-config.js"></script>
   <script src="https://cdn.omise.co/omise.js"></script>
   <script src="assets/js/register-payment.js"></script>
+  <script src="assets/js/profile-onboarding.js"></script>
   <script src="assets/js/language-picker.js"></script>
   <script src="https://translate.google.com/translate_a/element.js?cb=LoveMatchLanguagePicker.onTranslateReady"></script>
   <script>
     const appBasePath = LoveMatchApiConfig.appBasePath(window.location.pathname, "index.html");
     const API_BASE = LoveMatchApiConfig.apiBase(window.location.pathname, "index.html");
     const apiFetch = LoveMatchApiConfig.createApiFetch(API_BASE);
+
+    function setupProfileOnboarding() {
+      if (!window.ProfileOnboarding) {
+        return;
+      }
+      ProfileOnboarding.configure({
+        apiBase: API_BASE,
+        appBasePath: appBasePath,
+        onUserUpdated: function (user) {
+          currentUser = user;
+          updateAuthUI();
+        }
+      });
+    }
+    setupProfileOnboarding();
+
     const GIFTS_PAGE_URL = window.location.origin + (appBasePath || "") + "/gifts.html";
     const CHAT_PAGE_URL = window.location.origin + (appBasePath || "") + "/chat.html";
     const ADMIN_PAGE_URL = window.location.origin + (appBasePath || "") + "/admin.html";
@@ -4797,6 +4865,9 @@
       await hydrateMatches();
       await hydrateCurrentPlan();
       await loadDiscoverProfiles();
+      if (window.ProfileOnboarding) {
+        ProfileOnboarding.openIfNeeded(currentUser);
+      }
     }
 
     async function hydrateWallet() {
@@ -4869,6 +4940,9 @@
         setTimeout(function () {
           closeLoginModal();
           clearNotice(loginNotice);
+          if (window.ProfileOnboarding) {
+            ProfileOnboarding.openIfNeeded(currentUser);
+          }
         }, 700);
       } catch (error) {
         showNotice(loginNotice, error.message, "error");
@@ -4880,6 +4954,7 @@
     function handleRegisterSubmit(event) {
       return RegisterPaymentUI.handleRegisterSubmit(event, {
         apiFetch: apiFetch,
+        apiBase: API_BASE,
         appBasePath: appBasePath,
         registerForm: registerForm,
         registerNotice: registerNotice,
@@ -4887,14 +4962,22 @@
         clearNotice: clearNotice,
         showNotice: showNotice,
         closeRegisterModal: closeRegisterModal,
+        syncCurrentUser: function (user) {
+          currentUser = user;
+          updateAuthUI();
+        },
         onSuccess: async function (response) {
           currentUser = response.data.user;
           updateAuthUI();
-          await hydrateWallet();
-          await hydrateMatches();
-          await hydrateCurrentPlan();
-          await loadDiscoverProfiles();
-          await hydrateMatchWall();
+          try {
+            await hydrateWallet();
+            await hydrateMatches();
+            await hydrateCurrentPlan();
+            await loadDiscoverProfiles();
+            await hydrateMatchWall();
+          } catch (error) {
+            console.error(error);
+          }
         }
       });
     }

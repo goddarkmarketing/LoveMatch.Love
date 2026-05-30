@@ -12,6 +12,7 @@ use App\Controllers\GiftController;
 use App\Controllers\MatchController;
 use App\Controllers\MatchSignalController;
 use App\Controllers\PaidFeatureController;
+use App\Controllers\ProfileController;
 use App\Controllers\SubscriptionController;
 use App\Controllers\WalletController;
 use App\Repositories\AppDataRepository;
@@ -26,6 +27,7 @@ use App\Repositories\PaidFeatureRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\UserPhotoRepository;
 use App\Repositories\WalletRepository;
 use App\Support\Database;
 use App\Support\Request;
@@ -61,6 +63,8 @@ require_once dirname(__DIR__) . '/src/Controllers/MatchSignalController.php';
 require_once dirname(__DIR__) . '/src/Controllers/PaidFeatureController.php';
 require_once dirname(__DIR__) . '/src/Controllers/WalletController.php';
 require_once dirname(__DIR__) . '/src/Controllers/SubscriptionController.php';
+require_once dirname(__DIR__) . '/src/Repositories/UserPhotoRepository.php';
+require_once dirname(__DIR__) . '/src/Controllers/ProfileController.php';
 
 $appConfig = require dirname(__DIR__) . '/config/app.php';
 
@@ -124,6 +128,7 @@ try {
     $walletController = new WalletController($walletRepository, new GiftRepository($db));
     $giftController = new GiftController(new GiftRepository($db), $walletRepository, $matchSignalRepository);
     $subscriptionController = new SubscriptionController($subscriptionRepository, $paymentRepository, $paymentConfig, $db);
+    $profileController = new ProfileController(new UserRepository($db), new UserPhotoRepository($db));
 } catch (Throwable $exception) {
     Response::json([
         'success' => false,
@@ -172,6 +177,10 @@ $routes = [
     ['POST', '#^/auth/qr-login$#', static fn (Request $request): mixed => $authController->createQrLoginSession()],
     ['GET', '#^/auth/qr-login/([a-f0-9]{64})$#', static fn (Request $request, string $token): mixed => $authController->qrLoginStatus($token)],
     ['POST', '#^/auth/qr-login/([a-f0-9]{64})/approve$#', static fn (Request $request, string $token): mixed => $authController->approveQrLoginSession($token)],
+    ['POST', '#^/profile/onboarding$#', static function (Request $request) use ($profileController): mixed {
+        $userId = requireAuthUserId();
+        return $profileController->submitOnboarding($userId);
+    }],
     ['POST', '#^/auth/register$#', static fn (Request $request): mixed => $authController->register($request)],
     ['POST', '#^/auth/login$#', static fn (Request $request): mixed => $authController->login($request)],
     ['POST', '#^/auth/logout$#', static fn (Request $request): mixed => $authController->logout()],

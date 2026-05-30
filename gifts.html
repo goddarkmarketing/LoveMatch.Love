@@ -13,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/brand-logo.css">
   <link rel="stylesheet" href="assets/css/register-payment.css">
+  <link rel="stylesheet" href="assets/css/profile-onboarding.css">
   <link rel="stylesheet" href="assets/css/language-picker.css">
   <link rel="stylesheet" href="assets/css/coins-badge.css">
   <link rel="stylesheet" href="assets/css/floating-contact.css">
@@ -1655,12 +1656,29 @@
   <script src="assets/js/api-config.js"></script>
   <script src="https://cdn.omise.co/omise.js"></script>
   <script src="assets/js/register-payment.js"></script>
+  <script src="assets/js/profile-onboarding.js"></script>
   <script src="assets/js/language-picker.js"></script>
   <script src="https://translate.google.com/translate_a/element.js?cb=LoveMatchLanguagePicker.onTranslateReady"></script>
   <script>
     const appBasePath = LoveMatchApiConfig.appBasePath(window.location.pathname, "gifts.html");
     const API_BASE = LoveMatchApiConfig.apiBase(window.location.pathname, "gifts.html");
     const apiFetch = LoveMatchApiConfig.createApiFetch(API_BASE);
+
+    function setupProfileOnboarding() {
+      if (!window.ProfileOnboarding) {
+        return;
+      }
+      ProfileOnboarding.configure({
+        apiBase: API_BASE,
+        appBasePath: appBasePath,
+        onUserUpdated: function (user) {
+          currentUser = user;
+          updateAuthUI();
+        }
+      });
+    }
+    setupProfileOnboarding();
+
     const HOME_PAGE_URL = window.location.origin + (appBasePath || "") + "/";
     const GIFTS_PAGE_URL = window.location.origin + (appBasePath || "") + "/gifts.html";
     const CHAT_PAGE_URL = window.location.origin + (appBasePath || "") + "/chat.html";
@@ -1964,6 +1982,9 @@
       updateAuthUI();
       await hydrateWallet();
       await hydrateMatches();
+      if (window.ProfileOnboarding) {
+        ProfileOnboarding.openIfNeeded(currentUser);
+      }
     }
 
     async function hydrateWallet() {
@@ -2264,6 +2285,9 @@
         setTimeout(function () {
           closeModal(loginModal);
           clearNotice(loginNotice);
+          if (window.ProfileOnboarding) {
+            ProfileOnboarding.openIfNeeded(currentUser);
+          }
         }, 700);
       } catch (error) {
         showNotice(loginNotice, error.message, "error");
@@ -2299,6 +2323,7 @@
     function handleRegisterSubmit(event) {
       return RegisterPaymentUI.handleRegisterSubmit(event, {
         apiFetch: apiFetch,
+        apiBase: API_BASE,
         appBasePath: appBasePath,
         registerForm: registerForm,
         registerNotice: registerNotice,
@@ -2306,13 +2331,21 @@
         clearNotice: clearNotice,
         showNotice: showNotice,
         closeRegisterModal: closeRegisterModal,
+        syncCurrentUser: function (user) {
+          currentUser = user;
+          updateAuthUI();
+        },
         onSuccess: async function (response) {
           currentUser = response.data.user;
           updateAuthUI();
-          await hydrateWallet();
-          await hydrateMatches();
-          updateWalletCard();
-          populateRecipientOptions();
+          try {
+            await hydrateWallet();
+            await hydrateMatches();
+            updateWalletCard();
+            populateRecipientOptions();
+          } catch (error) {
+            console.error(error);
+          }
         }
       });
     }

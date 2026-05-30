@@ -332,6 +332,35 @@
     }
   };
 
+  function showOnboardingAfterRegister(ctx, user) {
+    if (!global.ProfileOnboarding) {
+      console.error("profile-onboarding.js ไม่ได้โหลด — ป๊อปอัปยืนยันตัวตนไม่แสดง");
+      return;
+    }
+
+    if (ctx.apiBase) {
+      global.ProfileOnboarding.configure({ apiBase: ctx.apiBase });
+    }
+
+    function finish(userRecord) {
+      global.ProfileOnboarding.openAfterRegister(userRecord || {});
+      if (typeof ctx.syncCurrentUser === "function" && userRecord) {
+        ctx.syncCurrentUser(userRecord);
+      }
+    }
+
+    if (user) {
+      finish(user);
+      return;
+    }
+
+    ctx.apiFetch("/auth/me", { method: "GET" }).then(function (res) {
+      finish(res.data && res.data.user ? res.data.user : {});
+    }).catch(function () {
+      finish({});
+    });
+  }
+
   function runRegister(ctx, selPlan, fee, method, omiseToken, firstId, lastId, emailId, passId, genderId, interestedId) {
     ctx.registerSubmitButton.disabled = true;
     var payload = {
@@ -355,34 +384,45 @@
       method: "POST",
       body: JSON.stringify(payload)
     }).then(function (response) {
-      return Promise.resolve(ctx.onSuccess(response, { fee: fee, method: method, selPlan: selPlan })).then(function () {
-        var msg = response.message || "สมัครสมาชิกสำเร็จ";
-        if (response.data && response.data.registration_payment && response.data.registration_payment.status === "pending") {
-          var p = response.data.registration_payment;
-          msg += " โอน ฿" + Number(p.amount_thb).toLocaleString("th-TH") + " (" + (p.plan_name || selPlan.name) + ")";
-          if (p.bank_accounts && p.bank_accounts.length) {
-            msg += " — โอนเข้าบัญชีใดก็ได้ด้านล่าง (ชื่อบัญชี " + (p.bank_account_name || "") + ")";
-          } else {
-            msg += " ไปที่ " + p.bank_name + " เลข " + p.bank_account_number + " (" + p.bank_account_name + ") — " + (p.transfer_reference_note || "");
+      var registeredUser = response.data && response.data.user ? response.data.user : null;
+      var closeDelay = fee && method === "bank_transfer" ? 1400 : 700;
+
+      return Promise.resolve(ctx.onSuccess(response, { fee: fee, method: method, selPlan: selPlan }))
+        .catch(function (err) {
+          console.error(err);
+        })
+        .then(function () {
+          var msg = response.message || "สมัครสมาชิกสำเร็จ";
+          if (response.data && response.data.registration_payment && response.data.registration_payment.status === "pending") {
+            var p = response.data.registration_payment;
+            msg += " โอน ฿" + Number(p.amount_thb).toLocaleString("th-TH") + " (" + (p.plan_name || selPlan.name) + ")";
+            if (p.bank_accounts && p.bank_accounts.length) {
+              msg += " — โอนเข้าบัญชีใดก็ได้ด้านล่าง (ชื่อบัญชี " + (p.bank_account_name || "") + ")";
+            } else {
+              msg += " ไปที่ " + p.bank_name + " เลข " + p.bank_account_number + " (" + p.bank_account_name + ") — " + (p.transfer_reference_note || "");
+            }
           }
-        }
-        ctx.showNotice(ctx.registerNotice, msg, "success");
-        ctx.registerForm.reset();
-        var bankRadioReset = document.querySelector('input[name="registerPaymentMethod"][value="bank_transfer"]');
-        if (bankRadioReset) {
-          bankRadioReset.checked = true;
-        }
-        return global.RegisterPaymentUI.loadRegistrationPaymentOptions(ctx.apiFetch, ctx.appBasePath).catch(function (e) {
-          console.error(e);
-        }).then(function () {
+          ctx.showNotice(ctx.registerNotice, msg, "success");
+          ctx.registerForm.reset();
+          var bankRadioReset = document.querySelector('input[name="registerPaymentMethod"][value="bank_transfer"]');
+          if (bankRadioReset) {
+            bankRadioReset.checked = true;
+          }
+          return global.RegisterPaymentUI.loadRegistrationPaymentOptions(ctx.apiFetch, ctx.appBasePath).catch(function (e) {
+            console.error(e);
+          });
+        })
+        .finally(function () {
           window.setTimeout(function () {
             if (ctx.closeRegisterModal) {
               ctx.closeRegisterModal();
             }
             ctx.clearNotice(ctx.registerNotice);
-          }, fee && method === "bank_transfer" ? 1400 : 700);
+            window.setTimeout(function () {
+              showOnboardingAfterRegister(ctx, registeredUser);
+            }, 120);
+          }, closeDelay);
         });
-      });
     }).catch(function (error) {
       ctx.showNotice(ctx.registerNotice, error.message, "error");
     }).finally(function () {

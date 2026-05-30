@@ -126,6 +126,7 @@ class AuthController
                     'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                     'gender' => $gender,
                     'interested_in' => $interestedIn,
+                    'is_profile_completed' => 0,
                     'photo_usage_consent_at' => $photoConsentAt,
                 ]);
                 $this->subscriptions->insertSubscriptionForNewUser((int) $user['id'], $planId, 'active');
@@ -171,6 +172,7 @@ class AuthController
                 'gender' => $gender,
                 'interested_in' => $interestedIn,
                 'status' => 'pending_verification',
+                'is_profile_completed' => 0,
                 'photo_usage_consent_at' => $photoConsentAt,
             ]);
             $userId = (int) $user['id'];

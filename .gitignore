@@ -7,4 +7,5 @@ config/database.local.php
 config/payments.local.php
 config/migrate.local.php
 uploads/topup-slips/
+uploads/profile-photos/
 scripts/node_modules/
