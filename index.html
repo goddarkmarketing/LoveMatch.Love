@@ -492,6 +492,55 @@
       position: relative;
       min-height: 430px;
       background: linear-gradient(180deg, rgba(38, 54, 76, 0.04) 0%, rgba(20, 23, 33, 0.18) 100%);
+      touch-action: pan-y;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .profile-swipe-label {
+      position: absolute;
+      top: 28px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: rotate(-18deg);
+      transition: opacity 0.12s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .profile-swipe-label-pass {
+      left: 22px;
+      color: #ff4d6d;
+      border-color: #ff4d6d;
+      background: rgba(255, 77, 109, 0.12);
+    }
+
+    .profile-card.is-swiping .profile-swipe-label-pass.is-visible,
+    .profile-card.is-swipe-pass .profile-swipe-label-pass {
+      opacity: 1;
+    }
+
+    .profile-card.is-swiping {
+      transition: none !important;
+      cursor: grabbing;
+    }
+
+    .profile-card.is-swipe-pass {
+      transition: transform 0.36s ease, opacity 0.36s ease !important;
+      transform: translateX(-125%) rotate(-16deg) !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .profile-card.is-swipe-snapback {
+      transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1) !important;
+      transform: translateX(0) rotate(0) !important;
     }
 
     .profile-card img {
@@ -2561,6 +2610,7 @@
 
       .profile-media {
         min-height: 380px;
+        touch-action: none;
       }
 
       .profile-card img {
@@ -2927,8 +2977,9 @@
         <section class="discover">
           <h2 class="section-title">ค้นหาคู่ใหม่</h2>
           <div class="profile-card">
-            <div class="profile-media">
-              <img id="discoverProfileImage" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80" alt="Profile">
+            <div class="profile-media" id="discoverProfileMedia">
+              <img id="discoverProfileImage" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80" alt="Profile" draggable="false">
+              <div class="profile-swipe-label profile-swipe-label-pass" id="discoverSwipePassLabel" aria-hidden="true">ข้าม</div>
               <div class="profile-sheen"></div>
               <div class="profile-loading" id="discoverLoading" aria-hidden="true">
                 <div class="profile-spinner"></div>
@@ -3667,6 +3718,8 @@
     const discoverProfileBio = document.getElementById("discoverProfileBio");
     const discoverProfileTopline = document.querySelector(".profile-topline");
     const discoverProfileCard = document.querySelector(".profile-card");
+    const discoverProfileMedia = document.getElementById("discoverProfileMedia");
+    const discoverSwipePassLabel = document.getElementById("discoverSwipePassLabel");
     const discoverLoading = document.getElementById("discoverLoading");
     const discoverNotice = document.getElementById("discoverNotice");
     const discoverPassButton = document.getElementById("discoverPassButton");
@@ -3722,6 +3775,7 @@
     let pendingScannedQrLoginToken = "";
     let discoverPassToastTimer = null;
     let discoverLikeToastTimer = null;
+    let discoverSwipeBusy = false;
     const recordedProfileViews = new Set();
     const demoDiscoverProfiles = [
       { id: 9001, display_name: "Emma", age: 29, location: "Bangkok, Thailand", bio: "Creative producer, ชอบคาเฟ่และทริปทะเลสุดสัปดาห์", avatar_url: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=80" },
@@ -3846,6 +3900,143 @@
       discoverLikeToastTimer = window.setTimeout(function () {
         discoverLikeToast.classList.remove("is-visible");
       }, 1200);
+    }
+
+    function resetDiscoverSwipeCard() {
+      if (!discoverProfileCard) {
+        return;
+      }
+      discoverProfileCard.classList.remove("is-swiping", "is-swipe-pass", "is-swipe-snapback");
+      discoverProfileCard.style.transform = "";
+      if (discoverSwipePassLabel) {
+        discoverSwipePassLabel.classList.remove("is-visible");
+        discoverSwipePassLabel.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    function initDiscoverProfileSwipe() {
+      if (!discoverProfileMedia || !discoverProfileCard) {
+        return;
+      }
+
+      var startX = 0;
+      var startY = 0;
+      var currentX = 0;
+      var dragging = false;
+      var axisLock = null;
+      var passThreshold = 72;
+
+      function setPassLabelVisible(visible) {
+        if (!discoverSwipePassLabel) {
+          return;
+        }
+        discoverSwipePassLabel.classList.toggle("is-visible", visible);
+        discoverSwipePassLabel.setAttribute("aria-hidden", visible ? "false" : "true");
+      }
+
+      function applyDragTransform(dx) {
+        var rotate = Math.max(-18, Math.min(18, dx * 0.08));
+        discoverProfileCard.style.transform = "translateX(" + dx + "px) rotate(" + rotate + "deg)";
+        setPassLabelVisible(dx < -28);
+      }
+
+      function finishSwipePass() {
+        discoverSwipeBusy = true;
+        discoverProfileCard.classList.remove("is-swiping");
+        discoverProfileCard.classList.add("is-swipe-pass");
+        discoverProfileCard.style.transform = "";
+        setPassLabelVisible(true);
+
+        var done = false;
+        function onSwipeOutComplete() {
+          if (done) {
+            return;
+          }
+          done = true;
+          discoverProfileCard.removeEventListener("transitionend", onSwipeOutComplete);
+          resetDiscoverSwipeCard();
+          discoverSwipeBusy = false;
+          submitSwipe("pass", { skipPassLoading: true });
+        }
+
+        discoverProfileCard.addEventListener("transitionend", onSwipeOutComplete);
+        window.setTimeout(onSwipeOutComplete, 420);
+      }
+
+      function snapBack() {
+        discoverProfileCard.classList.remove("is-swiping");
+        setPassLabelVisible(false);
+        discoverProfileCard.classList.add("is-swipe-snapback");
+        window.requestAnimationFrame(function () {
+          discoverProfileCard.style.transform = "translateX(0) rotate(0deg)";
+        });
+        window.setTimeout(function () {
+          resetDiscoverSwipeCard();
+        }, 300);
+      }
+
+      discoverProfileMedia.addEventListener("touchstart", function (event) {
+        if (discoverSwipeBusy || discoverProfileCard.classList.contains("is-loading")) {
+          return;
+        }
+        if (!event.touches || event.touches.length !== 1) {
+          return;
+        }
+        var touch = event.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        currentX = 0;
+        dragging = true;
+        axisLock = null;
+        discoverProfileCard.classList.remove("is-swipe-pass", "is-swipe-snapback");
+      }, { passive: true });
+
+      discoverProfileMedia.addEventListener("touchmove", function (event) {
+        if (!dragging || discoverSwipeBusy || !event.touches || event.touches.length !== 1) {
+          return;
+        }
+        var touch = event.touches[0];
+        var dx = touch.clientX - startX;
+        var dy = touch.clientY - startY;
+
+        if (axisLock === null) {
+          if (Math.abs(dx) < 6 && Math.abs(dy) < 6) {
+            return;
+          }
+          axisLock = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+        }
+
+        if (axisLock !== "x") {
+          return;
+        }
+
+        event.preventDefault();
+        currentX = dx;
+        discoverProfileCard.classList.add("is-swiping");
+        applyDragTransform(dx);
+      }, { passive: false });
+
+      function onTouchEnd() {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+
+        if (axisLock !== "x") {
+          resetDiscoverSwipeCard();
+          return;
+        }
+
+        if (currentX <= -passThreshold) {
+          finishSwipePass();
+          return;
+        }
+
+        snapBack();
+      }
+
+      discoverProfileMedia.addEventListener("touchend", onTouchEnd);
+      discoverProfileMedia.addEventListener("touchcancel", onTouchEnd);
     }
 
     function advanceDiscoverProfile() {
@@ -4584,6 +4775,7 @@
     }
 
     function renderDiscoverProfile() {
+      resetDiscoverSwipeCard();
       const profile = discoverProfiles[currentDiscoverIndex];
 
       if (!profile) {
@@ -4658,7 +4850,8 @@
       }
     }
 
-    async function submitSwipe(action) {
+    async function submitSwipe(action, options) {
+      options = options || {};
       clearNotice(discoverNotice);
 
       const profile = discoverProfiles[currentDiscoverIndex];
@@ -4699,11 +4892,13 @@
       }
       if (action === "pass") {
         showDiscoverPassToast();
-        setDiscoverLoadingState(true, "กำลังค้นหาโปรไฟล์ถัดไป...");
-        await new Promise(function (resolve) {
-          window.setTimeout(resolve, 520);
-        });
-        setDiscoverLoadingState(false);
+        if (!options.skipPassLoading) {
+          setDiscoverLoadingState(true, "กำลังค้นหาโปรไฟล์ถัดไป...");
+          await new Promise(function (resolve) {
+            window.setTimeout(resolve, 520);
+          });
+          setDiscoverLoadingState(false);
+        }
       }
       advanceDiscoverProfile();
     }
@@ -5669,6 +5864,7 @@
     discoverPassButton.addEventListener("click", function () { submitSwipe("pass"); });
     discoverLikeButton.addEventListener("click", function () { submitSwipe("like"); });
     discoverSuperLikeButton.addEventListener("click", function () { submitSwipe("super_like"); });
+    initDiscoverProfileSwipe();
     discoverRewindButton.addEventListener("click", function () {
       showNotice(discoverNotice, "Rewind จะทำงานเต็มรูปแบบเมื่อเพิ่ม endpoint ย้อนรายการปัด", "error");
     });
