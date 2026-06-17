@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\AuthController;
 use App\Controllers\AppDataController;
+use App\Controllers\AdminBackupController;
 use App\Controllers\AdminController;
 use App\Controllers\ChatController;
 use App\Controllers\CoinTopupController;
@@ -29,6 +30,7 @@ use App\Repositories\PaymentRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\UserPhotoRepository;
 use App\Repositories\WalletRepository;
+use App\Support\BackupManager;
 use App\Support\Database;
 use App\Support\Request;
 use App\Support\Response;
@@ -65,6 +67,8 @@ require_once dirname(__DIR__) . '/src/Controllers/WalletController.php';
 require_once dirname(__DIR__) . '/src/Controllers/SubscriptionController.php';
 require_once dirname(__DIR__) . '/src/Repositories/UserPhotoRepository.php';
 require_once dirname(__DIR__) . '/src/Controllers/ProfileController.php';
+require_once dirname(__DIR__) . '/src/Support/BackupManager.php';
+require_once dirname(__DIR__) . '/src/Controllers/AdminBackupController.php';
 
 $appConfig = require dirname(__DIR__) . '/config/app.php';
 
@@ -129,6 +133,10 @@ try {
     $giftController = new GiftController(new GiftRepository($db), $walletRepository, $matchSignalRepository);
     $subscriptionController = new SubscriptionController($subscriptionRepository, $paymentRepository, $paymentConfig, $db);
     $profileController = new ProfileController(new UserRepository($db), new UserPhotoRepository($db));
+    $databaseConfig = require dirname(__DIR__) . '/config/database.php';
+    $adminBackupController = new AdminBackupController(
+        new BackupManager($db, $databaseConfig, dirname(__DIR__))
+    );
 } catch (Throwable $exception) {
     Response::json([
         'success' => false,
@@ -150,6 +158,22 @@ $routes = [
     ['GET', '#^/admin/dashboard$#', static function (Request $request) use ($adminController, $authController): mixed {
         requireAdminUser($authController);
         return $adminController->dashboard();
+    }],
+    ['GET', '#^/admin/backups$#', static function (Request $request) use ($adminBackupController, $authController): mixed {
+        requireAdminUser($authController);
+        return $adminBackupController->index();
+    }],
+    ['POST', '#^/admin/backups$#', static function (Request $request) use ($adminBackupController, $authController): mixed {
+        $adminUser = requireAdminUser($authController);
+        return $adminBackupController->create((int) $adminUser['id'], (string) $adminUser['display_name']);
+    }],
+    ['GET', '#^/admin/backups/([^/]+\.zip)/download$#', static function (Request $request, string $filename) use ($adminBackupController, $authController): mixed {
+        requireAdminUser($authController);
+        return $adminBackupController->download($filename);
+    }],
+    ['POST', '#^/admin/backups/([^/]+\.zip)/delete$#', static function (Request $request, string $filename) use ($adminBackupController, $authController): mixed {
+        requireAdminUser($authController);
+        return $adminBackupController->delete($filename);
     }],
     ['GET', '#^/chat/rooms$#', static fn (Request $request): mixed => $appDataController->chatRooms()],
     ['GET', '#^/chat/sidebar$#', static function (Request $request) use ($chatController): mixed {

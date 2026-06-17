@@ -508,7 +508,6 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       opacity: 0;
-      transform: rotate(-18deg);
       transition: opacity 0.12s ease;
       pointer-events: none;
       z-index: 2;
@@ -519,10 +518,24 @@
       color: #ff4d6d;
       border-color: #ff4d6d;
       background: rgba(255, 77, 109, 0.12);
+      transform: rotate(-18deg);
+    }
+
+    .profile-swipe-label-like {
+      right: 22px;
+      color: #2faa57;
+      border-color: #2faa57;
+      background: rgba(47, 170, 87, 0.12);
+      transform: rotate(18deg);
     }
 
     .profile-card.is-swiping .profile-swipe-label-pass.is-visible,
     .profile-card.is-swipe-pass .profile-swipe-label-pass {
+      opacity: 1;
+    }
+
+    .profile-card.is-swiping .profile-swipe-label-like.is-visible,
+    .profile-card.is-swipe-like .profile-swipe-label-like {
       opacity: 1;
     }
 
@@ -534,6 +547,13 @@
     .profile-card.is-swipe-pass {
       transition: transform 0.36s ease, opacity 0.36s ease !important;
       transform: translateX(-125%) rotate(-16deg) !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .profile-card.is-swipe-like {
+      transition: transform 0.36s ease, opacity 0.36s ease !important;
+      transform: translateX(125%) rotate(16deg) !important;
       opacity: 0;
       pointer-events: none;
     }
@@ -2980,6 +3000,7 @@
             <div class="profile-media" id="discoverProfileMedia">
               <img id="discoverProfileImage" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80" alt="Profile" draggable="false">
               <div class="profile-swipe-label profile-swipe-label-pass" id="discoverSwipePassLabel" aria-hidden="true">ข้าม</div>
+              <div class="profile-swipe-label profile-swipe-label-like" id="discoverSwipeLikeLabel" aria-hidden="true">ถูกใจ</div>
               <div class="profile-sheen"></div>
               <div class="profile-loading" id="discoverLoading" aria-hidden="true">
                 <div class="profile-spinner"></div>
@@ -3720,6 +3741,7 @@
     const discoverProfileCard = document.querySelector(".profile-card");
     const discoverProfileMedia = document.getElementById("discoverProfileMedia");
     const discoverSwipePassLabel = document.getElementById("discoverSwipePassLabel");
+    const discoverSwipeLikeLabel = document.getElementById("discoverSwipeLikeLabel");
     const discoverLoading = document.getElementById("discoverLoading");
     const discoverNotice = document.getElementById("discoverNotice");
     const discoverPassButton = document.getElementById("discoverPassButton");
@@ -3906,11 +3928,15 @@
       if (!discoverProfileCard) {
         return;
       }
-      discoverProfileCard.classList.remove("is-swiping", "is-swipe-pass", "is-swipe-snapback");
+      discoverProfileCard.classList.remove("is-swiping", "is-swipe-pass", "is-swipe-like", "is-swipe-snapback");
       discoverProfileCard.style.transform = "";
       if (discoverSwipePassLabel) {
         discoverSwipePassLabel.classList.remove("is-visible");
         discoverSwipePassLabel.setAttribute("aria-hidden", "true");
+      }
+      if (discoverSwipeLikeLabel) {
+        discoverSwipeLikeLabel.classList.remove("is-visible");
+        discoverSwipeLikeLabel.setAttribute("aria-hidden", "true");
       }
     }
 
@@ -3924,7 +3950,7 @@
       var currentX = 0;
       var dragging = false;
       var axisLock = null;
-      var passThreshold = 72;
+      var swipeThreshold = 72;
 
       function setPassLabelVisible(visible) {
         if (!discoverSwipePassLabel) {
@@ -3934,18 +3960,29 @@
         discoverSwipePassLabel.setAttribute("aria-hidden", visible ? "false" : "true");
       }
 
+      function setLikeLabelVisible(visible) {
+        if (!discoverSwipeLikeLabel) {
+          return;
+        }
+        discoverSwipeLikeLabel.classList.toggle("is-visible", visible);
+        discoverSwipeLikeLabel.setAttribute("aria-hidden", visible ? "false" : "true");
+      }
+
       function applyDragTransform(dx) {
         var rotate = Math.max(-18, Math.min(18, dx * 0.08));
         discoverProfileCard.style.transform = "translateX(" + dx + "px) rotate(" + rotate + "deg)";
         setPassLabelVisible(dx < -28);
+        setLikeLabelVisible(dx > 28);
       }
 
-      function finishSwipePass() {
+      function finishSwipe(action) {
+        var isPass = action === "pass";
         discoverSwipeBusy = true;
         discoverProfileCard.classList.remove("is-swiping");
-        discoverProfileCard.classList.add("is-swipe-pass");
+        discoverProfileCard.classList.add(isPass ? "is-swipe-pass" : "is-swipe-like");
         discoverProfileCard.style.transform = "";
-        setPassLabelVisible(true);
+        setPassLabelVisible(isPass);
+        setLikeLabelVisible(!isPass);
 
         var done = false;
         function onSwipeOutComplete() {
@@ -3956,7 +3993,7 @@
           discoverProfileCard.removeEventListener("transitionend", onSwipeOutComplete);
           resetDiscoverSwipeCard();
           discoverSwipeBusy = false;
-          submitSwipe("pass", { skipPassLoading: true });
+          submitSwipe(action, { fromSwipe: true });
         }
 
         discoverProfileCard.addEventListener("transitionend", onSwipeOutComplete);
@@ -3966,6 +4003,7 @@
       function snapBack() {
         discoverProfileCard.classList.remove("is-swiping");
         setPassLabelVisible(false);
+        setLikeLabelVisible(false);
         discoverProfileCard.classList.add("is-swipe-snapback");
         window.requestAnimationFrame(function () {
           discoverProfileCard.style.transform = "translateX(0) rotate(0deg)";
@@ -3988,7 +4026,7 @@
         currentX = 0;
         dragging = true;
         axisLock = null;
-        discoverProfileCard.classList.remove("is-swipe-pass", "is-swipe-snapback");
+        discoverProfileCard.classList.remove("is-swipe-pass", "is-swipe-like", "is-swipe-snapback");
       }, { passive: true });
 
       discoverProfileMedia.addEventListener("touchmove", function (event) {
@@ -4027,8 +4065,13 @@
           return;
         }
 
-        if (currentX <= -passThreshold) {
-          finishSwipePass();
+        if (currentX <= -swipeThreshold) {
+          finishSwipe("pass");
+          return;
+        }
+
+        if (currentX >= swipeThreshold) {
+          finishSwipe("like");
           return;
         }
 
@@ -4882,9 +4925,11 @@
 
       if (action === "like") {
         showDiscoverLikeToast();
-        await new Promise(function (resolve) {
-          window.setTimeout(resolve, 480);
-        });
+        if (!options.fromSwipe) {
+          await new Promise(function (resolve) {
+            window.setTimeout(resolve, 480);
+          });
+        }
         openMatchModal(profile);
       }
       if (action === "super_like") {
@@ -4892,7 +4937,7 @@
       }
       if (action === "pass") {
         showDiscoverPassToast();
-        if (!options.skipPassLoading) {
+        if (!options.fromSwipe && !options.skipPassLoading) {
           setDiscoverLoadingState(true, "กำลังค้นหาโปรไฟล์ถัดไป...");
           await new Promise(function (resolve) {
             window.setTimeout(resolve, 520);

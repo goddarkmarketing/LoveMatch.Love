@@ -54,4 +54,13 @@ final class AdminApiTest extends DatabaseTestCase
         $r = $c->post('/admin/subscriptions/999999999/approve', []);
         $this->assertSame(422, $r['status'], $r['body']);
     }
+
+    public function testAdminBackupsList(): void
+    {
+        $c = $this->loginAdmin();
+        $r = $c->get('/admin/backups');
+        $this->assertSame(200, $r['status'], $r['body']);
+        $this->assertArrayHasKey('backups', $r['json']['data'] ?? []);
+        $this->assertIsArray($r['json']['data']['backups']);
+    }
 }

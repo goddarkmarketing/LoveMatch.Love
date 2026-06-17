@@ -430,6 +430,49 @@
     .mini-btn.is-gray { background: var(--gray); }
     .mini-btn.is-green { background: var(--green); }
 
+    .backup-toolbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .backup-toolbar h3 {
+      margin: 0 0 6px;
+    }
+
+    .backup-table-wrap {
+      overflow-x: auto;
+    }
+
+    .backup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-small);
+    }
+
+    .backup-table th,
+    .backup-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .backup-table th {
+      color: var(--muted);
+      font-weight: 600;
+      background: var(--panel-soft);
+    }
+
+    .backup-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .empty {
       padding: 26px 18px;
       border-radius: 20px;
@@ -510,6 +553,9 @@
     <symbol id="i-logout" viewBox="0 0 24 24">
       <path d="M10 17v-3H3v-4h7V7l5 5-5 5Zm6-14h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
     </symbol>
+    <symbol id="i-backup" viewBox="0 0 24 24">
+      <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8 13-4-4h3V8h2v4h3l-4 4Zm2-9h-2v2h2V7Z"/>
+    </symbol>
   </svg>
 
   <div class="admin-shell">
@@ -551,6 +597,13 @@
           <div class="nav-copy">
             <div class="nav-title">การเงินและสมาชิก</div>
             <div class="nav-meta">ตรวจสอบ payments และ package</div>
+          </div>
+        </button>
+        <button class="nav-btn" type="button" data-section="backups">
+          <svg class="nav-icon"><use href="#i-backup"></use></svg>
+          <div class="nav-copy">
+            <div class="nav-title">สำรองข้อมูล</div>
+            <div class="nav-meta">สร้าง ดาวน์โหลด และลบแบ็คอัพ</div>
           </div>
         </button>
       </nav>
@@ -657,6 +710,32 @@
             <div class="list" id="giftsListLarge"></div>
           </article>
         </section>
+
+        <section class="section" id="section-backups">
+          <article class="panel wide">
+            <div class="backup-toolbar">
+              <div>
+                <h3>สำรองข้อมูลระบบ</h3>
+                <div class="panel-subtitle">แบ็คอัพฐานข้อมูลทั้งหมด ไฟล์อัปโหลด การตั้งค่า และโครงสร้าง DB เป็นไฟล์ ZIP</div>
+              </div>
+              <button class="refresh-btn" id="createBackupButton" type="button">สร้างแบ็คอัพใหม่</button>
+            </div>
+            <div class="backup-table-wrap">
+              <table class="backup-table">
+                <thead>
+                  <tr>
+                    <th>วันที่สร้าง</th>
+                    <th>ผู้สร้าง</th>
+                    <th>ขนาดไฟล์</th>
+                    <th>ชื่อไฟล์</th>
+                    <th>การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="backupsList"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
       </div>
     </main>
   </div>
@@ -689,11 +768,14 @@
     const pendingTopupsListLarge = document.getElementById("pendingTopupsListLarge");
     const paymentsListLarge = document.getElementById("paymentsListLarge");
     const giftsListLarge = document.getElementById("giftsListLarge");
+    const backupsList = document.getElementById("backupsList");
+    const createBackupButton = document.getElementById("createBackupButton");
     const navButtons = Array.from(document.querySelectorAll(".nav-btn"));
     const sections = Array.from(document.querySelectorAll(".section"));
 
     let currentUser = null;
     let adminDashboard = null;
+    let adminBackups = [];
     let currentSection = "overview";
 
     function showNotice(message, type) {
@@ -704,6 +786,44 @@
     function clearNotice() {
       notice.textContent = "";
       notice.className = "notice";
+    }
+
+    function formatFileSize(bytes) {
+      const size = Number(bytes || 0);
+      if (size <= 0) {
+        return "-";
+      }
+      if (size < 1024) {
+        return size.toLocaleString("th-TH") + " B";
+      }
+      if (size < 1048576) {
+        return (size / 1024).toFixed(1) + " KB";
+      }
+      return (size / 1048576).toFixed(2) + " MB";
+    }
+
+    function renderBackups() {
+      if (!backupsList) {
+        return;
+      }
+
+      if (!adminBackups.length) {
+        backupsList.innerHTML = '<tr><td colspan="5"><div class="empty">ยังไม่มีไฟล์แบ็คอัพ — กดปุ่มสร้างแบ็คอัพใหม่เพื่อเริ่มต้น</div></td></tr>';
+        return;
+      }
+
+      backupsList.innerHTML = adminBackups.map(function (backup) {
+        return '<tr>' +
+          '<td>' + formatDate(backup.created_at) + '</td>' +
+          '<td>' + (backup.created_by || "-") + '</td>' +
+          '<td>' + formatFileSize(backup.size_bytes) + '</td>' +
+          '<td>' + backup.filename + '</td>' +
+          '<td><div class="backup-actions">' +
+            '<button class="mini-btn is-blue" type="button" data-download-backup="' + backup.filename + '">โหลด</button>' +
+            '<button class="mini-btn is-pink" type="button" data-delete-backup="' + backup.filename + '">ลบ</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("");
     }
 
     function formatDate(value) {
@@ -954,12 +1074,18 @@
         overview: ["ภาพรวมระบบ", "ติดตามสมาชิก รายงาน ธุรกรรม และการใช้งานล่าสุดแบบเรียลไทม์"],
         users: ["จัดการสมาชิก", "ตรวจสอบและอัปเดตสถานะผู้ใช้งานจากหลังบ้านโดยตรง"],
         reports: ["รายงานปัญหา", "ดูคิว moderation และจัดการรายงานที่เปิดอยู่"],
-        payments: ["การเงินและสมาชิก", "สรุปธุรกรรม แพ็กเกจ และกิจกรรมของขวัญล่าสุด"]
+        payments: ["การเงินและสมาชิก", "สรุปธุรกรรม แพ็กเกจ และกิจกรรมของขวัญล่าสุด"],
+        backups: ["สำรองข้อมูล", "สร้าง ดาวน์โหลด และลบไฟล์แบ็คอัพทั้งระบบได้จากที่นี่"]
       };
 
       const copy = titles[section] || titles.overview;
       sectionTitle.textContent = copy[0];
       sectionSubtitle.textContent = copy[1];
+
+      const isBackups = section === "backups";
+      statsGrid.style.display = isBackups ? "none" : "";
+      searchInput.hidden = isBackups;
+      refreshButton.textContent = isBackups ? "รีเฟรชรายการ" : "รีเฟรชข้อมูล";
 
       navButtons.forEach(function (button) {
         button.classList.toggle("is-active", button.dataset.section === section);
@@ -968,6 +1094,79 @@
       sections.forEach(function (panel) {
         panel.classList.toggle("is-active", panel.id === "section-" + section);
       });
+
+      if (isBackups) {
+        loadBackups();
+      }
+    }
+
+    async function loadBackups() {
+      clearNotice();
+      refreshButton.disabled = true;
+      if (createBackupButton) {
+        createBackupButton.disabled = true;
+      }
+
+      try {
+        const response = await apiFetch("/admin/backups", { method: "GET" });
+        adminBackups = response.data && response.data.backups ? response.data.backups : [];
+        renderBackups();
+      } catch (error) {
+        adminBackups = [];
+        renderBackups();
+        showNotice(error.message, "error");
+      } finally {
+        refreshButton.disabled = false;
+        if (createBackupButton) {
+          createBackupButton.disabled = false;
+        }
+      }
+    }
+
+    async function createBackup() {
+      if (!window.confirm("สร้างแบ็คอัพทั้งระบบตอนนี้? อาจใช้เวลาสักครู่")) {
+        return;
+      }
+
+      clearNotice();
+      createBackupButton.disabled = true;
+      refreshButton.disabled = true;
+
+      try {
+        const response = await apiFetch("/admin/backups", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showNotice(response.message || "สร้างแบ็คอัพเรียบร้อยแล้ว", "success");
+        await loadBackups();
+      } catch (error) {
+        showNotice(error.message, "error");
+      } finally {
+        createBackupButton.disabled = false;
+        refreshButton.disabled = false;
+      }
+    }
+
+    function downloadBackup(filename) {
+      window.location.href = API_BASE + "/admin/backups/" + encodeURIComponent(filename) + "/download";
+    }
+
+    async function deleteBackup(filename) {
+      if (!window.confirm("ลบไฟล์แบ็คอัพ " + filename + " ?")) {
+        return;
+      }
+
+      clearNotice();
+      try {
+        const response = await apiFetch("/admin/backups/" + encodeURIComponent(filename) + "/delete", {
+          method: "POST",
+          body: JSON.stringify({})
+        });
+        showNotice(response.message || "ลบแบ็คอัพเรียบร้อยแล้ว", "success");
+        await loadBackups();
+      } catch (error) {
+        showNotice(error.message, "error");
+      }
     }
 
     async function loadCurrentUser() {
@@ -1125,6 +1324,18 @@
       const rejectTopup = event.target.closest("[data-reject-topup]");
       if (rejectTopup) {
         rejectCoinTopup(Number(rejectTopup.getAttribute("data-reject-topup")));
+        return;
+      }
+
+      const downloadBackupBtn = event.target.closest("[data-download-backup]");
+      if (downloadBackupBtn) {
+        downloadBackup(downloadBackupBtn.getAttribute("data-download-backup"));
+        return;
+      }
+
+      const deleteBackupBtn = event.target.closest("[data-delete-backup]");
+      if (deleteBackupBtn) {
+        deleteBackup(deleteBackupBtn.getAttribute("data-delete-backup"));
       }
     });
 
@@ -1134,7 +1345,16 @@
       });
     });
 
-    refreshButton.addEventListener("click", loadDashboard);
+    refreshButton.addEventListener("click", function () {
+      if (currentSection === "backups") {
+        loadBackups();
+        return;
+      }
+      loadDashboard();
+    });
+    if (createBackupButton) {
+      createBackupButton.addEventListener("click", createBackup);
+    }
     logoutButton.addEventListener("click", logout);
     searchInput.addEventListener("input", renderAll);
 

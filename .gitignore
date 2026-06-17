@@ -8,4 +8,5 @@ config/payments.local.php
 config/migrate.local.php
 uploads/topup-slips/
 uploads/profile-photos/
+storage/backups/
 scripts/node_modules/
