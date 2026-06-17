@@ -1,0 +1,40 @@
+/**
+ * BetterTogether — brand font used on true.th
+ */
+
+@font-face {
+  font-family: BetterTogether;
+  src: url('../fonts/better-together/BetterTogether-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: BetterTogether;
+  src: url('../fonts/better-together/BetterTogether-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: BetterTogether;
+  src: url('../fonts/better-together/BetterTogether-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: BetterTogether;
+  src: url('../fonts/better-together/BetterTogether-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

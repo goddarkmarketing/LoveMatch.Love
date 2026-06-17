@@ -1,5 +1,5 @@
 /**
- * Header brand — logo icon + Great Vibes wordmark.
+ * Header brand — logo icon + BetterTogether wordmark.
  */
 
 .topbar {
@@ -44,8 +44,8 @@
 
 .topbar .brand .brand-name {
   display: inline-block;
-  font-family: "Great Vibes", "Brush Script MT", "Segoe Script", cursive;
-  font-weight: 400;
+  font-family: BetterTogether, sans-serif;
+  font-weight: 500;
   font-style: normal;
   font-size: clamp(36px, 5.8vw, 54px);
   letter-spacing: 0.02em;
