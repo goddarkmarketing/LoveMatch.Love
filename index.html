@@ -3783,7 +3783,6 @@
     let selectedPlan = null;
     let discoverProfiles = [];
     let currentDiscoverIndex = 0;
-    let discoverHistory = [];
     let discoverLoadingTimer = null;
     let matches = [];
     let activeChatType = "public";
@@ -3941,13 +3940,17 @@
       }
     }
 
-    function rewindDiscoverProfile() {
-      if (!discoverProfiles.length || !discoverHistory.length) {
+    function previousDiscoverProfile() {
+      if (!discoverProfiles.length || discoverProfiles.length < 2) {
         return false;
       }
-      currentDiscoverIndex = discoverHistory.pop();
+      currentDiscoverIndex = (currentDiscoverIndex - 1 + discoverProfiles.length) % discoverProfiles.length;
       renderDiscoverProfile();
       return true;
+    }
+
+    function canSwipeDiscoverPrevious() {
+      return discoverProfiles.length > 1;
     }
 
     function initDiscoverProfileSwipe() {
@@ -3982,7 +3985,7 @@
         var rotate = Math.max(-18, Math.min(18, dx * 0.08));
         discoverProfileCard.style.transform = "translateX(" + dx + "px) rotate(" + rotate + "deg)";
         setPassLabelVisible(dx < -28);
-        setRewindLabelVisible(dx > 28 && discoverHistory.length > 0);
+        setRewindLabelVisible(dx > 28 && canSwipeDiscoverPrevious());
       }
 
       function finishSwipe(action) {
@@ -4007,7 +4010,7 @@
           if (isPass) {
             submitSwipe("pass", { fromSwipe: true });
           } else if (isRewind) {
-            rewindDiscoverProfile();
+            previousDiscoverProfile();
           }
         }
 
@@ -4086,7 +4089,7 @@
         }
 
         if (currentX >= swipeThreshold) {
-          if (discoverHistory.length > 0) {
+          if (canSwipeDiscoverPrevious()) {
             finishSwipe("rewind");
           } else {
             snapBack();
@@ -4105,7 +4108,6 @@
       if (!discoverProfiles.length) {
         return;
       }
-      discoverHistory.push(currentDiscoverIndex);
       currentDiscoverIndex = (currentDiscoverIndex + 1) % discoverProfiles.length;
       renderDiscoverProfile();
     }
@@ -4877,7 +4879,6 @@
     async function loadDiscoverProfiles() {
       if (!currentUser) {
         discoverProfiles = demoDiscoverProfiles.slice();
-        discoverHistory = [];
         currentDiscoverIndex = 0;
         renderDiscoverProfile();
         return;
@@ -4886,12 +4887,10 @@
       try {
         const response = await apiFetch("/discover", { method: "GET" });
         discoverProfiles = (response.data.profiles && response.data.profiles.length ? response.data.profiles : demoDiscoverProfiles).slice();
-        discoverHistory = [];
         currentDiscoverIndex = 0;
         renderDiscoverProfile();
       } catch (error) {
         discoverProfiles = demoDiscoverProfiles.slice();
-        discoverHistory = [];
         currentDiscoverIndex = 0;
         renderDiscoverProfile();
       }
@@ -5934,8 +5933,8 @@
     discoverSuperLikeButton.addEventListener("click", function () { submitSwipe("super_like"); });
     initDiscoverProfileSwipe();
     discoverRewindButton.addEventListener("click", function () {
-      if (!rewindDiscoverProfile()) {
-        showNotice(discoverNotice, "ยังไม่มีโปรไฟล์ก่อนหน้าให้ย้อนกลับ", "error");
+      if (!previousDiscoverProfile()) {
+        showNotice(discoverNotice, "มีโปรไฟล์เดียว ไม่สามารถย้อนกลับได้", "error");
       }
     });
     heroCtaButton.addEventListener("click", handleHeroCta);
